@@ -1,0 +1,4 @@
+Contact: mailto:security@nexgn.cloud
+Encryption: https://nexgn.cloud/pgp.txt
+Acknowledgments: https://nexgn.cloud/trust/vulnerability-disclosure
+Preferred-Languages: en

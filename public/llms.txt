@@ -1,0 +1,16 @@
+# Nexgn Agreement Platform
+Nexgn is a modern electronic signature and agreement workflow platform.
+
+## Features
+- **Document Editor:** Drag and drop signature, text, and date fields.
+- **eSignature:** Mobile-friendly, frictionless signing. No account required for signers.
+- **Trust & Evidence:** Cryptographic SHA-256 hashing and IPv4/IPv6 audit trails.
+- **API:** RESTful API with webhooks and embedded signing for developers.
+
+## Pricing
+- Free: 19 envelopes/month.
+- Starter: 49 envelopes/month.
+- Business: Unlimited envelopes.
+
+## Compliance
+Complies with US ESIGN Act, EU eIDAS, and India IT Act 2000.

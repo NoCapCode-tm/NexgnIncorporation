@@ -1,0 +1,17 @@
+{
+  "navbar": {
+    "products": "Productos",
+    "solutions": "Soluciones",
+    "developers": "Desarrolladores",
+    "pricing": "Precios",
+    "trust": "Centro de Confianza",
+    "login": "Iniciar sesión",
+    "signup": "Empieza Gratis"
+  },
+  "home": {
+    "hero_title": "La plataforma de acuerdos moderna",
+    "hero_subtitle": "Cree, firme, automatice y confíe en acuerdos de forma segura.",
+    "cta_primary": "Empieza a enviar gratis",
+    "cta_secondary": "Hablar con Ventas"
+  }
+}

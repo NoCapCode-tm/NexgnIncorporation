@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  
+  <!-- Preconnect to Google Fonts for speed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Base URL (Required for GitHub Pages routing if NOT using a custom domain. Change to "/" if using nexgn.cloud) -->
+  <base href="/" />
+
+  <!-- Primary Meta Tags (Fallback for bots that don't run JS) -->
+  <title>Nexgn | The Modern Agreement Platform</title>
+  <meta name="title" content="Nexgn | The Modern Agreement Platform" />
+  <meta name="description" content="Create, sign, automate, and trust agreements. Nexgn brings document preparation, electronic signatures, and workflow automation into one secure workspace." />
+  <meta name="keywords" content="esignature, electronic signature, contract management, digital signature, nexgn, document workflows" />
+  <meta name="author" content="Nexgn" />
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nexgn.cloud/" />
+  <meta property="og:title" content="Nexgn | The Modern Agreement Platform" />
+  <meta property="og:description" content="Create, sign, automate, and trust agreements securely." />
+  <meta property="og:image" content="https://nexgn.cloud/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://nexgn.cloud/" />
+  <meta property="twitter:title" content="Nexgn | The Modern Agreement Platform" />
+  <meta property="twitter:description" content="Create, sign, automate, and trust agreements securely." />
+  <meta property="twitter:image" content="https://nexgn.cloud/og-image.jpg" />
+
+  <!-- Device Specific Icons & PWA Manifest -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="mask-icon" href="/favicon.ico" color="#FF0915" />
+  <meta name="msapplication-TileColor" content="#FF0915" />
+  <meta name="theme-color" content="#FF0915" />
+
+  <!-- Strict CSP: Only allows scripts from our domain, Google Fonts, and Razorpay -->
+   <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self'; 
+    script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; 
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+    font-src 'self' https://fonts.gstatic.com; 
+    img-src 'self' data: https://*; 
+    connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com;
+    ">
+
+    {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Nexgn",
+    "url": "https://nexgn.cloud",
+    "logo": "https://nexgn.cloud/favicon.ico",
+    "sameAs": [
+        "https://instagram.com/nexgn.cloud",
+        "https://linkedin.com/company/nexgncloud"
+        
+    ],
+    "knowsAbout": [
+        "Electronic Signatures",
+        "US ESIGN Act",
+        "EU eIDAS Regulation",
+        "India IT Act 2000",
+        "Contract Automation"
+    ]
+    }
+</head>
+<body>
+  <!-- Fallback for users with JavaScript disabled -->
+  <noscript>You need to enable JavaScript to run the Nexgn platform.</noscript>
+  
+  <!-- React Mount Point -->
+  <div id="root"></div>
+
+  <!-- Rsbuild automatically injects the JS script tags here during build -->
+</body>
+</html>

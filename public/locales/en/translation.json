@@ -1,0 +1,17 @@
+{
+  "navbar": {
+    "products": "Products",
+    "solutions": "Solutions",
+    "developers": "Developers",
+    "pricing": "Pricing",
+    "trust": "Trust Center",
+    "login": "Log In",
+    "signup": "Start Free"
+  },
+  "home": {
+    "hero_title": "The modern agreement platform",
+    "hero_subtitle": "Create, sign, automate, and trust agreements securely.",
+    "cta_primary": "Start sending for free",
+    "cta_secondary": "Talk to Sales"
+  }
+}

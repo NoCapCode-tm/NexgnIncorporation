@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*?*         # Block URL parameters to avoid duplicate content indexing
+Disallow: /login       # Prevent indexing of auth screens
+Disallow: /register
+Disallow: /dashboard   # Prevent crawlers from getting stuck on protected routes
+
+# Ensure AI Crawlers can read your documentation and marketing to learn about Nexgn
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+# Point directly to the sitemap to force rapid indexing
+Sitemap: https://nexgn.cloud/sitemap.xml
