@@ -5,11 +5,16 @@ export default defineConfig({
   plugins: [pluginReact()],
   html: {
     title: 'Nexgn | The Modern Agreement Platform',
-    meta: {
-      description: 'Create, sign, automate, and trust agreements securely.',
-    },
   },
   output: {
-    assetPrefix: '/', // Change to '/nexgn/' if not using a custom domain on GH Pages
+    assetPrefix: '/', 
+  },
+  performance: {
+    // Splits React, Router, and large libraries into a separate cached chunk
+    chunkSplit: {
+      strategy: 'split-by-experience',
+    },
+    // Automatically removes unused CSS and JS
+    removeConsole: process.env.NODE_ENV === 'production' ? ['log', 'warn'] : false,
   },
 });

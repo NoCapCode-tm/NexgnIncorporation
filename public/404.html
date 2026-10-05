@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Base URL (Required for GitHub Pages routing if NOT using a custom domain. Change to "/" if using nexgn.cloud) -->
+  <!-- Base URL (Required for GitHub Pages SPA routing) -->
   <base href="/" />
 
   <!-- Primary Meta Tags (Fallback for bots that don't run JS) -->
@@ -41,6 +41,41 @@
   <link rel="mask-icon" href="/favicon.ico" color="#FF0915" />
   <meta name="msapplication-TileColor" content="#FF0915" />
   <meta name="theme-color" content="#FF0915" />
+
+  <!-- Strict CSP: Only allows scripts from our domain, Google Fonts, and Razorpay -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self'; 
+    script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; 
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+    font-src 'self' https://fonts.gstatic.com; 
+    img-src 'self' data: https://*; 
+    connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com;
+  ">
+
+  <!-- PRELOAD LCP: Forces the browser to load the hero image instantly -->
+  <link rel="preload" as="image" href="/assets/hero-image.webp" type="image/webp" />
+
+  <!-- JSON-LD Structured Data for AEO/GEO Indexing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Nexgn",
+    "url": "https://nexgn.cloud",
+    "logo": "https://nexgn.cloud/favicon.ico",
+    "sameAs": [
+        "https://instagram.com/nexgn.cloud",
+        "https://linkedin.com/company/nexgncloud"
+    ],
+    "knowsAbout": [
+        "Electronic Signatures",
+        "US ESIGN Act",
+        "EU eIDAS Regulation",
+        "India IT Act 2000",
+        "Contract Automation"
+    ]
+  }
+  </script>
 </head>
 <body>
   <!-- Fallback for users with JavaScript disabled -->
