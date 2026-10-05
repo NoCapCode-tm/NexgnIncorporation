@@ -10,10 +10,15 @@
     "postbuild": "cp dist/index.html dist/404.html",
     "format": "prettier --write src/"
   },
-  "keywords": ["esignature", "docusign-alternative", "contract-management"],
+  "keywords": [
+    "esignature",
+    "docusign-alternative",
+    "contract-management"
+  ],
   "author": "NoCapCode",
   "type": "commonjs",
   "dependencies": {
+    "axios": "^1.20.0",
     "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^4.0.2",

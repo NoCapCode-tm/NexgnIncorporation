@@ -1,0 +1,250 @@
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+.heroSection {
+  position: relative;
+  padding: 120px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255, 9, 21, 0.06) 0%, rgba(255, 255, 255, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(255, 9, 21, 0.1);
+  color: var(--nexgn-red);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--nexgn-dark);
+  max-width: 900px;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+}
+
+.heroSubtitle {
+  font-size: clamp(1.1rem, 2vw, 1.25rem);
+  color: var(--text-muted);
+  max-width: 650px;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 64px;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  background: var(--nexgn-red);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 9, 21, 0.3);
+}
+
+.btnPrimary:hover {
+  background: var(--nexgn-red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 9, 21, 0.4);
+}
+
+.btnSecondary {
+  background: var(--bg-white);
+  color: var(--nexgn-slate);
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: var(--bg-light);
+  border-color: #ccc;
+}
+
+.dashboardPreview {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  background: var(--bg-white);
+}
+
+/* ==========================================
+   SOCIAL PROOF (LOGO TICKER)
+   ========================================== */
+.socialProof {
+  padding: 60px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+  overflow: hidden;
+}
+
+.socialProof p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+}
+
+.logoTicker {
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  width: max-content;
+  animation: scrollTicker 30s linear infinite;
+}
+
+.logoTicker h3 {
+  color: #9CA3AF; /* Light gray for placeholder logos */
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 20px;
+}
+
+@keyframes scrollTicker {
+  to { transform: translateX(-50%); }
+}
+
+/* ==========================================
+   BENTO BOX FEATURE GRID
+   ========================================== */
+.featuresSection {
+  padding: 100px 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.featuresHeader {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.featuresHeader h2 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  color: var(--nexgn-dark);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.bentoCard {
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.bentoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+}
+
+.cardLarge { grid-column: span 8; }
+.cardSmall { grid-column: span 4; }
+
+.bentoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--nexgn-red);
+  margin-bottom: 24px;
+}
+
+.bentoCard h3 {
+  font-size: 1.5rem;
+  color: var(--nexgn-dark);
+  margin-bottom: 12px;
+}
+
+.bentoCard p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+/* ==========================================
+   FINAL CTA
+   ========================================== */
+.ctaSection {
+  padding: 100px 24px;
+  background: var(--nexgn-dark);
+  color: #fff;
+  text-align: center;
+}
+
+.ctaSection h2 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.ctaSection p {
+  color: #9CA3AF;
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Grid for Mobile/Tablets */
+@media (max-width: 900px) {
+  .cardLarge, .cardSmall {
+    grid-column: span 12;
+  }
+}
