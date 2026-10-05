@@ -1,7 +1,7 @@
 {
   "name": "nexgnincorporation",
   "version": "1.0.0",
-  "description": "",
+  "description": "Nexgn - The modern, secure electronic signature and contract management platform.",
   "main": "index.js",
   "scripts": {
     "dev": "rsbuild dev",
@@ -10,7 +10,8 @@
     "postbuild": "cp dist/index.html dist/404.html",
     "format": "prettier --write src/"
   },
-  "keywords": [],
+  "keywords": ["esignature", "docusign-alternative", "contract-management"],
+  "author": "NoCapCode",
   "type": "commonjs",
   "dependencies": {
     "i18next": "^26.4.2",
