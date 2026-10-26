@@ -102,6 +102,7 @@
   white-space: nowrap;
   user-select: none;
   overflow: hidden;
+  justify-self: center;
 }
 
 .accent {
