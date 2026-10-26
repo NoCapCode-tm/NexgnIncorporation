@@ -33,7 +33,8 @@ jobs:
 
       # Keep the preview site out of search engines
       - name: Block indexing on preview
-        run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+        run: |
+          printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
 
       - uses: actions/configure-pages@v5
 
