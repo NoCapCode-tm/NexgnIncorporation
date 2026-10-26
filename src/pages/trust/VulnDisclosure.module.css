@@ -1,0 +1,497 @@
+/* /trust/vulnerability-disclosure — responsive from mobile (320px) to 4K (3840px+).
+   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+
+.page {
+  --dark: #0d1017;
+  --light: #f9fafa;
+  --tint: #eef2f4;
+  --white: #ffffff;
+  --ink: #0d1017;
+  --ink-soft: #5b6270;
+  --on-dark: #fafbfb;
+  --on-dark-soft: #9aa0a9;
+  --line: #dfe4e8;
+  --line-dark: rgba(255, 255, 255, 0.14);
+  --red: #ee0510;
+  --green: #1f9d55;
+
+  /* fluid scale */
+  --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
+  --section-y: clamp(3.5rem, 7vw, 14rem);
+  --gap: clamp(1rem, 1.6vw, 3.5rem);
+  --radius: clamp(1rem, 1.4vw, 2.5rem);
+
+  --fs-eyebrow: clamp(0.6875rem, 0.2vw + 0.62rem, 1.35rem);
+  --fs-h1: clamp(2.5rem, 4.2vw + 0.75rem, 10rem);
+  --fs-h2: clamp(1.75rem, 2.6vw + 0.75rem, 6.5rem);
+  --fs-h3: clamp(1.0625rem, 0.5vw + 0.95rem, 2.5rem);
+  --fs-lead: clamp(0.9375rem, 0.35vw + 0.85rem, 2.1rem);
+  --fs-statement: clamp(1.0625rem, 1.3vw + 0.6rem, 3.5rem);
+  --fs-body: clamp(0.8125rem, 0.25vw + 0.75rem, 1.65rem);
+
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  overflow-x: clip;
+}
+
+/* ---------- Layout primitives ---------- */
+
+.section {
+  padding: var(--section-y) var(--pad-x);
+  box-sizing: border-box;
+}
+
+.dark {
+  background: var(--dark);
+  color: var(--on-dark);
+}
+
+.light {
+  background: var(--light);
+}
+
+.tint {
+  background: var(--tint);
+}
+
+.sectionLast {
+  padding-bottom: calc(var(--section-y) * 1.1);
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  margin: 0 auto;
+}
+
+/* ---------- Typography ---------- */
+
+.eyebrow {
+  margin: 0 0 clamp(1rem, 1.4vw, 2.5rem);
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.eyebrowLight {
+  color: var(--on-dark-soft);
+}
+
+.eyebrowCenter {
+  text-align: center;
+}
+
+.head {
+  max-width: 62rem;
+  margin: 0 auto clamp(2rem, 4vw, 8rem);
+  text-align: center;
+}
+
+.headTight {
+  margin-bottom: clamp(1.5rem, 2.5vw, 5rem);
+}
+
+.title {
+  margin: 0 0 clamp(1rem, 1.6vw, 3rem);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.titleLeft {
+  text-align: left;
+}
+
+.lead {
+  margin: 0 auto;
+  max-width: 44rem;
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.leadLeft {
+  margin: 0;
+  text-align: left;
+}
+
+.leadLight {
+  color: var(--on-dark-soft);
+}
+
+.inlineLink {
+  color: var(--on-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  overflow-wrap: anywhere;
+}
+
+.inlineLink:hover {
+  text-decoration-color: var(--on-dark);
+}
+
+/* ---------- 1. Hero ---------- */
+
+.hero {
+  text-align: center;
+  padding-top: clamp(4rem, 8vw, 16rem);
+  padding-bottom: clamp(4rem, 8vw, 16rem);
+}
+
+.heroTitle {
+  margin: 0 auto clamp(1.25rem, 2vw, 4rem);
+  max-width: 12em;
+  font-size: var(--fs-h1);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.muted {
+  color: var(--on-dark-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 1vw, 2rem);
+  margin-top: clamp(1.75rem, 2.5vw, 5rem);
+}
+
+.btnPrimary,
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
+  padding: 0 1.6em;
+  border-radius: 0.4em;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btnPrimary {
+  background: var(--red);
+  color: #fff;
+  border: 1px solid var(--red);
+}
+
+.btnPrimary:hover {
+  background: #d1040e;
+  border-color: #d1040e;
+}
+
+.btnOutline {
+  color: var(--on-dark);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.btnOutline:hover {
+  border-color: var(--on-dark);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Media placeholders (artwork slots) ---------- */
+
+.media {
+  width: 100%;
+  background: var(--white);
+  border-radius: var(--radius);
+}
+
+.mediaSafe {
+  aspect-ratio: 16 / 9;
+  margin-bottom: clamp(1.75rem, 3vw, 6rem);
+}
+
+.mediaScope {
+  aspect-ratio: 4 / 3;
+}
+
+.mediaReward {
+  aspect-ratio: 16 / 9;
+  background: #e1e6e9;
+  margin-bottom: clamp(1rem, 1.6vw, 3rem);
+}
+
+/* ---------- 2. Safe harbor statement ---------- */
+
+.statement {
+  margin: 0;
+  max-width: 62em;
+  font-size: var(--fs-statement);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+/* ---------- 3. Do / Do Not ---------- */
+
+.rules {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+.ruleCard {
+  padding: clamp(1.25rem, 1.8vw, 3.5rem);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+}
+
+.ruleDo {
+  background: var(--white);
+  border: clamp(2px, 0.15vw, 5px) solid var(--green);
+}
+
+.ruleDont {
+  background: var(--tint);
+  border: clamp(2px, 0.15vw, 5px) solid transparent;
+}
+
+.ruleTitle {
+  margin: 0 0 clamp(0.75rem, 1vw, 2rem);
+  padding-bottom: clamp(0.75rem, 1vw, 2rem);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.ruleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.6rem, 0.9vw, 1.75rem);
+  padding: clamp(0.75rem, 1vw, 2rem) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.ruleItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ruleIcon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  margin-top: -0.05em;
+  border-radius: 50%;
+  font-size: calc(var(--fs-body) * 1);
+}
+
+.iconDo {
+  background: var(--ink);
+  color: #fff;
+}
+
+.iconDont {
+  border: 1.5px solid #9aa0a9;
+  color: #7b828d;
+}
+
+/* ---------- 5. Timeline ---------- */
+
+.timeline {
+  list-style: none;
+  margin: clamp(2.5rem, 4vw, 8rem) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.75rem, 3vw, 6rem) var(--gap);
+}
+
+.step {
+  position: relative;
+  min-width: 0;
+  padding-top: clamp(1.25rem, 1.6vw, 3.25rem);
+  border-top: 1px solid var(--line-dark);
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(0.6rem, 0.5vw + 0.4rem, 1.4rem);
+  height: clamp(0.6rem, 0.5vw + 0.4rem, 1.4rem);
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--dark);
+  border: 1.5px solid var(--on-dark-soft);
+  box-sizing: border-box;
+}
+
+.stepActive .dot {
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.stepTitle {
+  margin: 0 0 clamp(0.75rem, 1vw, 2rem);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.stepText {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--on-dark-soft);
+}
+
+.stepList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+  padding: clamp(0.6rem, 0.8vw, 1.5rem) 0;
+  border-bottom: 1px solid var(--line-dark);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  color: var(--on-dark-soft);
+}
+
+.stepItem:first-child {
+  padding-top: 0;
+}
+
+.stepItem:last-child {
+  border-bottom: 0;
+}
+
+.stepCheck {
+  flex: none;
+  margin-top: 0.25em;
+  color: var(--red);
+}
+
+/* ---------- 6. Rewards ---------- */
+
+.rewards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.reward {
+  min-width: 0;
+  padding: clamp(1rem, 1.4vw, 3rem);
+  background: var(--tint);
+  border-radius: var(--radius);
+}
+
+.rewardText {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ---------- Focus ---------- */
+
+.btnPrimary:focus-visible,
+.btnOutline:focus-visible,
+.inlineLink:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---------- Breakpoints ---------- */
+
+@media (min-width: 560px) {
+  .timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .rules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rewards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mediaSafe {
+    aspect-ratio: 4 / 1;
+  }
+
+  .mediaScope {
+    aspect-ratio: 2.6 / 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .timeline {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Container caps — mirror Navbar + Footer */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1920px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+}
+
+/* 4K and above */
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btnPrimary,
+  .btnOutline {
+    transition: none;
+  }
+}

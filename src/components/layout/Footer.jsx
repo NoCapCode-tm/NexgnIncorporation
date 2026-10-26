@@ -85,8 +85,8 @@ const COLUMNS = [
 ];
 
 const SOCIALS = [
-  { key: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/', Icon: FaLinkedinIn },
-  { key: 'x', label: 'X', href: 'https://x.com/', Icon: FaXTwitter },
+  { key: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/company/nexgncloud', Icon: FaLinkedinIn },
+  { key: 'x', label: 'X', href: 'https://x.com/nexgncloud', Icon: FaXTwitter },
   { key: 'github', label: 'GitHub', href: 'https://github.com/', Icon: FaGithub },
 ];
 
@@ -194,7 +194,7 @@ const Footer = () => {
             </ul>
 
             <p className={styles.built}>
-              {t('footer.built', 'Securely built by')} NoCapCode.
+              {t('footer.built', 'Securely built by')} NoCapCode Inc.
             </p>
           </div>
         </div>
