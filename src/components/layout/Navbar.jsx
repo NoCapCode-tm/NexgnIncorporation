@@ -1,182 +1,365 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, NavLink, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'motion/react';
-import { FileSignature, FileEdit, Files, Bot, ShieldCheck, Fingerprint, Users, HardDrive } from 'lucide-react';
+import { FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
 import styles from './Navbar.module.css';
 
-export default function Navbar() {
-  const { t, i18n } = useTranslation();
-  const { pathname } = useLocation();
-  const [activeMenu, setActiveMenu] = useState(null);
-  const timeoutRef = useRef(null);
+// TODO: replace with your real app URLs
+const LOGIN_URL = 'https://app.nexgn.com/login';
+const SIGNUP_URL = 'https://app.nexgn.com/signup';
 
-  // Helper to get the correct URL prefix based on language
-  const langPrefix = i18n.resolvedLanguage === 'en' ? '' : `/${i18n.resolvedLanguage}`;
+const LANGS = ['en', 'es', 'hi'];
 
-  // 150ms delay logic to prevent accidental hover flashes
-  const handleMouseEnter = (menuName) => {
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setActiveMenu(menuName);
-    }, 150);
+/**
+ * Paths are relative to the language prefix (AppRouter mounts under /:lng/*).
+ * Each menu has `groups`, and each group has `links`. The Product menu mirrors the Figma overlay.
+ *
+ * TODO route not in AppRouter yet: /labs (Nexgn Labs)
+ */
+const MENUS = [
+  {
+    key: 'product',
+    label: 'Product',
+    groups: [
+      {
+        key: 'core',
+        title: 'Core Agreement Products',
+        links: [
+          { key: 'esignature', label: 'eSignature', to: '/products/esignature' },
+          { key: 'docEditor', label: 'Document Editor', to: '/products/document-editor' },
+          { key: 'templates', label: 'Templates', to: '/products/templates' },
+          { key: 'workflows', label: 'Agreement Workflow & Scheduler', to: '/products/workflows' },
+        ],
+      },
+      {
+        key: 'intelligence',
+        title: 'Intelligence (Nexgn AI)',
+        links: [
+          { key: 'aiSummary', label: 'AI Agreement Summary', to: '/products/ai-summary' },
+          { key: 'aiBuilder', label: 'AI Template Builder', to: '/products/ai-builder' },
+        ],
+      },
+      {
+        key: 'trust',
+        title: 'Trust & Evidence',
+        links: [
+          { key: 'identity', label: 'Identity Assurance', to: '/products/identity-assurance' },
+          { key: 'audit', label: 'Audit Trails', to: '/products/audit-trail' },
+          { key: 'verification', label: 'Agreement Verification', to: '/products/agreement-verification' },
+        ],
+      },
+      {
+        key: 'workspace',
+        title: 'Workspace & Management',
+        links: [
+          { key: 'workspace', label: 'Team Workspace & RBAC', to: '/products/workspace' },
+          { key: 'storage', label: 'Google Drive & Storage', to: '/products/storage' },
+        ],
+      },
+      {
+        key: 'explore',
+        title: 'Explore',
+        links: [
+          { key: 'whatsNew', label: 'What’s New', to: '/changelog' },
+          { key: 'labs', label: 'Nexgn Labs', to: '/labs' },
+          { key: 'roadmap', label: 'Product Roadmap', to: '/roadmap' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'solutions',
+    label: 'Solutions',
+    groups: [
+      {
+        key: 'teams',
+        title: 'By Team',
+        links: [
+          { key: 'hr', label: 'HR', to: '/solutions/hr' },
+          { key: 'sales', label: 'Sales', to: '/solutions/sales' },
+          { key: 'legal', label: 'Legal', to: '/solutions/legal' },
+          { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
+        ],
+      },
+      {
+        key: 'company',
+        title: 'By Company Size',
+        links: [
+          { key: 'startups', label: 'Startups', to: '/solutions/startups' },
+          { key: 'smb', label: 'Small & Medium Business', to: '/solutions/smb' },
+          { key: 'enterprise', label: 'Enterprise', to: '/solutions/enterprise' },
+        ],
+      },
+      {
+        key: 'more',
+        title: 'More',
+        links: [
+          { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
+          { key: 'individuals', label: 'Individuals', to: '/solutions/individuals' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'developers',
+    label: 'Developers',
+    groups: [
+      {
+        key: 'build',
+        title: 'Build',
+        links: [
+          { key: 'portal', label: 'Developer Portal', to: '/developers' },
+          { key: 'api', label: 'API Reference', to: '/developers/api-reference' },
+          { key: 'embedded', label: 'Embedded Signing', to: '/developers/embedded' },
+        ],
+      },
+      {
+        key: 'integrate',
+        title: 'Integrate',
+        links: [
+          { key: 'webhooks', label: 'Webhooks', to: '/developers/webhooks' },
+          { key: 'sdks', label: 'SDKs', to: '/developers/sdks' },
+          { key: 'sandbox', label: 'Sandbox', to: '/developers/sandbox' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'trust',
+    label: 'Trust Centre',
+    groups: [
+      {
+        key: 'trust',
+        title: 'Trust',
+        links: [
+          { key: 'center', label: 'Trust Centre', to: '/trust' },
+          { key: 'security', label: 'Security Architecture', to: '/trust/security' },
+          { key: 'legality', label: 'eSignature Legality', to: '/trust/legality' },
+          { key: 'privacy', label: 'Privacy Centre', to: '/trust/privacy' },
+        ],
+      },
+      {
+        key: 'compliance',
+        title: 'Compliance',
+        links: [
+          { key: 'subprocessors', label: 'Subprocessors', to: '/trust/subprocessors' },
+          { key: 'vuln', label: 'Vulnerability Disclosure', to: '/trust/vulnerability-disclosure' },
+          { key: 'sustainability', label: 'Sustainability Pledge', to: '/sustainability' },
+        ],
+      },
+    ],
+  },
+  { key: 'pricing', label: 'Pricing', to: '/pricing' },
+];
+
+// Placeholder mark. Replace with your real logo SVG.
+const LogoMark = () => (
+  <svg viewBox="0 0 32 32" className={styles.logoMark} aria-hidden="true" focusable="false">
+    <path d="M2 2h12l-5 8 7 4-7 4 4 12H2z" fill="currentColor" />
+    <path d="M30 30H18l5-8-7-4 7-4-4-12h12z" fill="currentColor" opacity="0.85" />
+  </svg>
+);
+
+const DESKTOP_QUERY = '(min-width: 1024px) and (hover: hover)';
+
+const Navbar = () => {
+  const { t } = useTranslation();
+  const { lng } = useParams(); // Navbar renders inside /:lng/*
+  const location = useLocation();
+
+  const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
+
+  // Homepage (/en, /en/) gets the dark navbar; every other page gets the white one.
+  const isHome = location.pathname.split('/').filter(Boolean).length <= 1;
+  const theme = isHome ? 'dark' : 'light';
+
+  const [openKey, setOpenKey] = useState(null); // open dropdown (desktop) / accordion (mobile)
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const headerRef = useRef(null);
+  const closeTimer = useRef(null);
+
+  const clearTimer = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
   };
 
-  const handleMouseLeave = () => {
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, 150);
+  const closeAll = useCallback(() => {
+    clearTimer();
+    setOpenKey(null);
+    setMobileOpen(false);
+  }, []);
+
+  const isDesktopHover = () =>
+    typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches;
+
+  // Hover opens menus on desktop; small delay on leave stops flicker
+  const handleEnter = (key) => {
+    if (!isDesktopHover()) return;
+    clearTimer();
+    setOpenKey(key);
+  };
+  const handleLeave = () => {
+    if (!isDesktopHover()) return;
+    clearTimer();
+    closeTimer.current = setTimeout(() => setOpenKey(null), 120);
   };
 
-  // Close menu when route changes
+  // Click / keyboard toggle (touch, tablet, keyboard users)
+  const handleToggle = (key) => setOpenKey((cur) => (cur === key ? null : key));
+
+  // Close on route change
   useEffect(() => {
-    setActiveMenu(null);
-  }, [pathname]);
+    closeAll();
+  }, [location.pathname, closeAll]);
+
+  // Escape, outside click, and resize to desktop
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && closeAll();
+    const onDown = (e) => {
+      if (headerRef.current && !headerRef.current.contains(e.target)) closeAll();
+    };
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onResize = () => mq.matches && setMobileOpen(false);
+
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onDown);
+    mq.addEventListener('change', onResize);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onDown);
+      mq.removeEventListener('change', onResize);
+      clearTimer();
+    };
+  }, [closeAll]);
+
+  // Lock page scroll while the mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
 
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.navContainer}>
-        
-        {/* Logo */}
-        <Link to={`${langPrefix}/`} className={styles.logo}>
-          Nexgn<span className={styles.logoDot}>.</span>
+    <header
+      ref={headerRef}
+      className={styles.header}
+      data-theme={theme}
+      onMouseLeave={handleLeave}
+      onMouseEnter={clearTimer}
+    >
+      <div className={styles.bar}>
+        <Link to={withLng('/')} className={styles.logo} aria-label="Nexgn home">
+          <LogoMark />
+          <span className={styles.logoText}>Nexgn</span>
         </Link>
 
-        {/* Main Navigation Links */}
-        <ul className={styles.navLinks}>
-          
-          {/* =========================================
-              PRODUCT MEGA MENU
-              ========================================= */}
-          <li 
-            className={styles.navItem}
-            onMouseEnter={() => handleMouseEnter('products')}
-            onMouseLeave={handleMouseLeave}
-          >
-            {t('navbar.products', 'Products')}
-            
-            <AnimatePresence>
-              {activeMenu === 'products' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className={styles.megaMenu}
+        <nav
+          id="main-nav"
+          className={styles.nav}
+          data-open={mobileOpen}
+          aria-label={t('nav.label', 'Main navigation')}
+        >
+          <ul className={styles.menu}>
+            {MENUS.map((item) =>
+              item.groups ? (
+                <li
+                  key={item.key}
+                  className={styles.item}
+                  onMouseEnter={() => handleEnter(item.key)}
                 >
-                  {/* Column 1: Core */}
-                  <div className={styles.menuColumn}>
-                    <h4>Core Agreement</h4>
-                    <Link to={`${langPrefix}/products/esignature`} className={styles.menuLink}>
-                      <FileSignature size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>eSignature</div>
-                        <div className={styles.menuDesc}>Sign agreements without friction or accounts.</div>
-                      </div>
-                    </Link>
-                    <Link to={`${langPrefix}/products/document-editor`} className={styles.menuLink}>
-                      <FileEdit size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>Document Editor</div>
-                        <div className={styles.menuDesc}>Drag and drop fields onto any PDF.</div>
-                      </div>
-                    </Link>
-                    <Link to={`${langPrefix}/products/templates`} className={styles.menuLink}>
-                      <Files size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>Templates</div>
-                        <div className={styles.menuDesc}>Stop rebuilding the same contracts.</div>
-                      </div>
-                    </Link>
-                  </div>
+                  <button
+                    type="button"
+                    className={styles.trigger}
+                    aria-expanded={openKey === item.key}
+                    aria-controls={`panel-${item.key}`}
+                    onClick={() => handleToggle(item.key)}
+                    onFocus={() => handleEnter(item.key)}
+                  >
+                    {t(`nav.${item.key}.title`, item.label)}
+                    <FiChevronDown className={styles.chevron} aria-hidden="true" />
+                  </button>
 
-                  {/* Column 2: Intelligence */}
-                  <div className={styles.menuColumn}>
-                    <h4>Intelligence</h4>
-                    <Link to={`${langPrefix}/products/ai-summary`} className={styles.menuLink}>
-                      <Bot size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>AI Summary</div>
-                        <div className={styles.menuDesc}>Turn 50-page contracts into 5 bullet points.</div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  {/* Column 3: Trust & Workspace */}
-                  <div className={styles.menuColumn}>
-                    <h4>Trust & Ops</h4>
-                    <Link to={`${langPrefix}/trust/security`} className={styles.menuLink}>
-                      <ShieldCheck size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>Audit Trail</div>
-                        <div className={styles.menuDesc}>Cryptographic proof for every signature.</div>
-                      </div>
-                    </Link>
-                    <Link to={`${langPrefix}/products/workspace`} className={styles.menuLink}>
-                      <Users size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>Team Workspace</div>
-                        <div className={styles.menuDesc}>Granular RBAC and admin controls.</div>
-                      </div>
-                    </Link>
-                    <Link to={`${langPrefix}/products/storage`} className={styles.menuLink}>
-                      <HardDrive size={24} className={styles.menuIcon} />
-                      <div>
-                        <div className={styles.menuTitle}>Cloud Storage</div>
-                        <div className={styles.menuDesc}>Directly sync to your Google Drive.</div>
-                      </div>
-                    </Link>
-                  </div>
-
-                  {/* Column 4: Featured Promo */}
-                  <div className={styles.featuredCard}>
-                    <h4>What's New</h4>
-                    <div style={{ marginTop: '12px' }}>
-                      <strong style={{ display: 'block', fontSize: '1.1rem' }}>Nexgn AI is here.</strong>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px', marginBottom: '16px' }}>
-                        Discover how our new AI Clause Assistant is changing legal review.
-                      </p>
-                      <Link to={`${langPrefix}/products/ai-clause-assistant`} style={{ color: 'var(--nexgn-red)', fontWeight: '600', fontSize: '0.9rem' }}>
-                        Read Announcement &rarr;
-                      </Link>
+                  <div
+                    id={`panel-${item.key}`}
+                    className={styles.panel}
+                    data-open={openKey === item.key}
+                    style={{ '--cols': item.groups.length }}
+                  >
+                    <div className={styles.panelInner}>
+                      {item.groups.map((group) => (
+                        <div key={group.key} className={styles.group}>
+                          <h3 className={styles.groupTitle}>
+                            {t(`nav.${item.key}.${group.key}.title`, group.title)}
+                          </h3>
+                          <ul className={styles.groupList}>
+                            {group.links.map((link) => (
+                              <li key={link.key}>
+                                <Link to={withLng(link.to)} className={styles.panelLink}>
+                                  {t(`nav.${item.key}.${group.key}.${link.key}`, link.label)}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </li>
+                </li>
+              ) : (
+                <li key={item.key} className={styles.item}>
+                  <NavLink
+                    to={withLng(item.to)}
+                    className={({ isActive }) =>
+                      `${styles.trigger} ${isActive ? styles.active : ''}`
+                    }
+                  >
+                    {t(`nav.${item.key}`, item.label)}
+                  </NavLink>
+                </li>
+              )
+            )}
+          </ul>
 
-          {/* You would duplicate the <li> structure above for Solutions, Developers, Trust, etc. */}
-          <li className={styles.navItem}>
-             <Link to={`${langPrefix}/pricing`}>{t('navbar.pricing', 'Pricing')}</Link>
-          </li>
-        </ul>
+          {/* Mobile drawer actions (desktop actions live in the bar) */}
+          <div className={styles.drawerActions}>
+            <a href={LOGIN_URL} className={styles.login}>
+              {t('nav.login', 'Log in')}
+            </a>
+            <a href={SIGNUP_URL} className={styles.cta}>
+              {t('nav.cta', 'Start for free')}
+            </a>
+          </div>
+        </nav>
 
-        {/* Call to Actions & Auth */}
-        <div className={styles.navActions}>
-          {/* Example Language Switcher (Optional, just to show i18n usage) */}
-          <select 
-            onChange={(e) => i18n.changeLanguage(e.target.value)}
-            value={i18n.resolvedLanguage}
-            style={{ border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer', color: 'var(--text-muted)', marginRight: '16px' }}
-          >
-            <option value="en">EN</option>
-            <option value="es">ES</option>
-            <option value="hi">HI</option>
-          </select>
-
-          <Link to="/login" className={styles.loginBtn}>
-            {t('navbar.login', 'Log In')}
-          </Link>
-          <Link to="/register">
-            <button className={styles.signupBtn}>
-              {t('navbar.signup', 'Start Free')}
-            </button>
-          </Link>
+        <div className={styles.actions}>
+          <a href={LOGIN_URL} className={styles.login}>
+            {t('nav.login', 'Log in')}
+          </a>
+          <a href={SIGNUP_URL} className={styles.cta}>
+            {t('nav.cta', 'Start for free')}
+          </a>
         </div>
-        
+
+        <button
+          type="button"
+          className={styles.burger}
+          aria-label={mobileOpen ? t('nav.close', 'Close menu') : t('nav.open', 'Open menu')}
+          aria-expanded={mobileOpen}
+          aria-controls="main-nav"
+          onClick={() => {
+            setOpenKey(null);
+            setMobileOpen((v) => !v);
+          }}
+        >
+          {mobileOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+        </button>
       </div>
-    </nav>
+    </header>
   );
-}
+};
+
+export default Navbar;

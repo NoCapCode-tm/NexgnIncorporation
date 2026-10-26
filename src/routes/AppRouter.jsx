@@ -74,11 +74,26 @@ const DPA = lazy(() => import('../pages/legal/DPA'));
 const Refunds = lazy(() => import('../pages/legal/Refunds'));
 
 // ==========================================
+// CONSTANTS
+// ==========================================
+// Must match the folders in public/locales
+const SUPPORTED_LANGUAGES = ['en', 'es', 'hi'];
+
+// ==========================================
 // FALLBACK LOADER UI
 // ==========================================
+// Rendered inside <main>, so Navbar and Footer stay visible while a page loads.
 const PageLoader = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
-    <div className="spinner"></div>
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '60vh',
+      width: '100%',
+    }}
+  >
+    <div className="spinner" role="status" aria-label="Loading"></div>
   </div>
 );
 
@@ -88,95 +103,116 @@ const PageLoader = () => (
 const LanguageWrapper = () => {
   const { lng } = useParams();
   const { i18n } = useTranslation();
-  
-  // Define supported languages based on your locales folder
-  const supportedLanguages = ['en', 'es', 'hi'];
-  
+
+  const isSupported = SUPPORTED_LANGUAGES.includes(lng);
+
   useEffect(() => {
+    if (!isSupported) return;
+
     // Sync React Router URL with i18next state
-    if (lng && supportedLanguages.includes(lng) && i18n.language !== lng) {
+    if (i18n.language !== lng) {
       i18n.changeLanguage(lng);
     }
-  }, [lng, i18n]);
+    // Keep <html lang="..."> correct for SEO and screen readers
+    document.documentElement.lang = lng;
+  }, [lng, isSupported, i18n]);
 
-  // If user types an unsupported language (e.g., /fr/pricing), redirect to English
-  if (!supportedLanguages.includes(lng)) {
+  // Unsupported language (e.g. /fr/pricing) -> redirect to English
+  if (!isSupported) {
     return <Navigate to="/en" replace />;
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <main style={{ minHeight: 'calc(100vh - 300px)' }}>
-        <Routes>
-          {/* Core Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/changelog" element={<Changelog />} />
-          <Route path="/roadmap" element={<Roadmap />} />
 
-          {/* Product Routes */}
-          <Route path="/products" element={<ProductOverview />} />
-          <Route path="/products/esignature" element={<ESignature />} />
-          <Route path="/products/document-editor" element={<DocEditor />} />
-          <Route path="/products/templates" element={<Templates />} />
-          <Route path="/products/workflows" element={<Workflows />} />
-          <Route path="/products/scheduler" element={<Scheduler />} />
-          <Route path="/products/reminders" element={<Reminders />} />
-          <Route path="/products/ai-summary" element={<AISummary />} />
-          <Route path="/products/ai-builder" element={<AIBuilder />} />
-          <Route path="/products/ai-clause-assistant" element={<AIClause />} />
-          <Route path="/products/identity-assurance" element={<Identity />} />
-          <Route path="/products/audit-trail" element={<AuditTrail />} />
-          <Route path="/products/agreement-verification" element={<Verification />} />
-          <Route path="/products/workspace" element={<Workspace />} />
-          <Route path="/products/roles-permissions" element={<Rbac />} />
-          <Route path="/products/storage" element={<Storage />} />
-          <Route path="/products/activity-logs" element={<ActivityLogs />} />
+      {/* flex: 1 pushes the Footer to the bottom on short pages */}
+      <main style={{ flex: 1 }}>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Core Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/changelog" element={<Changelog />} />
+            <Route path="/roadmap" element={<Roadmap />} />
 
-          {/* Solutions Routes */}
-          <Route path="/solutions/hr" element={<HR />} />
-          <Route path="/solutions/sales" element={<Sales />} />
-          <Route path="/solutions/legal" element={<Legal />} />
-          <Route path="/solutions/startups" element={<Startups />} />
-          <Route path="/solutions/real-estate" element={<RealEstate />} />
-          <Route path="/solutions/agencies" element={<Agencies />} />
-          <Route path="/solutions/individuals" element={<Individuals />} />
-          <Route path="/solutions/smb" element={<SMB />} />
-          <Route path="/solutions/enterprise" element={<Enterprise />} />
+            {/* Product Routes */}
+            <Route path="/products" element={<ProductOverview />} />
+            <Route path="/products/esignature" element={<ESignature />} />
+            <Route path="/products/document-editor" element={<DocEditor />} />
+            <Route path="/products/templates" element={<Templates />} />
+            <Route path="/products/workflows" element={<Workflows />} />
+            <Route path="/products/scheduler" element={<Scheduler />} />
+            <Route path="/products/reminders" element={<Reminders />} />
+            <Route path="/products/ai-summary" element={<AISummary />} />
+            <Route path="/products/ai-builder" element={<AIBuilder />} />
+            <Route path="/products/ai-clause-assistant" element={<AIClause />} />
+            <Route path="/products/identity-assurance" element={<Identity />} />
+            <Route path="/products/audit-trail" element={<AuditTrail />} />
+            <Route path="/products/agreement-verification" element={<Verification />} />
+            <Route path="/products/workspace" element={<Workspace />} />
+            <Route path="/products/roles-permissions" element={<Rbac />} />
+            <Route path="/products/storage" element={<Storage />} />
+            <Route path="/products/activity-logs" element={<ActivityLogs />} />
 
-          {/* Developer Routes */}
-          <Route path="/developers" element={<DevPortal />} />
-          <Route path="/developers/api-reference" element={<ApiRef />} />
-          <Route path="/developers/embedded" element={<Embedded />} />
-          <Route path="/developers/webhooks" element={<Webhooks />} />
-          <Route path="/developers/sdks" element={<SDKs />} />
-          <Route path="/developers/sandbox" element={<Sandbox />} />
+            {/* Solutions Routes */}
+            <Route path="/solutions/hr" element={<HR />} />
+            <Route path="/solutions/sales" element={<Sales />} />
+            <Route path="/solutions/legal" element={<Legal />} />
+            <Route path="/solutions/startups" element={<Startups />} />
+            <Route path="/solutions/real-estate" element={<RealEstate />} />
+            <Route path="/solutions/agencies" element={<Agencies />} />
+            <Route path="/solutions/individuals" element={<Individuals />} />
+            <Route path="/solutions/smb" element={<SMB />} />
+            <Route path="/solutions/enterprise" element={<Enterprise />} />
+            {/* TODO: footer links to /solutions/finance — add a Finance page, then:
+            <Route path="/solutions/finance" element={<Finance />} /> */}
 
-          {/* Trust Center Routes */}
-          <Route path="/trust" element={<TrustCenter />} />
-          <Route path="/trust/security" element={<Security />} />
-          <Route path="/trust/legality" element={<Legality />} />
-          <Route path="/trust/privacy" element={<Privacy />} />
-          <Route path="/trust/subprocessors" element={<Subprocessors />} />
-          <Route path="/trust/vulnerability-disclosure" element={<VulnDisclosure />} />
+            {/* Developer Routes */}
+            <Route path="/developers" element={<DevPortal />} />
+            <Route path="/developers/api-reference" element={<ApiRef />} />
+            <Route path="/developers/embedded" element={<Embedded />} />
+            <Route path="/developers/webhooks" element={<Webhooks />} />
+            <Route path="/developers/sdks" element={<SDKs />} />
+            <Route path="/developers/sandbox" element={<Sandbox />} />
 
-          {/* Sustainability Route */}
-          <Route path="/sustainability" element={<Sustainability />} />
+            {/* Trust Center Routes */}
+            <Route path="/trust" element={<TrustCenter />} />
+            <Route path="/trust/security" element={<Security />} />
+            <Route path="/trust/legality" element={<Legality />} />
+            <Route path="/trust/privacy" element={<Privacy />} />
+            <Route path="/trust/subprocessors" element={<Subprocessors />} />
+            <Route path="/trust/vulnerability-disclosure" element={<VulnDisclosure />} />
 
-          {/* Legal Routes */}
-          <Route path="/legal/terms" element={<Terms />} />
-          <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/legal/acceptable-use" element={<AUP />} />
-          <Route path="/legal/dpa" element={<DPA />} />
-          <Route path="/legal/refunds" element={<Refunds />} />
+            {/* Sustainability Route */}
+            <Route path="/sustainability" element={<Sustainability />} />
 
-          {/* Global 404 Catch-All */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* Legal Routes */}
+            <Route path="/legal/terms" element={<Terms />} />
+            <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/legal/acceptable-use" element={<AUP />} />
+            <Route path="/legal/dpa" element={<DPA />} />
+            <Route path="/legal/refunds" element={<Refunds />} />
+            {/* TODO: footer links to /legal/cookies — add a CookiePolicy page, then:
+            <Route path="/legal/cookies" element={<CookiePolicy />} /> */}
+
+            {/* TODO: navbar "Nexgn Labs" link goes to /labs — add a Labs page, then:
+            <Route path="/labs" element={<Labs />} /> */}
+
+            {/* TODO: Company pages linked in the footer (add pages, then routes):
+            <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/partners" element={<Partners />} /> */}
+
+            {/* Global 404 Catch-All */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
+
       <Footer />
-    </>
+    </div>
   );
 };
 
@@ -187,15 +223,13 @@ export const AppRouter = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* Redirect root (/) to default language (/en/) */}
-          <Route path="/" element={<Navigate to="/en" replace />} />
-          
-          {/* Catch all routes and pass them through the Language Wrapper */}
-          <Route path="/:lng/*" element={<LanguageWrapper />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        {/* Redirect root (/) to default language (/en) */}
+        <Route path="/" element={<Navigate to="/en" replace />} />
+
+        {/* Everything else goes through the Language Wrapper */}
+        <Route path="/:lng/*" element={<LanguageWrapper />} />
+      </Routes>
     </BrowserRouter>
   );
 };

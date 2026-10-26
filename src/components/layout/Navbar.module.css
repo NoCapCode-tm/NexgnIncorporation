@@ -1,161 +1,462 @@
-.navbar {
-  position: fixed;
+/* Fonts: DM Sans (links) + MuseoModerno (logo). Must stay the first rule.
+   Tip: move this to a <link> in public/index.html and delete it here and in Footer.module.css. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=MuseoModerno:wght@600;700&display=swap');
+
+/* Navbar — responsive from mobile (320px) up to 4K (3840px+).
+   Dark theme on the homepage, light theme everywhere else (data-theme). */
+
+.header {
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --fs: clamp(0.875rem, 0.3vw + 0.8rem, 2rem);
+  --fs-group: clamp(0.75rem, 0.25vw + 0.7rem, 1.6rem);
+  --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
+  --col-w: clamp(10.5rem, 15vw, 24rem);
+  --red: #dc3027;
+  --red-hover: #c22820;
+
+  position: sticky;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--header-height);
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-color);
   z-index: 1000;
-  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.navContainer {
-  max-width: var(--max-width);
+/* Homepage */
+.header[data-theme='dark'] {
+  --bg: #0e1015;
+  --text: #ffffff;
+  --muted: #9ca3af;
+  --line: rgba(255, 255, 255, 0.08);
+  --hover-bg: rgba(255, 255, 255, 0.07);
+  --panel-bg: #000000;
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --panel-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* All other pages */
+.header[data-theme='light'] {
+  --bg: #fafafa;
+  --text: #111318;
+  --muted: #5b6270;
+  --line: rgba(0, 0, 0, 0.08);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --panel-bg: #ffffff;
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --panel-shadow: 0 24px 60px rgba(16, 24, 40, 0.14);
+}
+
+/* ---------- Bar ---------- */
+
+.bar {
+  height: var(--nav-h);
+  width: 100%;
+  max-width: 2400px;
   margin: 0 auto;
-  padding: 0 24px;
-  height: 100%;
+  padding: 0 var(--pad-x);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
+
+/* ---------- Logo ---------- */
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--nexgn-dark);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5em;
+  color: var(--red);
+  text-decoration: none;
+  font-size: clamp(1.25rem, 0.6vw + 1rem, 3rem);
 }
 
-.logoDot {
-  color: var(--nexgn-red);
+.logoMark {
+  width: 1.35em;
+  height: 1.35em;
 }
 
-.navLinks {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  height: 100%;
+.logoText {
+  font-family: 'MuseoModerno', 'DM Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
 
-.navItem {
-  position: relative;
-  height: 100%;
+/* ---------- Nav (mobile drawer by default) ---------- */
+
+.nav {
+  position: fixed;
+  top: var(--nav-h);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.75rem var(--pad-x) 1.5rem;
+  background: var(--bg);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.nav[data-open='true'] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-bottom: 1px solid var(--line);
+}
+
+.trigger {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: calc(var(--fs) * 1.15);
   font-weight: 500;
-  color: var(--nexgn-slate);
+  text-decoration: none;
+  text-align: left;
   cursor: pointer;
-  transition: color 0.2s ease;
 }
 
-.navItem:hover {
-  color: var(--nexgn-red);
-}
-
-/* ==========================================
-   MEGA MENU STYLES
-   ========================================== */
-.megaMenu {
-  position: absolute;
-  top: var(--header-height);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 900px;
-  background: var(--bg-white);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  padding: 32px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr) 250px;
-  gap: 24px;
-  cursor: default;
-}
-
-.menuColumn h4 {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  margin-bottom: 16px;
-}
-
-.menuLink {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.menuLink:hover {
-  background: rgba(255, 9, 21, 0.05); /* Soft Nexgn Red */
-}
-
-.menuIcon {
-  color: var(--nexgn-red);
-  margin-top: 2px;
+.chevron {
+  flex: none;
   transition: transform 0.2s ease;
 }
 
-.menuLink:hover .menuIcon {
-  transform: scale(1.1);
+.trigger[aria-expanded='true'] .chevron {
+  transform: rotate(180deg);
 }
 
-.menuTitle {
-  font-weight: 600;
-  color: var(--nexgn-dark);
-  font-size: 0.95rem;
-  margin-bottom: 4px;
+.active {
+  color: var(--red);
 }
 
-.menuDesc {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.4;
+/* Panel — mobile: accordion inside the drawer */
+.panel {
+  display: none;
 }
 
-.featuredCard {
-  background: var(--bg-light);
-  border-radius: 8px;
-  padding: 24px;
+.panel[data-open='true'] {
+  display: block;
+}
+
+.panelInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 0.25rem 0 1.25rem;
+}
+
+.group {
+  min-width: 0;
+}
+
+.groupTitle {
+  margin: 0 0 0.5rem;
+  font-size: var(--fs-group);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.groupList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 0.15rem;
 }
 
-/* Auth Buttons */
-.navActions {
+.panelLink {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--muted);
+  font-size: var(--fs);
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.panelLink:hover,
+.panelLink:focus-visible {
+  color: var(--text);
+}
+
+/* Drawer buttons (shown <1024px) */
+.drawerActions {
   display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+}
+
+/* Desktop actions are hidden on mobile */
+.actions {
+  display: none;
+}
+
+/* ---------- Buttons ---------- */
+
+.login {
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-}
-
-.loginBtn {
-  font-weight: 500;
-  color: var(--nexgn-slate);
-}
-
-.loginBtn:hover {
-  color: var(--nexgn-red);
-}
-
-.signupBtn {
-  background: var(--nexgn-red);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 6px;
+  justify-content: center;
+  min-height: 3rem;
+  color: var(--text);
+  font-size: calc(var(--fs) * 1.05);
   font-weight: 600;
-  border: none;
-  transition: background 0.2s ease;
+  text-decoration: none;
 }
 
-.signupBtn:hover {
-  background: var(--nexgn-red-hover);
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.4em;
+  background: var(--red);
+  color: #fff;
+  border-radius: 0.5em;
+  font-size: calc(var(--fs) * 1.05);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background: var(--red-hover);
+}
+
+/* ---------- Burger ---------- */
+
+.burger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: none;
+  border: 0;
+  border-radius: 0.5rem;
+  color: var(--text);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.burger:hover {
+  background: var(--hover-bg);
+}
+
+/* ---------- Focus ---------- */
+
+.logo:focus-visible,
+.trigger:focus-visible,
+.panelLink:focus-visible,
+.login:focus-visible,
+.cta:focus-visible,
+.burger:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Desktop (≥1024px): inline nav + hover mega-menu ---------- */
+
+@media (min-width: 1024px) {
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .burger,
+  .drawerActions {
+    display: none;
+  }
+
+  .nav {
+    position: static;
+    inset: auto;
+    display: block;
+    padding: 0;
+    background: none;
+    overflow: visible;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  .menu {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(0.25rem, 1.2vw, 2.5rem);
+  }
+
+  .item {
+    border: 0;
+    /* NOT position: relative — the panel anchors to the sticky header instead */
+  }
+
+  .trigger {
+    width: auto;
+    min-height: var(--nav-h);
+    padding: 0 0.6em;
+    gap: 0.4em;
+    font-size: var(--fs);
+  }
+
+  .trigger:hover {
+    color: var(--red);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: clamp(1rem, 1.6vw, 3rem);
+  }
+
+  .login,
+  .cta {
+    font-size: var(--fs);
+  }
+
+  .cta {
+    min-height: clamp(2.5rem, 1.2vw + 1.8rem, 4.5rem);
+  }
+
+  /* Mega-menu panel, centred under the navbar */
+  .panel {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 2;
+    width: min(
+      calc(var(--cols) * var(--col-w) + 2 * var(--panel-pad)),
+      calc(100vw - 2 * var(--pad-x))
+    );
+    --panel-pad: clamp(1.25rem, 1.8vw, 3.5rem);
+    margin-top: clamp(0.35rem, 0.5vw, 1rem);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -6px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+
+  /* invisible bridge so the pointer can travel from the trigger to the panel */
+  .panel::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: clamp(0.5rem, 0.8vw, 1.5rem);
+  }
+
+  .panel[data-open='true'] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+
+  .panelInner {
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    gap: clamp(1.25rem, 2vw, 3.5rem);
+    padding: var(--panel-pad);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: clamp(1rem, 1.4vw, 2.5rem);
+    box-shadow: var(--panel-shadow);
+  }
+
+  .groupTitle {
+    margin-bottom: clamp(0.75rem, 1vw, 1.75rem);
+    line-height: 1.3;
+  }
+
+  .groupList {
+    gap: clamp(0.5rem, 0.7vw, 1.25rem);
+  }
+
+  .panelLink {
+    padding: 0;
+  }
+}
+
+/* ---------- Tablet / large-phone polish for the drawer ---------- */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .panelInner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .drawerActions {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.25rem;
+  }
+}
+
+/* ---------- Large screens: keep content aligned with the Footer ---------- */
+
+@media (min-width: 1920px) {
+  .bar {
+    max-width: 1920px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .bar {
+    max-width: 2400px;
+  }
+}
+
+@media (min-width: 3200px) {
+  .bar {
+    max-width: 3200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .nav,
+  .panel,
+  .chevron,
+  .panelLink,
+  .cta {
+    transition: none;
+  }
 }
