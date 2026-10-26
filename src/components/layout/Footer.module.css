@@ -1,5 +1,6 @@
-/* Load the Nexgn wordmark font. Must stay the first rule in this file. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=MuseoModerno:wght@600;700&display=swap');
+/* Load fonts. Must stay the first rule in this file.
+   MuseoModerno is loaded as a range (100-900) so any font-weight works on the wordmark. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=MuseoModerno:wght@100..900&display=swap');
 
 /* Footer — responsive from mobile (320px) up to 4K (3840px+) */
 
@@ -82,6 +83,7 @@
 
 .link:focus-visible,
 .social:focus-visible,
+.builtLink:focus-visible,
 .lang:focus-within {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -91,9 +93,10 @@
 /* ---------- Wordmark (MuseoModerno) ---------- */
 
 .wordmark {
-  margin: clamp(2.5rem, 6vw, 10rem) 0 clamp(1.5rem, 3vw, 6rem);
+  margin: clamp(2.5rem, 6vw, 10rem) 0 0; /* bottom spacing comes from the padding below */
+  padding: 0.05em 0 0.28em; /* room for the "g" tail (bottom) and the N top (top) */
   font-family: 'MuseoModerno', 'DM Sans', system-ui, sans-serif;
-  font-weight: 700;
+  font-weight: 400; /* change to 300 / 400 / 600 / 700 to taste */
   /* ~5 letters; 23vw fills the container width. Tune this one number if needed. */
   font-size: clamp(4.5rem, 23vw, 55rem);
   line-height: 0.9;
@@ -128,6 +131,20 @@
 
 .built {
   font-style: italic;
+}
+
+/* "NoCapCode Inc." link */
+.builtLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.builtLink:hover,
+.builtLink:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .meta {
@@ -244,7 +261,8 @@
 @media (prefers-reduced-motion: reduce) {
   .link,
   .social,
-  .lang {
+  .lang,
+  .builtLink {
     transition: none;
   }
 }

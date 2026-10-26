@@ -5,8 +5,8 @@ import { FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
 import styles from './Navbar.module.css';
 
 // TODO: replace with your real app URLs
-const LOGIN_URL = 'https://app.nexgn.com/login';
-const SIGNUP_URL = 'https://app.nexgn.com/signup';
+const LOGIN_URL = 'https://sign.nexgn.cloud/login';
+const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
 
 const LANGS = ['en', 'es', 'hi'];
 
@@ -154,10 +154,10 @@ const MENUS = [
 
 // Placeholder mark. Replace with your real logo SVG.
 const LogoMark = () => (
-  <svg viewBox="0 0 32 32" className={styles.logoMark} aria-hidden="true" focusable="false">
-    <path d="M2 2h12l-5 8 7 4-7 4 4 12H2z" fill="currentColor" />
-    <path d="M30 30H18l5-8-7-4 7-4-4-12h12z" fill="currentColor" opacity="0.85" />
-  </svg>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M26.126 0C29.1586 0.000103077 31.6171 2.45855 31.6172 5.49121V26.126C31.6172 26.399 31.5961 26.6673 31.5576 26.9297L23.9355 19.4746C22.8515 18.4144 21.1035 18.4239 20.0312 19.4961L18.7148 20.8135C17.6431 21.8857 17.6517 23.6146 18.7354 24.6748L25.833 31.6172H5.49121C5.39788 31.6172 5.30508 31.615 5.21289 31.6104L25.165 12.0938C26.2487 11.0333 26.2577 9.30457 25.1855 8.23242L23.8691 6.91602C22.7969 5.84377 21.0488 5.83415 19.9648 6.89453L0.00683594 26.416C0.00183573 26.32 3.37262e-06 26.2233 0 26.126V5.75195L7.64551 13.2314C8.72927 14.2916 10.4775 14.2816 11.5498 13.21L12.8672 11.8926C13.9392 10.8203 13.9296 9.09156 12.8457 8.03125L4.69434 0.0576172C4.9545 0.0197894 5.22056 5.65771e-06 5.49121 0H26.126Z" fill="#ED040F"/>
+</svg>
+
 );
 
 const DESKTOP_QUERY = '(min-width: 1024px) and (hover: hover)';

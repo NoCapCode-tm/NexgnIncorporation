@@ -1,0 +1,52 @@
+name: Deploy preview to GitHub Pages
+
+on:
+  push:
+    branches: [main]        # change if your branch is named differently
+  workflow_dispatch:         # lets you run it manually from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # "postbuild" in package.json runs automatically and copies
+      # dist/index.html -> dist/404.html, which makes deep links work on Pages
+      - run: npm run build
+
+      # Keep the preview site out of search engines
+      - name: Block indexing on preview
+        run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

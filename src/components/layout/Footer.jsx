@@ -194,7 +194,15 @@ const Footer = () => {
             </ul>
 
             <p className={styles.built}>
-              {t('footer.built', 'Securely built by')} NoCapCode Inc.
+              {t('footer.built', 'Securely built by')}{' '}
+              <a
+                href="https://nocapcode.cloud"
+                className={styles.builtLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                NoCapCode Inc.
+              </a>
             </p>
           </div>
         </div>
