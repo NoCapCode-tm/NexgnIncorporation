@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiShield, FiStar, FiX } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
+import CtaBanner from '../../components/common/CtaBanner';
 import styles from './Home.module.css';
 
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
@@ -808,31 +809,18 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ============ 7. FINAL CTA ============ */}
-      <section className={`${styles.cta} ${styles.photoSection}`} style={bg(IMAGES.cta)}>
-        <div className={`${styles.photo} ${styles.photoCta}`} aria-hidden="true" />
-        <div className={`${styles.shade} ${styles.shadeCta}`} aria-hidden="true" />
-
-        <div className={styles.container}>
-          <Reveal className={styles.ctaInner}>
-            <h2 className={styles.ctaTitle}>{tr('cta.title', 'Start signing')}</h2>
-            <p className={styles.ctaText}>
-              {tr(
-                'cta.text',
-                'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
-              )}
-            </p>
-            <div className={styles.actions}>
-              <a href={SIGNUP_URL} className={styles.btnPrimary}>
-                {tr('cta.primary', 'Create your free account')}
-              </a>
-              <a href={LOGIN_URL} className={styles.btnGhost}>
-                {tr('cta.secondary', 'Login')}
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* ============ 7. FINAL CTA (reusable: src/components/common/CtaBanner) ============ */}
+      <CtaBanner
+        image={IMAGES.cta}
+        title={tr('cta.title', 'Start signing documents')}
+        highlight={tr('cta.highlight', 'signing')}
+        text={tr(
+          'cta.text',
+          'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
+        )}
+        primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}
+        secondary={{ label: tr('cta.secondary', 'Login'), href: LOGIN_URL }}
+      />
     </div>
   );
 };

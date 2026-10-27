@@ -30,7 +30,6 @@
   /* type (mobile first, overridden at 768px) */
   --fs-h1: clamp(2.1rem, 11vw, 4.5rem);
   --fs-h2: clamp(1.6rem, 7vw, 3rem);
-  --fs-cta: clamp(2.6rem, 13vw, 5rem);
   --fs-lead: clamp(0.9rem, 3.8vw, 1.25rem);
   --fs-body: clamp(0.8125rem, 3.4vw, 1rem);
   --fs-card: clamp(1rem, 4.2vw, 1.25rem);
@@ -50,7 +49,6 @@
   .page {
     --fs-h1: 8.8vw;
     --fs-h2: 6vw;
-    --fs-cta: 6.6vw;
     --fs-lead: max(1rem, 1.55vw);
     --fs-body: max(0.875rem, 1.2vw);
     --fs-card: max(1rem, 1.55vw);
@@ -166,16 +164,16 @@
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.055em;
-  text-wrap: balance;
+  text-wrap: wrap;
 }
 
 .lead {
   margin: max(1rem, 2.2vw) auto 0;
-  max-width: 52vw;
+  max-width: 51vw;
   font-size: var(--fs-lead);
   line-height: 1.8;
   color: var(--soft);
-  text-wrap: balance;
+  text-wrap: wrap;
 }
 
 /* ---------- Buttons ---------- */
@@ -391,6 +389,14 @@
   white-space: nowrap;
 }
 
+@media (min-width: 640px) {
+  .trustedRow {
+    flex-direction: row;
+    align-items: center;
+    gap: max(1.5rem, 4vw);
+  }
+}
+
 /* ---------- 3. Sustainability stats ---------- */
 
 .impact {
@@ -419,7 +425,7 @@
   aspect-ratio: 4 / 5;
   background: #000;
   color: #fff;
-  border-radius: max(1rem, 2.4cqw);
+  border-radius: max(1rem, 1.75vw);
   transition: translate 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out),
     opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
   transition-delay: 0s, 0s, var(--d, 0ms), var(--d, 0ms);
@@ -566,13 +572,13 @@
   align-items: center;
   gap: 0.55em;
   height: 2.75rem;
-  padding: 0 1rem;
+  padding: 0 0.75rem;
   background: transparent;
   border: 0;
   border-radius: 0.6rem;
   color: #a8a8a8;
   font: inherit;
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 400;
   white-space: nowrap;
   cursor: pointer;
@@ -596,7 +602,7 @@
 .tabActive:hover {
   background: linear-gradient(135deg, #1b1b1b, #000 70%);
   color: #ff0a14;
-  font-size: 1.25rem;
+  font-size: 1.0625rem;
   font-weight: 500;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 10px 30px -12px rgba(0, 0, 0, 0.8);
 }
@@ -1217,51 +1223,9 @@ div.cardMedia[data-k='storage'] {
   }
 }
 
-/* ---------- 7. Final CTA ---------- */
-
-.cta {
-  --fallback: radial-gradient(45% 55% at 50% 38%, #9a6a35, transparent 70%),
-    radial-gradient(30% 40% at 12% 60%, #4a5a3a, transparent 70%),
-    linear-gradient(180deg, #3a2a1e, #120d09);
-  color: #fff;
-  text-align: center;
-}
-
-.shadeCta {
-  background: rgba(0, 0, 0, 0.28);
-}
-
-.ctaInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: max(30rem, 46.8vw);
-  padding: 4rem 0;
-}
-
-.ctaTitle {
-  margin: 0;
-  font-size: var(--fs-cta);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.ctaText {
-  max-width: 40vw;
-  margin: max(1rem, 1.6vw) auto 0;
-  font-size: var(--fs-body);
-  line-height: 1.65;
-  color: #fff;
-  text-wrap: balance;
-}
+/* ---------- 7. Final CTA: moved to src/components/common/CtaBanner ---------- */
 
 @media (max-width: 767px) {
-  .ctaText {
-    max-width: 30rem;
-  }
-
   .lead {
     max-width: 30rem;
   }

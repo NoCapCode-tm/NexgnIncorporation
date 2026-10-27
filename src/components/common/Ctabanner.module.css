@@ -1,0 +1,201 @@
+/* CtaBanner: full-width photo call-to-action, responsive from mobile to 4K.
+   Desktop sizes are in vw (scaled from the 1367px design). Below 768px they switch to mobile sizes. */
+
+.cta {
+  --red: #ed040f;
+  --red-hover: #d1030d;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  --fs-title: clamp(2.6rem, 13vw, 5rem);
+  --fs-body: clamp(0.875rem, 3.6vw, 1rem);
+  --fs-btn: clamp(0.875rem, 3.6vw, 1rem);
+  --btn-h: 2.75rem;
+
+  /* shown until a photo is passed */
+  --fallback: radial-gradient(45% 55% at 50% 38%, #9a6a35, transparent 70%),
+    radial-gradient(30% 40% at 12% 60%, #4a5a3a, transparent 70%),
+    linear-gradient(180deg, #3a2a1e, #120d09);
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 0 var(--pad-x);
+  color: #fff;
+  text-align: center;
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (min-width: 768px) {
+  .cta {
+    --fs-title: 6.6vw;
+    --fs-body: max(0.875rem, 1.2vw);
+    --fs-btn: max(0.875rem, 1.17vw);
+    --btn-h: max(2.75rem, 3.2vw);
+  }
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--img, var(--fallback));
+  background-size: cover;
+  background-position: var(--pos, center);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, calc(var(--shade, 0.5) * 0.9));
+  background-image: radial-gradient(
+    ellipse 60% 60% at 50% 50%,
+    rgba(0, 0, 0, calc(var(--shade, 0.5) * 0.4)),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: max(30rem, 46.8vw);
+  padding: 4rem 0;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+}
+
+.inner[data-in='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+.title {
+  max-width: 8.2em;
+  margin: 0;
+  font-size: var(--fs-title);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+}
+
+.red {
+  color: #ff0a14;
+}
+
+.text {
+  max-width: 40vw;
+  margin: max(1rem, 1.6vw) auto 0;
+  font-size: var(--fs-body);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+  text-wrap: balance;
+}
+
+@media (max-width: 767px) {
+  .text {
+    max-width: 30rem;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: max(0.5rem, 0.6vw);
+  margin-top: max(1.5rem, 3.3vw);
+}
+
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--btn-h);
+  padding: 0 1.6em;
+  border-radius: 0.4em;
+  font-size: var(--fs-btn);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.35s var(--ease-out),
+    background 0.2s ease, border-color 0.2s ease;
+}
+
+.btnPrimary {
+  background: #ff0a14;
+  color: #fff;
+  border: 1px solid #ff0a14;
+}
+
+.btnPrimary:hover {
+  background: var(--red-hover);
+  border-color: var(--red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -10px rgba(237, 4, 15, 0.6);
+}
+
+.btnPrimary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btnGhost {
+  color: #fff;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.btnGhost:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.btnPrimary:focus-visible,
+.btnGhost:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Container caps (mirror Navbar + Footer) */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1920px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+}
+
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .btnPrimary,
+  .btnGhost {
+    transition: none;
+  }
+}
