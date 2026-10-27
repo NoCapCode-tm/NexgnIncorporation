@@ -47,7 +47,10 @@ const Individuals = lazy(() => import('../pages/solutions/Individuals'));
 const SMB = lazy(() => import('../pages/solutions/SMB'));
 const Enterprise = lazy(() => import('../pages/solutions/Enterprise'));
 
-// 4. Developers
+// 4. Programmatic SEO / Comparison Pages
+const AlternativeCompare = lazy(() => import('../pages/solutions/AlternativeCompare'));
+
+// 5. Developers
 const DevPortal = lazy(() => import('../pages/developers/DevPortal'));
 const ApiRef = lazy(() => import('../pages/developers/ApiRef'));
 const Embedded = lazy(() => import('../pages/developers/Embedded'));
@@ -55,7 +58,7 @@ const Webhooks = lazy(() => import('../pages/developers/Webhooks'));
 const SDKs = lazy(() => import('../pages/developers/SDKs'));
 const Sandbox = lazy(() => import('../pages/developers/Sandbox'));
 
-// 5. Trust Center
+// 6. Trust Center
 const TrustCenter = lazy(() => import('../pages/trust/TrustCenter'));
 const Security = lazy(() => import('../pages/trust/Security'));
 const Legality = lazy(() => import('../pages/trust/Legality'));
@@ -63,10 +66,10 @@ const Privacy = lazy(() => import('../pages/trust/Privacy'));
 const Subprocessors = lazy(() => import('../pages/trust/Subprocessors'));
 const VulnDisclosure = lazy(() => import('../pages/trust/VulnDisclosure'));
 
-// 6. Sustainability
+// 7. Sustainability
 const Sustainability = lazy(() => import('../pages/sustainability/Sustainability'));
 
-// 7. Legal (Footer Pages)
+// 8. Legal (Footer Pages)
 const Terms = lazy(() => import('../pages/legal/Terms'));
 const PrivacyPolicy = lazy(() => import('../pages/legal/PrivacyPolicy'));
 const AUP = lazy(() => import('../pages/legal/AUP'));
@@ -165,8 +168,10 @@ const LanguageWrapper = () => {
             <Route path="/solutions/individuals" element={<Individuals />} />
             <Route path="/solutions/smb" element={<SMB />} />
             <Route path="/solutions/enterprise" element={<Enterprise />} />
-            {/* TODO: footer links to /solutions/finance — add a Finance page, then:
-            <Route path="/solutions/finance" element={<Finance />} /> */}
+
+            {/* pSEO / Alternatives Routes */}
+            {/* This single route automatically handles /alternatives/docusign, /alternatives/pandadoc, etc. */}
+            <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 
             {/* Developer Routes */}
             <Route path="/developers" element={<DevPortal />} />
@@ -193,17 +198,6 @@ const LanguageWrapper = () => {
             <Route path="/legal/acceptable-use" element={<AUP />} />
             <Route path="/legal/dpa" element={<DPA />} />
             <Route path="/legal/refunds" element={<Refunds />} />
-            {/* TODO: footer links to /legal/cookies — add a CookiePolicy page, then:
-            <Route path="/legal/cookies" element={<CookiePolicy />} /> */}
-
-            {/* TODO: navbar "Nexgn Labs" link goes to /labs — add a Labs page, then:
-            <Route path="/labs" element={<Labs />} /> */}
-
-            {/* TODO: Company pages linked in the footer (add pages, then routes):
-            <Route path="/about" element={<About />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/partners" element={<Partners />} /> */}
 
             {/* Global 404 Catch-All */}
             <Route path="*" element={<NotFound />} />

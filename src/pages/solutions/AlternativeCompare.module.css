@@ -1,0 +1,189 @@
+.page {
+  width: 100%;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: #0d1017;
+  background: #f9fafa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 4rem);
+}
+
+.hero {
+  background: #0d1017;
+  color: #fff;
+  padding: clamp(6rem, 10vw, 12rem) clamp(1.25rem, 4vw, 4rem) clamp(4rem, 8vw, 8rem);
+  text-align: center;
+}
+
+.heroContainer {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  text-wrap: balance;
+}
+
+.red {
+  color: #ed040f;
+}
+
+.lead {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  color: #a3aab6;
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  background: #ed040f;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: #d1030d;
+  transform: translateY(-2px);
+}
+
+.btnGhost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnGhost:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.tableSection {
+  padding: clamp(4rem, 8vw, 8rem) 0;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.sectionSubtitle {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #5b6270;
+  margin-bottom: 4rem;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 1rem;
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+  border: 1px solid #dfe4e8;
+  background: #fff;
+}
+
+.compareTable {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.compareTable th,
+.compareTable td {
+  padding: 1.5rem;
+  border-bottom: 1px solid #dfe4e8;
+  font-size: 1.125rem;
+}
+
+.compareTable th {
+  background: #f0f1f2;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  color: #5b6270;
+}
+
+.nexgnColumn {
+  background: #fff0f1;
+  color: #ed040f;
+  width: 35%;
+}
+
+.nexgnCell {
+  background: #fffafa;
+  font-weight: 500;
+}
+
+.compColumn, .compCell {
+  width: 35%;
+  color: #5b6270;
+}
+
+.compareTable tr:last-child td {
+  border-bottom: none;
+}
+
+.iconGreen {
+  color: #2fb457;
+  margin-right: 0.5rem;
+  vertical-align: text-bottom;
+}
+
+.iconRed {
+  color: #ed040f;
+  margin-right: 0.5rem;
+  vertical-align: text-bottom;
+}
+
+.iconMuted {
+  color: #a3aab6;
+  margin-right: 0.5rem;
+  vertical-align: text-bottom;
+}
+
+.bottomCta {
+  margin-top: 5rem;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f0f1f2;
+  border-radius: 1rem;
+}
+
+.bottomCta h3 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}

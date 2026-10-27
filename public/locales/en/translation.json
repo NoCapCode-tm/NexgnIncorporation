@@ -1,17 +1,277 @@
 {
-  "navbar": {
-    "products": "Products",
-    "solutions": "Solutions",
-    "developers": "Developers",
-    "pricing": "Pricing",
-    "trust": "Trust Center",
-    "login": "Log In",
-    "signup": "Start Free"
+  "nav": {
+    "label": "Main navigation",
+    "login": "Log in",
+    "cta": "Start for free",
+    "close": "Close menu",
+    "open": "Open menu",
+    "product": {
+      "title": "Product",
+      "core": {
+        "title": "Core Agreement Products",
+        "esignature": "eSignature",
+        "docEditor": "Document Editor",
+        "templates": "Templates",
+        "workflows": "Agreement Workflow & Scheduler"
+      },
+      "intelligence": {
+        "title": "Intelligence (Nexgn AI)",
+        "aiSummary": "AI Agreement Summary",
+        "aiBuilder": "AI Template Builder"
+      },
+      "trust": {
+        "title": "Trust & Evidence",
+        "identity": "Identity Assurance",
+        "audit": "Audit Trails",
+        "verification": "Agreement Verification"
+      },
+      "workspace": {
+        "title": "Workspace & Management",
+        "workspace": "Team Workspace & RBAC",
+        "storage": "Google Drive & Storage"
+      },
+      "explore": {
+        "title": "Explore",
+        "whatsNew": "What’s New",
+        "labs": "Nexgn Labs",
+        "roadmap": "Product Roadmap"
+      }
+    },
+    "solutions": {
+      "title": "Solutions",
+      "teams": {
+        "title": "By Team",
+        "hr": "HR",
+        "sales": "Sales",
+        "legal": "Legal",
+        "realEstate": "Real Estate"
+      },
+      "company": {
+        "title": "By Company Size",
+        "startups": "Startups",
+        "smb": "Small & Medium Business",
+        "enterprise": "Enterprise"
+      },
+      "more": {
+        "title": "More",
+        "agencies": "Agencies",
+        "individuals": "Individuals"
+      }
+    },
+    "developers": {
+      "title": "Developers",
+      "build": {
+        "title": "Build",
+        "portal": "Developer Portal",
+        "api": "API Reference",
+        "embedded": "Embedded Signing"
+      },
+      "integrate": {
+        "title": "Integrate",
+        "webhooks": "Webhooks",
+        "sdks": "SDKs",
+        "sandbox": "Sandbox"
+      }
+    },
+    "trust": {
+      "title": "Trust Centre",
+      "trust": {
+        "title": "Trust",
+        "center": "Trust Centre",
+        "security": "Security Architecture",
+        "legality": "eSignature Legality",
+        "privacy": "Privacy Centre"
+      },
+      "compliance": {
+        "title": "Compliance",
+        "subprocessors": "Subprocessors",
+        "vuln": "Vulnerability Disclosure",
+        "sustainability": "Sustainability Pledge"
+      }
+    },
+    "pricing": "Pricing"
   },
   "home": {
-    "hero_title": "The modern agreement platform",
-    "hero_subtitle": "Create, sign, automate, and trust agreements securely.",
-    "cta_primary": "Start sending for free",
-    "cta_secondary": "Talk to Sales"
+    "seo": {
+      "title": "Free eSignature Software for India & Worldwide",
+      "description": "Create, sign and automate legally binding documents from any device. Nexgn is built in India, compliant with IT Act, ESIGN, UETA and eIDAS, with AES-256 encryption. Free to start."
+    },
+    "hero": {
+      "line1a": "Create.",
+      "line1b": "Sign.",
+      "line2": "Automate. Trust.",
+      "text": "Send, sign and track legally binding documents from any device. Built in India, compliant worldwide, free to start.",
+      "cta": "Start for free",
+      "secondary": "See how it works",
+      "note": "No credit card required. Signers don’t need an account.",
+      "legal": "Legally valid in India, the US and the EU"
+    },
+    "trusted": {
+      "label": "Trusted By"
+    },
+    "impact": {
+      "eyebrow": "Sustainability & Efficiency",
+      "title": "Every Agreement Leaves a Smaller Footprint",
+      "paper": "Estimated paper sheets saved",
+      "hours": "Admin Hours Reclaimed",
+      "co2": "Kg CO₂ Mitigated",
+      "link": "Read our Sustainability Pledge"
+    },
+    "flow": {
+      "title1": "More than a signature.",
+      "title2a": "A complete",
+      "title2b": "workflow.",
+      "lead1": "Everything your agreements need.",
+      "lead2": "Nothing they don’t.",
+      "tabs": "Workflow steps",
+      "prepare": {
+        "label": "Prepare",
+        "title": "Make every document ready to sign.",
+        "text": "Place fields visually, assign them to the right signers, and reuse templates for agreements you send often.",
+        "b1": "Drag-and-drop PDF editor",
+        "b2": "Reusable PDF and HTML templates",
+        "b3": "Flexible field placement"
+      },
+      "sign": {
+        "label": "Sign",
+        "title": "Sign from any device, in seconds.",
+        "text": "Signers open a secure link, review the document and sign on any screen. No app and no account needed.",
+        "b1": "Draw, type or upload a signature",
+        "b2": "Mobile-optimized signing",
+        "b3": "Instant status alerts"
+      },
+      "automate": {
+        "label": "Automate",
+        "title": "Let workflows do the chasing.",
+        "text": "Route agreements through multiple signers, schedule sends and let smart reminders follow up for you.",
+        "b1": "Multi-signer routing",
+        "b2": "Automated email reminders",
+        "b3": "Scheduled sending"
+      },
+      "prove": {
+        "label": "Prove",
+        "title": "Evidence that stands up.",
+        "text": "Every completed agreement is sealed with a SHA-256 hash and an audit certificate recording who signed, when and from where.",
+        "b1": "Tamper-evident documents",
+        "b2": "Audit certificate on every PDF",
+        "b3": "Agreement verification"
+      },
+      "quote": "“We went from chasing signatures over email to getting agreements signed in minutes. It’s a game-changer.”",
+      "quoteBy": "Sales Manager, Orbit."
+    },
+    "law": {
+      "title1": "Designed for",
+      "title2": "global",
+      "title3": "legal compliance.",
+      "text": "Your contracts are only as good as the evidence behind them. Nexgn is built to support legally meaningful electronic agreements worldwide.",
+      "more": "Learn more",
+      "totp": {
+        "title": "TOTP Two-Factor Authentication",
+        "text": "Protect every workspace with authenticator-app 2FA, brute-force lockouts and actively monitored session tokens."
+      },
+      "hash": {
+        "title": "SHA-256 Hashing",
+        "text": "Every completed agreement is sealed with a cryptographic hash. If a single character changes, the seal breaks and all parties are alerted."
+      },
+      "law": {
+        "title": "eIDAS / ESIGN / IT Act alignment",
+        "text": "Built to support the US ESIGN Act and UETA, EU eIDAS and India’s IT Act, with a court-admissible audit certificate."
+      }
+    },
+    "pricing": {
+      "title1": "Simple pricing.",
+      "title2a": "Start",
+      "title2b": "free",
+      "title2c": ", scale when you’re ready.",
+      "note": "No credit card to start. Cancel anytime.",
+      "billing": "Billing period",
+      "monthly": "Monthly",
+      "yearly": "Yearly, save 20%",
+      "currency": "Currency",
+      "save": "Save 20%",
+      "perMonth": "/month",
+      "noCard": "No credit card required",
+      "billedYearly": "billed yearly",
+      "billedMonthly": "Billed monthly",
+      "compare": "Compare all plans",
+      "free": {
+        "name": "Free",
+        "tag": "Basic",
+        "desc": "Perfect for individuals and early exploration.",
+        "cta": "Try Now"
+      },
+      "starter": {
+        "name": "Starter",
+        "desc": "Built for freelancers and small businesses.",
+        "cta": "Choose Plan"
+      },
+      "business": {
+        "name": "Business",
+        "tag": "+Extras",
+        "desc": "Built for growing teams and businesses.",
+        "cta": "Choose Plan"
+      }
+    },
+    "cta": {
+      "title": "Start signing",
+      "text": "Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.",
+      "primary": "Create your free account",
+      "secondary": "Login"
+    }
+  },
+  "footer": {
+    "label": "Site footer",
+    "nav": "Footer navigation",
+    "rights": "All rights reserved.",
+    "language": "Select language",
+    "built": "Securely built by",
+    "product": {
+      "title": "Product",
+      "esignature": "eSignature",
+      "docEditor": "Document Editor",
+      "templates": "Templates",
+      "workflows": "Workflows",
+      "reminders": "Smart Reminders",
+      "ai": "AI Assistant"
+    },
+    "solutions": {
+      "title": "Solutions",
+      "startups": "Startups",
+      "hr": "HR",
+      "legal": "Legal",
+      "sales": "Sales",
+      "realEstate": "Real Estate",
+      "finance": "Finance"
+    },
+    "developers": {
+      "title": "Developers",
+      "api": "API Documentation",
+      "webhooks": "Webhooks",
+      "sdks": "SDKs",
+      "status": "System Status"
+    },
+    "trust": {
+      "title": "Trust & Security",
+      "trustCenter": "Trust Center",
+      "legality": "eSignature Legality",
+      "security": "Security Architecture",
+      "privacyCenter": "Privacy Center",
+      "sustainability": "Sustainability Pledge"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "careers": "Careers",
+      "contact": "Contact",
+      "partners": "Partners"
+    },
+    "legal": {
+      "title": "Legal",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Policy",
+      "aup": "Acceptable Use Policy",
+      "dpa": "Data Processing Addendum (DPA)"
+    }
   }
 }

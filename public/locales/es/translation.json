@@ -1,17 +1,277 @@
 {
-  "navbar": {
-    "products": "Productos",
-    "solutions": "Soluciones",
-    "developers": "Desarrolladores",
-    "pricing": "Precios",
-    "trust": "Centro de Confianza",
+  "nav": {
+    "label": "Navegación principal",
     "login": "Iniciar sesión",
-    "signup": "Empieza Gratis"
+    "cta": "Comienza gratis",
+    "close": "Cerrar menú",
+    "open": "Abrir menú",
+    "product": {
+      "title": "Producto",
+      "core": {
+        "title": "Productos Base",
+        "esignature": "Firma Electrónica",
+        "docEditor": "Editor de Documentos",
+        "templates": "Plantillas",
+        "workflows": "Flujos de Trabajo"
+      },
+      "intelligence": {
+        "title": "Inteligencia (Nexgn AI)",
+        "aiSummary": "Resumen con IA",
+        "aiBuilder": "Creador de Plantillas IA"
+      },
+      "trust": {
+        "title": "Confianza y Evidencia",
+        "identity": "Aseguramiento de Identidad",
+        "audit": "Pistas de Auditoría",
+        "verification": "Verificación de Acuerdos"
+      },
+      "workspace": {
+        "title": "Espacio de Trabajo",
+        "workspace": "Espacio de Equipo y RBAC",
+        "storage": "Google Drive y Almacenamiento"
+      },
+      "explore": {
+        "title": "Explorar",
+        "whatsNew": "Novedades",
+        "labs": "Nexgn Labs",
+        "roadmap": "Hoja de Ruta"
+      }
+    },
+    "solutions": {
+      "title": "Soluciones",
+      "teams": {
+        "title": "Por Equipo",
+        "hr": "Recursos Humanos",
+        "sales": "Ventas",
+        "legal": "Legal",
+        "realEstate": "Inmobiliaria"
+      },
+      "company": {
+        "title": "Por Tamaño",
+        "startups": "Startups",
+        "smb": "PyMEs",
+        "enterprise": "Empresas"
+      },
+      "more": {
+        "title": "Más",
+        "agencies": "Agencias",
+        "individuals": "Individuos"
+      }
+    },
+    "developers": {
+      "title": "Desarrolladores",
+      "build": {
+        "title": "Construir",
+        "portal": "Portal de Desarrolladores",
+        "api": "Referencia API",
+        "embedded": "Firma Integrada"
+      },
+      "integrate": {
+        "title": "Integrar",
+        "webhooks": "Webhooks",
+        "sdks": "SDKs",
+        "sandbox": "Sandbox"
+      }
+    },
+    "trust": {
+      "title": "Centro de Confianza",
+      "trust": {
+        "title": "Confianza",
+        "center": "Centro de Confianza",
+        "security": "Arquitectura de Seguridad",
+        "legality": "Legalidad de Firmas",
+        "privacy": "Centro de Privacidad"
+      },
+      "compliance": {
+        "title": "Cumplimiento",
+        "subprocessors": "Subencargados",
+        "vuln": "Divulgación de Vulnerabilidades",
+        "sustainability": "Compromiso de Sostenibilidad"
+      }
+    },
+    "pricing": "Precios"
   },
   "home": {
-    "hero_title": "La plataforma de acuerdos moderna",
-    "hero_subtitle": "Cree, firme, automatice y confíe en acuerdos de forma segura.",
-    "cta_primary": "Empieza a enviar gratis",
-    "cta_secondary": "Hablar con Ventas"
+    "seo": {
+      "title": "Software de Firma Electrónica Gratuito",
+      "description": "Cree, firme y automatice documentos legales desde cualquier dispositivo. Cumple con ESIGN, eIDAS y encriptación AES-256."
+    },
+    "hero": {
+      "line1a": "Crea.",
+      "line1b": "Firma.",
+      "line2": "Automatiza. Confía.",
+      "text": "Envía, firma y rastrea documentos legalmente vinculantes desde cualquier dispositivo. Gratis para empezar.",
+      "cta": "Comienza gratis",
+      "secondary": "Mira cómo funciona",
+      "note": "No requiere tarjeta de crédito. Los firmantes no necesitan cuenta.",
+      "legal": "Legalmente válido en EE. UU., UE e India"
+    },
+    "trusted": {
+      "label": "Con la confianza de"
+    },
+    "impact": {
+      "eyebrow": "Sostenibilidad y Eficiencia",
+      "title": "Cada Acuerdo Deja una Menor Huella",
+      "paper": "Hojas de papel ahorradas",
+      "hours": "Horas de administración recuperadas",
+      "co2": "Kg CO₂ mitigados",
+      "link": "Lea nuestro Compromiso de Sostenibilidad"
+    },
+    "flow": {
+      "title1": "Más que una firma.",
+      "title2a": "Un completo",
+      "title2b": "flujo de trabajo.",
+      "lead1": "Todo lo que tus acuerdos necesitan.",
+      "lead2": "Nada de lo que no.",
+      "tabs": "Pasos",
+      "prepare": {
+        "label": "Preparar",
+        "title": "Haz que cada documento esté listo.",
+        "text": "Coloca campos visualmente, asígnalos a los firmantes correctos y reutiliza plantillas para los acuerdos frecuentes.",
+        "b1": "Editor de PDF arrastrar y soltar",
+        "b2": "Plantillas PDF y HTML reutilizables",
+        "b3": "Colocación flexible de campos"
+      },
+      "sign": {
+        "label": "Firmar",
+        "title": "Firma desde cualquier dispositivo, en segundos.",
+        "text": "Los firmantes abren un enlace seguro, revisan y firman en cualquier pantalla. Sin aplicaciones ni cuentas.",
+        "b1": "Dibuja, escribe o sube una firma",
+        "b2": "Firma optimizada para móviles",
+        "b3": "Alertas de estado instantáneas"
+      },
+      "automate": {
+        "label": "Automatizar",
+        "title": "Deja que los flujos trabajen por ti.",
+        "text": "Enruta acuerdos a través de múltiples firmantes, programa envíos y deja que los recordatorios automáticos hagan el seguimiento.",
+        "b1": "Enrutamiento multi-firmante",
+        "b2": "Recordatorios automáticos por correo",
+        "b3": "Envío programado"
+      },
+      "prove": {
+        "label": "Probar",
+        "title": "Evidencia que se sostiene.",
+        "text": "Cada acuerdo completado se sella con un hash SHA-256 y un certificado de auditoría que registra quién firmó, cuándo y desde dónde.",
+        "b1": "Documentos a prueba de manipulaciones",
+        "b2": "Certificado de auditoría en cada PDF",
+        "b3": "Verificación de acuerdos"
+      },
+      "quote": "“Pasamos de perseguir firmas por correo electrónico a obtener acuerdos firmados en minutos. Es un cambio de juego.”",
+      "quoteBy": "Gerente de Ventas, Orbit."
+    },
+    "law": {
+      "title1": "Diseñado para",
+      "title2": "cumplimiento legal",
+      "title3": "global.",
+      "text": "Tus contratos son tan buenos como la evidencia detrás de ellos. Nexgn está diseñado para soportar acuerdos electrónicos legales en todo el mundo.",
+      "more": "Saber más",
+      "totp": {
+        "title": "Autenticación de dos factores TOTP",
+        "text": "Proteja cada espacio de trabajo con 2FA de aplicación de autenticación y bloqueos de fuerza bruta."
+      },
+      "hash": {
+        "title": "Hashing SHA-256",
+        "text": "Cada acuerdo completado se sella con un hash criptográfico. Si un solo carácter cambia, el sello se rompe."
+      },
+      "law": {
+        "title": "Alineación eIDAS / ESIGN / IT Act",
+        "text": "Creado para soportar la Ley ESIGN de EE. UU., eIDAS de la UE y la Ley de TI de India."
+      }
+    },
+    "pricing": {
+      "title1": "Precios simples.",
+      "title2a": "Comienza",
+      "title2b": "gratis",
+      "title2c": ", escala cuando estés listo.",
+      "note": "Sin tarjeta de crédito. Cancela cuando quieras.",
+      "billing": "Período de facturación",
+      "monthly": "Mensual",
+      "yearly": "Anual, ahorra 20%",
+      "currency": "Moneda",
+      "save": "Ahorra 20%",
+      "perMonth": "/mes",
+      "noCard": "Sin tarjeta de crédito",
+      "billedYearly": "facturado anualmente",
+      "billedMonthly": "Facturado mensualmente",
+      "compare": "Compara todos los planes",
+      "free": {
+        "name": "Gratis",
+        "tag": "Básico",
+        "desc": "Perfecto para individuos y exploración temprana.",
+        "cta": "Prueba ahora"
+      },
+      "starter": {
+        "name": "Inicial",
+        "desc": "Construido para freelancers y pequeñas empresas.",
+        "cta": "Elegir Plan"
+      },
+      "business": {
+        "name": "Negocios",
+        "tag": "+Extras",
+        "desc": "Construido para equipos y empresas en crecimiento.",
+        "cta": "Elegir Plan"
+      }
+    },
+    "cta": {
+      "title": "Empieza a firmar",
+      "text": "Únete a las empresas modernas que envían y firman documentos de forma segura con Nexgn.",
+      "primary": "Crea tu cuenta gratuita",
+      "secondary": "Iniciar sesión"
+    }
+  },
+  "footer": {
+    "label": "Pie de página",
+    "nav": "Navegación",
+    "rights": "Todos los derechos reservados.",
+    "language": "Seleccionar idioma",
+    "built": "Construido de forma segura por",
+    "product": {
+      "title": "Producto",
+      "esignature": "Firma Electrónica",
+      "docEditor": "Editor de Documentos",
+      "templates": "Plantillas",
+      "workflows": "Flujos de Trabajo",
+      "reminders": "Recordatorios Inteligentes",
+      "ai": "Asistente IA"
+    },
+    "solutions": {
+      "title": "Soluciones",
+      "startups": "Startups",
+      "hr": "Recursos Humanos",
+      "legal": "Legal",
+      "sales": "Ventas",
+      "realEstate": "Bienes Raíces",
+      "finance": "Finanzas"
+    },
+    "developers": {
+      "title": "Desarrolladores",
+      "api": "Documentación API",
+      "webhooks": "Webhooks",
+      "sdks": "SDKs",
+      "status": "Estado del Sistema"
+    },
+    "trust": {
+      "title": "Confianza y Seguridad",
+      "trustCenter": "Centro de Confianza",
+      "legality": "Legalidad de Firmas",
+      "security": "Arquitectura de Seguridad",
+      "privacyCenter": "Centro de Privacidad",
+      "sustainability": "Sostenibilidad"
+    },
+    "company": {
+      "title": "Empresa",
+      "about": "Sobre Nosotros",
+      "careers": "Empleos",
+      "contact": "Contacto",
+      "partners": "Socios"
+    },
+    "legal": {
+      "title": "Legal",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies",
+      "aup": "Política de Uso Aceptable",
+      "dpa": "Acuerdo de Procesamiento de Datos"
+    }
   }
 }

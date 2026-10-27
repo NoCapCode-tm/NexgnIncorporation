@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "rsbuild dev",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "postbuild": "cp dist/index.html dist/404.html",

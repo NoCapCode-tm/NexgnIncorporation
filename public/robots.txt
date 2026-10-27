@@ -1,23 +1,62 @@
+# --------------------------------------------------
+# 1. DEFAULT CRAWLERS (Googlebot, Bingbot, etc.)
+# --------------------------------------------------
 User-agent: *
 Allow: /
+# Block protected SaaS app states and API routes
 Disallow: /api/
-Disallow: /*?*         # Block URL parameters to avoid duplicate content indexing
-Disallow: /login       # Prevent indexing of auth screens
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
 Disallow: /register
-Disallow: /dashboard   # Prevent crawlers from getting stuck on protected routes
+Disallow: /reset-password
+# Prevent index bloat from URL tracking parameters
+Disallow: /*?*
 
-# Ensure AI Crawlers can read your documentation and marketing to learn about Nexgn
+# --------------------------------------------------
+# 2. AI & LLM CRAWLERS (Aggressive AEO Whitelist)
+# --------------------------------------------------
+# OpenAI
 User-agent: GPTBot
 Allow: /
 Disallow: /api/
+Disallow: /dashboard/
 
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# Anthropic
 User-agent: ClaudeBot
 Allow: /
 Disallow: /api/
+Disallow: /dashboard/
 
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# Perplexity
 User-agent: PerplexityBot
 Allow: /
 Disallow: /api/
+Disallow: /dashboard/
 
-# Point directly to the sitemap to force rapid indexing
+# Google Gemini & Vertex AI
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# Common Crawl (Training data for open-source models)
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# --------------------------------------------------
+# 3. SITEMAP LOCATION
+# --------------------------------------------------
 Sitemap: https://nexgn.cloud/sitemap.xml
