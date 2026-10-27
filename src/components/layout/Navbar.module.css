@@ -1,59 +1,113 @@
 /* Fonts: DM Sans (links) + MuseoModerno (logo). Must stay the first rule.
-   Tip: move this to a <link> in public/index.html and delete it here and in Footer.module.css. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=MuseoModerno:wght@600;700&display=swap');
+   Tip: load these once with a <link> in public/index.html and delete the @import here and in Footer.module.css. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=MuseoModerno:wght@100..900&display=swap');
 
-/* Navbar — responsive from mobile (320px) up to 4K (3840px+).
-   Dark theme on the homepage, light theme everywhere else (data-theme). */
+/* Navbar — frosted-glass, responsive from mobile (320px) up to 4K (3840px+).
+   Dark glass on the homepage, light glass everywhere else (data-theme).
+
+   IMPORTANT: the glass (backdrop-filter) lives on .header::before, NOT on .header.
+   backdrop-filter on an ancestor would trap the position:fixed mobile drawer inside the
+   header's box. Likewise the dropdown animates .panelInner (which owns its own
+   backdrop-filter), so the blur never flickers while it fades. */
 
 .header {
+  /* sizing (fluid) */
   --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --bar-h: var(--nav-h);
   --fs: clamp(0.875rem, 0.3vw + 0.8rem, 2rem);
   --fs-group: clamp(0.75rem, 0.25vw + 0.7rem, 1.6rem);
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
   --col-w: clamp(10.5rem, 15vw, 24rem);
-  --red: #dc3027;
-  --red-hover: #c22820;
+
+  /* brand */
+  --red: #ed040f;
+  --red-hover: #d1030d;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --blur: 16px;
 
   position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
-  border-bottom: 1px solid var(--line);
   font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.3s ease;
 }
+
+/* Scrolled: bar tightens a little and the glass gets stronger */
+.header[data-scrolled='true'] {
+  --bar-h: calc(var(--nav-h) * 0.88);
+  --blur: 24px;
+}
+
+/* ---------- Themes ---------- */
 
 /* Homepage */
 .header[data-theme='dark'] {
-  --bg: #0e1015;
   --text: #ffffff;
-  --muted: #9ca3af;
-  --line: rgba(255, 255, 255, 0.08);
-  --hover-bg: rgba(255, 255, 255, 0.07);
-  --panel-bg: #000000;
-  --panel-border: rgba(255, 255, 255, 0.08);
-  --panel-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --muted: #a3aab6;
+  --line: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.09);
+  --glass: rgba(14, 16, 21, 0.55);
+  --glass-scrolled: rgba(14, 16, 21, 0.72);
+  --bar-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --bar-shadow-scrolled: 0 10px 40px -12px rgba(0, 0, 0, 0.5);
+  --panel-glass: rgba(10, 12, 16, 0.62);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --panel-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --scrim: rgba(3, 5, 8, 0.35);
+  --drawer-bg: rgba(10, 12, 16, 0.9);
 }
 
 /* All other pages */
 .header[data-theme='light'] {
-  --bg: #fafafa;
   --text: #111318;
-  --muted: #5b6270;
+  --muted: #4f5663;
   --line: rgba(0, 0, 0, 0.08);
-  --hover-bg: rgba(0, 0, 0, 0.05);
-  --panel-bg: #ffffff;
+  --hover-bg: rgba(0, 0, 0, 0.06);
+  --glass: rgba(250, 250, 250, 0.62);
+  --glass-scrolled: rgba(250, 250, 250, 0.78);
+  --bar-shadow: 0 0 0 rgba(16, 24, 40, 0);
+  --bar-shadow-scrolled: 0 10px 40px -14px rgba(16, 24, 40, 0.22);
+  --panel-glass: rgba(255, 255, 255, 0.7);
   --panel-border: rgba(0, 0, 0, 0.08);
-  --panel-shadow: 0 24px 60px rgba(16, 24, 40, 0.14);
+  --panel-shadow: 0 30px 80px -20px rgba(16, 24, 40, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --scrim: rgba(16, 24, 40, 0.18);
+  --drawer-bg: rgba(250, 250, 250, 0.92);
+}
+
+/* ---------- Glass layer (bar background) ---------- */
+
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+  backdrop-filter: blur(var(--blur)) saturate(180%);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--bar-shadow);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease,
+    backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease;
+  animation: glassIn 0.8s var(--ease-out) backwards;
+}
+
+.header[data-scrolled='true']::before,
+.header[data-mobile-open='true']::before {
+  background: var(--glass-scrolled);
+  box-shadow: var(--bar-shadow-scrolled);
 }
 
 /* ---------- Bar ---------- */
 
 .bar {
-  height: var(--nav-h);
+  height: var(--bar-h);
   width: 100%;
   max-width: 2400px;
   margin: 0 auto;
@@ -63,6 +117,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  transition: height 0.4s var(--ease-out);
 }
 
 /* ---------- Logo ---------- */
@@ -74,16 +129,23 @@
   color: var(--red);
   text-decoration: none;
   font-size: clamp(1.25rem, 0.6vw + 1rem, 3rem);
+  animation: fadeUp 0.8s var(--ease-out) 0.1s backwards;
 }
 
 .logoMark {
   width: 1.35em;
   height: 1.35em;
+  flex: none;
+  transition: transform 0.6s var(--ease-spring);
+}
+
+.logo:hover .logoMark {
+  transform: rotate(-8deg) scale(1.08);
 }
 
 .logoText {
   font-family: 'MuseoModerno', 'DM Sans', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1;
 }
@@ -92,27 +154,32 @@
 
 .nav {
   position: fixed;
-  top: var(--nav-h);
+  top: var(--bar-h);
   right: 0;
   bottom: 0;
   left: 0;
+  max-height: calc(100dvh - var(--bar-h));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 0.75rem var(--pad-x) 1.5rem;
-  background: var(--bg);
+  background: var(--drawer-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
   overflow-y: auto;
   overscroll-behavior: contain;
   visibility: hidden;
   opacity: 0;
-  transform: translateY(-0.5rem);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  transform: translateY(-0.75rem);
+  transition: opacity 0.35s var(--ease-out), transform 0.45s var(--ease-out),
+    visibility 0s linear 0.35s;
 }
 
 .nav[data-open='true'] {
   visibility: visible;
   opacity: 1;
   transform: none;
+  transition-delay: 0s;
 }
 
 .menu {
@@ -123,11 +190,23 @@
   flex-direction: column;
 }
 
+/* drawer items rise in one after another */
 .item {
   border-bottom: 1px solid var(--line);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s var(--ease-out), transform 0.55s var(--ease-out);
+}
+
+.nav[data-open='true'] .item {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 45ms + 90ms);
 }
 
 .trigger {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -144,11 +223,16 @@
   text-decoration: none;
   text-align: left;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.triggerLabel {
+  position: relative;
 }
 
 .chevron {
   flex: none;
-  transition: transform 0.2s ease;
+  transition: transform 0.4s var(--ease-spring);
 }
 
 .trigger[aria-expanded='true'] .chevron {
@@ -159,13 +243,23 @@
   color: var(--red);
 }
 
-/* Panel — mobile: accordion inside the drawer */
+/* Panel — mobile: smooth accordion inside the drawer (grid-rows 0fr -> 1fr) */
 .panel {
-  display: none;
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.45s var(--ease-out), visibility 0s linear 0.45s;
 }
 
 .panel[data-open='true'] {
-  display: block;
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.panelClip {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .panelInner {
@@ -175,8 +269,19 @@
   padding: 0.25rem 0 1.25rem;
 }
 
+/* groups fade up in sequence when a panel opens */
 .group {
   min-width: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.panel[data-open='true'] .group {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
+  transition-delay: calc(var(--gi, 0) * 55ms + 110ms);
 }
 
 .groupTitle {
@@ -204,12 +309,13 @@
   font-size: var(--fs);
   line-height: 1.35;
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color 0.2s ease, transform 0.35s var(--ease-out);
 }
 
 .panelLink:hover,
 .panelLink:focus-visible {
   color: var(--text);
+  transform: translateX(4px);
 }
 
 /* Drawer buttons (shown <1024px) */
@@ -238,7 +344,22 @@
   text-decoration: none;
 }
 
+/* underline that draws in from the left */
+.loginLabel {
+  padding-bottom: 2px;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1.5px no-repeat;
+  transition: background-size 0.45s var(--ease-out);
+}
+
+.login:hover .loginLabel,
+.login:focus-visible .loginLabel {
+  background-size: 100% 1.5px;
+}
+
 .cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -251,15 +372,45 @@
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(237, 4, 15, 0);
+  transition: transform 0.35s var(--ease-out), box-shadow 0.4s var(--ease-out),
+    background 0.2s ease;
+}
+
+/* soft light sweep across the button on hover */
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.8s var(--ease-out);
 }
 
 .cta:hover,
 .cta:focus-visible {
   background: var(--red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px -8px rgba(237, 4, 15, 0.6), 0 0 0 0 rgba(237, 4, 15, 0);
 }
 
-/* ---------- Burger ---------- */
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateX(120%);
+}
+
+.cta:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* ---------- Burger (animated hamburger -> X) ---------- */
 
 .burger {
   display: inline-flex;
@@ -269,14 +420,60 @@
   height: 2.75rem;
   background: none;
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   color: var(--text);
-  font-size: 1.6rem;
   cursor: pointer;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  animation: fadeUp 0.8s var(--ease-out) 0.2s backwards;
 }
 
 .burger:hover {
   background: var(--hover-bg);
+}
+
+.burgerBox {
+  position: relative;
+  display: block;
+  width: 1.4rem;
+  height: 1rem;
+}
+
+.burgerLine {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.45s var(--ease-out), opacity 0.2s ease, top 0.45s var(--ease-out);
+}
+
+.burgerLine:nth-child(1) {
+  top: 0;
+}
+
+.burgerLine:nth-child(2) {
+  top: calc(50% - 1px);
+}
+
+.burgerLine:nth-child(3) {
+  top: calc(100% - 2px);
+}
+
+.burger[aria-expanded='true'] .burgerLine:nth-child(1) {
+  top: calc(50% - 1px);
+  transform: rotate(45deg);
+}
+
+.burger[aria-expanded='true'] .burgerLine:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.burger[aria-expanded='true'] .burgerLine:nth-child(3) {
+  top: calc(50% - 1px);
+  transform: rotate(-45deg);
 }
 
 /* ---------- Focus ---------- */
@@ -308,36 +505,77 @@
   .nav {
     position: static;
     inset: auto;
+    max-height: none;
     display: block;
     padding: 0;
     background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     overflow: visible;
     visibility: visible;
     opacity: 1;
     transform: none;
+    transition: none;
   }
 
   .menu {
     flex-direction: row;
     align-items: center;
-    gap: clamp(0.25rem, 1.2vw, 2.5rem);
+    gap: clamp(0.25rem, 0.8vw, 1.5rem);
   }
 
   .item {
     border: 0;
+    opacity: 1;
+    transform: none;
+    transition: none;
     /* NOT position: relative — the panel anchors to the sticky header instead */
   }
 
   .trigger {
     width: auto;
-    min-height: var(--nav-h);
-    padding: 0 0.6em;
+    min-height: var(--bar-h);
+    padding: 0 0.8em;
     gap: 0.4em;
     font-size: var(--fs);
+    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 150ms) backwards;
   }
 
-  .trigger:hover {
-    color: var(--red);
+  /* hover pill: fades + scales in behind the label */
+  .trigger::before {
+    content: '';
+    position: absolute;
+    inset: 22% 0;
+    z-index: -1;
+    border-radius: 0.7em;
+    background: var(--hover-bg);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.25s ease, transform 0.35s var(--ease-out);
+  }
+
+  .trigger:hover::before,
+  .trigger:focus-visible::before,
+  .trigger[aria-expanded='true']::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* current-section marker: small red dot under the label */
+  .active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--bar-h) * 0.14);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--red);
+    translate: -50% 0;
+  }
+
+  .active {
+    color: var(--text);
   }
 
   .actions {
@@ -352,27 +590,55 @@
     font-size: var(--fs);
   }
 
-  .cta {
-    min-height: clamp(2.5rem, 1.2vw + 1.8rem, 4.5rem);
+  .login {
+    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 150ms) backwards;
   }
 
-  /* Mega-menu panel, centred under the navbar */
+  .cta {
+    min-height: clamp(2.5rem, 1.2vw + 1.8rem, 4.5rem);
+    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 230ms) backwards;
+  }
+
+  /* soft page dim behind an open menu */
+  .header::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: var(--scrim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .header[data-menu-open='true']::after {
+    opacity: 1;
+  }
+
+  /* Mega-menu panel wrapper: positioning + show/hide only (no opacity here, so the
+     inner glass can blur the page behind it) */
   .panel {
+    --panel-pad: clamp(1.25rem, 1.8vw, 3.5rem);
     display: block;
     position: absolute;
     top: 100%;
     left: 50%;
     z-index: 2;
+    translate: -50% 0;
     width: min(
       calc(var(--cols) * var(--col-w) + 2 * var(--panel-pad)),
       calc(100vw - 2 * var(--pad-x))
     );
-    --panel-pad: clamp(1.25rem, 1.8vw, 3.5rem);
     margin-top: clamp(0.35rem, 0.5vw, 1rem);
-    opacity: 0;
     visibility: hidden;
-    transform: translate(-50%, -6px);
-    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    pointer-events: none;
+    transition: visibility 0s linear 0.22s;
+  }
+
+  .panel[data-open='true'] {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   /* invisible bridge so the pointer can travel from the trigger to the panel */
@@ -385,20 +651,31 @@
     height: clamp(0.5rem, 0.8vw, 1.5rem);
   }
 
-  .panel[data-open='true'] {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
+  .panelClip {
+    overflow: visible;
   }
 
+  /* the frosted dropdown card */
   .panelInner {
     grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
     gap: clamp(1.25rem, 2vw, 3.5rem);
     padding: var(--panel-pad);
-    background: var(--panel-bg);
+    background: var(--panel-glass);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
     border: 1px solid var(--panel-border);
     border-radius: clamp(1rem, 1.4vw, 2.5rem);
     box-shadow: var(--panel-shadow);
+    transform-origin: 50% 0;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.985);
+    transition: opacity 0.18s ease, transform 0.22s ease;
+  }
+
+  .panel[data-open='true'] .panelInner {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.35s var(--ease-out), transform 0.55s var(--ease-out);
   }
 
   .groupTitle {
@@ -450,13 +727,71 @@
   }
 }
 
+/* ---------- Keyframes ---------- */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes glassIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- Fallbacks & accessibility ---------- */
+
+/* Browsers without backdrop-filter, or users who asked for less transparency: near-solid bars */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header[data-theme='dark'] {
+    --glass: rgba(14, 16, 21, 0.96);
+    --glass-scrolled: rgba(14, 16, 21, 0.98);
+    --panel-glass: rgba(10, 12, 16, 0.98);
+    --drawer-bg: rgba(10, 12, 16, 0.99);
+  }
+
+  .header[data-theme='light'] {
+    --glass: rgba(250, 250, 250, 0.96);
+    --glass-scrolled: rgba(250, 250, 250, 0.98);
+    --panel-glass: rgba(255, 255, 255, 0.99);
+    --drawer-bg: rgba(250, 250, 250, 0.99);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .header[data-theme='dark'] {
+    --glass: #0e1015;
+    --glass-scrolled: #0e1015;
+    --panel-glass: #0a0c10;
+    --drawer-bg: #0a0c10;
+  }
+
+  .header[data-theme='light'] {
+    --glass: #fafafa;
+    --glass-scrolled: #fafafa;
+    --panel-glass: #ffffff;
+    --drawer-bg: #fafafa;
+  }
+
+  .header::before,
+  .panelInner,
+  .nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Respect "reduce motion": no entrance, no sweeps, no slides */
 @media (prefers-reduced-motion: reduce) {
   .header,
-  .nav,
-  .panel,
-  .chevron,
-  .panelLink,
-  .cta {
-    transition: none;
+  .header *,
+  .header::before,
+  .header::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
   }
 }

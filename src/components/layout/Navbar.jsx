@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, NavLink, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
+import { FiChevronDown } from 'react-icons/fi';
 import styles from './Navbar.module.css';
 
-// TODO: replace with your real app URLs
 const LOGIN_URL = 'https://sign.nexgn.cloud/login';
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
 
@@ -152,15 +151,24 @@ const MENUS = [
   { key: 'pricing', label: 'Pricing', to: '/pricing' },
 ];
 
-// Placeholder mark. Replace with your real logo SVG.
 const LogoMark = () => (
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M26.126 0C29.1586 0.000103077 31.6171 2.45855 31.6172 5.49121V26.126C31.6172 26.399 31.5961 26.6673 31.5576 26.9297L23.9355 19.4746C22.8515 18.4144 21.1035 18.4239 20.0312 19.4961L18.7148 20.8135C17.6431 21.8857 17.6517 23.6146 18.7354 24.6748L25.833 31.6172H5.49121C5.39788 31.6172 5.30508 31.615 5.21289 31.6104L25.165 12.0938C26.2487 11.0333 26.2577 9.30457 25.1855 8.23242L23.8691 6.91602C22.7969 5.84377 21.0488 5.83415 19.9648 6.89453L0.00683594 26.416C0.00183573 26.32 3.37262e-06 26.2233 0 26.126V5.75195L7.64551 13.2314C8.72927 14.2916 10.4775 14.2816 11.5498 13.21L12.8672 11.8926C13.9392 10.8203 13.9296 9.09156 12.8457 8.03125L4.69434 0.0576172C4.9545 0.0197894 5.22056 5.65771e-06 5.49121 0H26.126Z" fill="#ED040F"/>
-</svg>
-
+  <svg
+    className={styles.logoMark}
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      d="M26.126 0C29.1586 0.000103077 31.6171 2.45855 31.6172 5.49121V26.126C31.6172 26.399 31.5961 26.6673 31.5576 26.9297L23.9355 19.4746C22.8515 18.4144 21.1035 18.4239 20.0312 19.4961L18.7148 20.8135C17.6431 21.8857 17.6517 23.6146 18.7354 24.6748L25.833 31.6172H5.49121C5.39788 31.6172 5.30508 31.615 5.21289 31.6104L25.165 12.0938C26.2487 11.0333 26.2577 9.30457 25.1855 8.23242L23.8691 6.91602C22.7969 5.84377 21.0488 5.83415 19.9648 6.89453L0.00683594 26.416C0.00183573 26.32 3.37262e-06 26.2233 0 26.126V5.75195L7.64551 13.2314C8.72927 14.2916 10.4775 14.2816 11.5498 13.21L12.8672 11.8926C13.9392 10.8203 13.9296 9.09156 12.8457 8.03125L4.69434 0.0576172C4.9545 0.0197894 5.22056 5.65771e-06 5.49121 0H26.126Z"
+      fill="currentColor"
+    />
+  </svg>
 );
 
 const DESKTOP_QUERY = '(min-width: 1024px) and (hover: hover)';
+const SCROLL_THRESHOLD = 8;
 
 const Navbar = () => {
   const { t } = useTranslation();
@@ -170,12 +178,15 @@ const Navbar = () => {
   const currentLng = LANGS.includes(lng) ? lng : 'en';
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
 
-  // Homepage (/en, /en/) gets the dark navbar; every other page gets the white one.
+  // Homepage (/en, /en/) gets the dark glass; every other page gets the light glass.
   const isHome = location.pathname.split('/').filter(Boolean).length <= 1;
   const theme = isHome ? 'dark' : 'light';
 
   const [openKey, setOpenKey] = useState(null); // open dropdown (desktop) / accordion (mobile)
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(
+    () => typeof window !== 'undefined' && window.scrollY > SCROLL_THRESHOLD
+  );
   const headerRef = useRef(null);
   const closeTimer = useRef(null);
 
@@ -204,11 +215,19 @@ const Navbar = () => {
   const handleLeave = () => {
     if (!isDesktopHover()) return;
     clearTimer();
-    closeTimer.current = setTimeout(() => setOpenKey(null), 120);
+    closeTimer.current = setTimeout(() => setOpenKey(null), 160);
   };
 
   // Click / keyboard toggle (touch, tablet, keyboard users)
   const handleToggle = (key) => setOpenKey((cur) => (cur === key ? null : key));
+
+  // Highlight the trigger whose menu contains the current page
+  const isActivePath = (path) => {
+    const full = withLng(path);
+    return location.pathname === full || location.pathname.startsWith(`${full}/`);
+  };
+  const menuIsActive = (item) =>
+    item.groups.some((group) => group.links.some((link) => isActivePath(link.to)));
 
   // Close on route change
   useEffect(() => {
@@ -235,6 +254,23 @@ const Navbar = () => {
     };
   }, [closeAll]);
 
+  // Scroll state: switches the glass to its stronger "scrolled" look
+  useEffect(() => {
+    let ticking = false;
+    const update = () => {
+      setScrolled(window.scrollY > SCROLL_THRESHOLD);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   // Lock page scroll while the mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
@@ -248,6 +284,9 @@ const Navbar = () => {
       ref={headerRef}
       className={styles.header}
       data-theme={theme}
+      data-scrolled={scrolled}
+      data-menu-open={openKey !== null}
+      data-mobile-open={mobileOpen}
       onMouseLeave={handleLeave}
       onMouseEnter={clearTimer}
     >
@@ -264,22 +303,25 @@ const Navbar = () => {
           aria-label={t('nav.label', 'Main navigation')}
         >
           <ul className={styles.menu}>
-            {MENUS.map((item) =>
+            {MENUS.map((item, index) =>
               item.groups ? (
                 <li
                   key={item.key}
                   className={styles.item}
+                  style={{ '--i': index + 1 }}
                   onMouseEnter={() => handleEnter(item.key)}
                 >
                   <button
                     type="button"
-                    className={styles.trigger}
+                    className={`${styles.trigger} ${menuIsActive(item) ? styles.active : ''}`}
                     aria-expanded={openKey === item.key}
                     aria-controls={`panel-${item.key}`}
                     onClick={() => handleToggle(item.key)}
                     onFocus={() => handleEnter(item.key)}
                   >
-                    {t(`nav.${item.key}.title`, item.label)}
+                    <span className={styles.triggerLabel}>
+                      {t(`nav.${item.key}.title`, item.label)}
+                    </span>
                     <FiChevronDown className={styles.chevron} aria-hidden="true" />
                   </button>
 
@@ -289,35 +331,37 @@ const Navbar = () => {
                     data-open={openKey === item.key}
                     style={{ '--cols': item.groups.length }}
                   >
-                    <div className={styles.panelInner}>
-                      {item.groups.map((group) => (
-                        <div key={group.key} className={styles.group}>
-                          <h3 className={styles.groupTitle}>
-                            {t(`nav.${item.key}.${group.key}.title`, group.title)}
-                          </h3>
-                          <ul className={styles.groupList}>
-                            {group.links.map((link) => (
-                              <li key={link.key}>
-                                <Link to={withLng(link.to)} className={styles.panelLink}>
-                                  {t(`nav.${item.key}.${group.key}.${link.key}`, link.label)}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                    <div className={styles.panelClip}>
+                      <div className={styles.panelInner}>
+                        {item.groups.map((group, gi) => (
+                          <div key={group.key} className={styles.group} style={{ '--gi': gi }}>
+                            <h3 className={styles.groupTitle}>
+                              {t(`nav.${item.key}.${group.key}.title`, group.title)}
+                            </h3>
+                            <ul className={styles.groupList}>
+                              {group.links.map((link) => (
+                                <li key={link.key}>
+                                  <Link to={withLng(link.to)} className={styles.panelLink}>
+                                    {t(`nav.${item.key}.${group.key}.${link.key}`, link.label)}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </li>
               ) : (
-                <li key={item.key} className={styles.item}>
+                <li key={item.key} className={styles.item} style={{ '--i': index + 1 }}>
                   <NavLink
                     to={withLng(item.to)}
                     className={({ isActive }) =>
                       `${styles.trigger} ${isActive ? styles.active : ''}`
                     }
                   >
-                    {t(`nav.${item.key}`, item.label)}
+                    <span className={styles.triggerLabel}>{t(`nav.${item.key}`, item.label)}</span>
                   </NavLink>
                 </li>
               )
@@ -327,7 +371,7 @@ const Navbar = () => {
           {/* Mobile drawer actions (desktop actions live in the bar) */}
           <div className={styles.drawerActions}>
             <a href={LOGIN_URL} className={styles.login}>
-              {t('nav.login', 'Log in')}
+              <span className={styles.loginLabel}>{t('nav.login', 'Log in')}</span>
             </a>
             <a href={SIGNUP_URL} className={styles.cta}>
               {t('nav.cta', 'Start for free')}
@@ -335,9 +379,9 @@ const Navbar = () => {
           </div>
         </nav>
 
-        <div className={styles.actions}>
+        <div className={styles.actions} style={{ '--i': MENUS.length + 1 }}>
           <a href={LOGIN_URL} className={styles.login}>
-            {t('nav.login', 'Log in')}
+            <span className={styles.loginLabel}>{t('nav.login', 'Log in')}</span>
           </a>
           <a href={SIGNUP_URL} className={styles.cta}>
             {t('nav.cta', 'Start for free')}
@@ -355,7 +399,11 @@ const Navbar = () => {
             setMobileOpen((v) => !v);
           }}
         >
-          {mobileOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+          <span className={styles.burgerBox} aria-hidden="true">
+            <span className={styles.burgerLine} />
+            <span className={styles.burgerLine} />
+            <span className={styles.burgerLine} />
+          </span>
         </button>
       </div>
     </header>
