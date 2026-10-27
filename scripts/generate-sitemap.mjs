@@ -19,7 +19,8 @@ const ROUTES = [
 ];
 
 const generateSitemap = () => {
-  const today = new Date().toISOString.split('T')[0];
+  // FIXED: Added () to toISOString so it executes properly before splitting
+  const today = new Date().toISOString().split('T')[0];
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
 
@@ -49,7 +50,7 @@ const generateSitemap = () => {
 
   // Write to the public directory so Rsbuild picks it up during the build
   fs.writeFileSync(path.resolve('public/sitemap.xml'), xml);
-  console.log('Dynamic sitemap generated successfully.');
+  console.log('✅ Dynamic sitemap generated successfully.');
 };
 
 generateSitemap();
