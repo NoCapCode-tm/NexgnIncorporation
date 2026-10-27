@@ -1,0 +1,352 @@
+/* Sizing variables inherited and refined for fluid 4K scaling */
+.page {
+  --black: #000000;
+  --light: #fdfdfd;
+  --grey: #f0f1f2;
+  --ink: #0d1017;
+  --soft: #5b6270;
+  --red: #ed040f;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  
+  --fs-eyebrow: clamp(0.6875rem, 3vw, 0.875rem);
+  --fs-h1: clamp(2.5rem, 6vw, 5.5rem);
+  --fs-h2: clamp(1.75rem, 4vw, 3.5rem);
+  --fs-h3: clamp(1.125rem, 1.5vw, 1.5rem);
+  --fs-lead: clamp(1rem, 2vw, 1.25rem);
+  --fs-body: clamp(0.9rem, 1.2vw, 1.125rem);
+  
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+}
+
+.red {
+  color: var(--red);
+}
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+
+.reveal[data-in='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 1. Hero Section ---------- */
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 10rem));
+  padding-bottom: clamp(5rem, 10vw, 12rem);
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+  text-align: center;
+  color: #fff;
+  margin-top: calc(var(--nav-h) * -1); /* Pull under transparent navbar */
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  /* Dark forest/soil gradient fallback until you add the actual image */
+  background: linear-gradient(135deg, #182218, #0a0e0a);
+  background-size: cover;
+  background-position: center;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.heroContent {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.heroTitle {
+  margin: 0 0 1.5rem;
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.heroLead {
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 48rem;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
+/* ---------- 2. Two Column Intro ---------- */
+.introSection {
+  padding: clamp(4rem, 8vw, 10rem) var(--pad-x);
+  background: #ffffff;
+}
+
+.twoCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 6rem);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .twoCol {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.textCol, .imageCol {
+  flex: 1;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: var(--fs-h2);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  text-wrap: balance;
+}
+
+.paragraph {
+  font-size: var(--fs-body);
+  color: var(--soft);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.placeholderImg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #a8a8a8; /* Matches the gray box from the design */
+  border-radius: clamp(1rem, 2vw, 2rem);
+}
+
+/* ---------- 3. Impact Stats ---------- */
+.statsSection {
+  padding: clamp(4rem, 8vw, 10rem) var(--pad-x);
+  background: #fdfdfd;
+}
+
+.headCenter {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+}
+
+.statsTitle {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.statsGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2.3vw, 2rem);
+}
+
+@media (min-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.statCard {
+  position: relative;
+  container-type: inline-size;
+  overflow: hidden;
+  aspect-ratio: 13 / 20;
+  background: #000;
+  color: #fff;
+  border-radius: clamp(1rem, 1.75vw, 2rem);
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+
+.statCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -24px rgba(237, 4, 15, 0.45);
+}
+
+/* Glow effect identical to Home.module.css */
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 36% 24% at var(--g1x) var(--g1y),
+      rgba(150, 24, 24, 1),
+      rgba(130, 20, 20, 0.5) 50%,
+      transparent
+    ),
+    radial-gradient(
+      ellipse 30% 20% at var(--g2x) var(--g2y),
+      rgba(150, 24, 24, 0.95),
+      rgba(130, 20, 20, 0.45) 50%,
+      transparent
+    );
+  animation: glowPulse 5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.statBig {
+  position: absolute;
+  top: var(--by);
+  left: var(--bx);
+  font-size: 50cqw;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: #fff;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.statValue {
+  position: absolute;
+  top: 45cqw;
+  left: 10cqw;
+  margin: 0;
+  font-size: 28cqw;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #ff0a14;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  position: absolute;
+  left: 9.5cqw;
+  right: 9.5cqw;
+  bottom: 24cqw;
+  margin: 0;
+  font-size: max(0.8125rem, 5.9cqw);
+  line-height: 1.4;
+  color: #fff;
+}
+
+/* ---------- 4. Our Practice ---------- */
+.practiceSection {
+  padding: clamp(3rem, 6vw, 8rem) var(--pad-x) clamp(5rem, 10vw, 12rem);
+  background: #f7f7f7; /* Very subtle off-white for contrast */
+}
+
+.eyebrowDark {
+  margin: 0 0 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.15em;
+  color: var(--soft);
+}
+
+.practiceLead {
+  font-size: var(--fs-lead);
+  color: var(--soft);
+  max-width: 600px;
+  margin: 1.5rem auto 0;
+  line-height: 1.6;
+}
+
+.practiceImageWrapper {
+  width: 100%;
+  margin: clamp(2rem, 5vw, 4rem) 0;
+}
+
+.practiceLargePlaceholder {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  background: #fff;
+  border-radius: clamp(1rem, 2vw, 2rem);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+}
+
+@media (max-width: 768px) {
+  .practiceLargePlaceholder {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+}
+
+@media (min-width: 768px) {
+  .pillarsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.pillar h3 {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+}
+
+.pillar p {
+  font-size: var(--fs-body);
+  color: var(--soft);
+  line-height: 1.6;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes glowPulse {
+  from { opacity: 0.75; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .statCard::before {
+    animation: none;
+  }
+}

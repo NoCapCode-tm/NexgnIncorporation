@@ -10,9 +10,6 @@ import styles from './Footer.module.css';
  * Paths below are relative to the language prefix.
  * AppRouter mounts everything under /:lng/*, so "/products/esignature"
  * becomes "/en/products/esignature" at render time.
- *
- * TODO routes not yet in AppRouter (they will hit the 404 page until added):
- *   /solutions/finance, /about, /careers, /contact, /partners, /legal/cookies
  */
 const COLUMNS = [
   {
@@ -46,7 +43,6 @@ const COLUMNS = [
       { key: 'api', label: 'API Documentation', to: '/developers/api-reference' },
       { key: 'webhooks', label: 'Webhooks', to: '/developers/webhooks' },
       { key: 'sdks', label: 'SDKs', to: '/developers/sdks' },
-      // TODO: replace with your real status page URL
       { key: 'status', label: 'System Status', href: 'https://status.nexgn.cloud' },
     ],
   },
@@ -69,6 +65,7 @@ const COLUMNS = [
       { key: 'careers', label: 'Careers', to: '/careers' },
       { key: 'contact', label: 'Contact', to: '/contact' },
       { key: 'partners', label: 'Partners', to: '/partners' },
+      { key: 'blog', label: 'Blog', to: '/blog' }, // Added Blog Route Here
     ],
   },
   {
@@ -90,7 +87,6 @@ const SOCIALS = [
   { key: 'github', label: 'GitHub', href: 'https://github.com/', Icon: FaGithub },
 ];
 
-// Must match the folders in public/locales and supportedLanguages in AppRouter
 const LANGUAGES = [
   { code: 'en', label: 'English (US)' },
   { code: 'es', label: 'Español' },
@@ -99,7 +95,7 @@ const LANGUAGES = [
 
 const Footer = () => {
   const { t } = useTranslation();
-  const { lng } = useParams(); // Footer renders inside /:lng/*
+  const { lng } = useParams(); 
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -111,7 +107,6 @@ const Footer = () => {
 
   const handleLanguageChange = (e) => {
     const next = e.target.value;
-    // swap only the first URL segment: /en/pricing -> /es/pricing
     const nextPath = location.pathname.replace(/^\/[^/]+/, `/${next}`);
     navigate(`${nextPath}${location.search}${location.hash}`);
   };
@@ -159,7 +154,6 @@ const Footer = () => {
           </p>
 
           <div className={styles.meta}>
-            {/* Native <select> sits invisibly over the label: accessible + styled */}
             <label className={styles.lang}>
               <FiGlobe aria-hidden="true" />
               <span>{currentLabel}</span>

@@ -76,6 +76,13 @@ const AUP = lazy(() => import('../pages/legal/AUP'));
 const DPA = lazy(() => import('../pages/legal/DPA'));
 const Refunds = lazy(() => import('../pages/legal/Refunds'));
 
+// 9. Company Pages
+const Contact = lazy(() => import('../pages/company/Contact'));
+const About = lazy(() => import('../pages/company/About'));
+const Careers = lazy(() => import('../pages/company/Careers'));
+const Press = lazy(() => import('../pages/company/Press'));
+const Blog = lazy(() => import('../pages/company/Blog'));
+
 // ==========================================
 // CONSTANTS
 // ==========================================
@@ -170,7 +177,6 @@ const LanguageWrapper = () => {
             <Route path="/solutions/enterprise" element={<Enterprise />} />
 
             {/* pSEO / Alternatives Routes */}
-            {/* This single route automatically handles /alternatives/docusign, /alternatives/pandadoc, etc. */}
             <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 
             {/* Developer Routes */}
@@ -198,6 +204,17 @@ const LanguageWrapper = () => {
             <Route path="/legal/acceptable-use" element={<AUP />} />
             <Route path="/legal/dpa" element={<DPA />} />
             <Route path="/legal/refunds" element={<Refunds />} />
+
+            {/* Company Routes */}
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/press" element={<Press />} />
+            
+            {/* Blog Routes */}
+            <Route path="/blog" element={<Blog />} />
+            {/* This handles individual dynamic blog posts (e.g. /blog/shift-to-aes-256) */}
+            <Route path="/blog/:slug" element={<Blog />} /> 
 
             {/* Global 404 Catch-All */}
             <Route path="*" element={<NotFound />} />
