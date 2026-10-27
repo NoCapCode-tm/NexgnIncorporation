@@ -59,4 +59,4 @@ Disallow: /dashboard/
 # --------------------------------------------------
 # 3. SITEMAP LOCATION
 # --------------------------------------------------
-Sitemap: https://nexgn.cloud/sitemap.xml
+Sitemap: https://preview.nexgn.cloud/sitemap.xml
