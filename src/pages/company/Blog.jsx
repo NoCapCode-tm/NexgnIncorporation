@@ -7,7 +7,7 @@ import CtaBanner from '../../components/common/CtaBanner';
 import styles from './Blog.module.css';
 
 // Import the specific CTA image
-import ctaOtherImg from '../../assets/home/cta_other.png';
+import ctaOtherImg from '../../assets/common/cta.png';
 
 /* =====================================================================
    Scroll Reveal Helpers
