@@ -1,0 +1,197 @@
+.page {
+  --black: #000000;
+  --dark: #0d1017;
+  --light: #ffffff;
+  --ink: #0d1017;
+  --soft: #6e7687;
+  --red: #ed040f;
+  --red-hover: #d1030d;
+  
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* ---------- Scroll Reveal Animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.reveal[data-in='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  background: var(--dark);
+  color: #fff;
+  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 6rem));
+  padding-bottom: clamp(5rem, 10vw, 8rem);
+  text-align: center;
+  margin-top: calc(var(--nav-h) * -1); /* Pulls up under the transparent navbar */
+}
+
+.heroContent {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.7rem, 2vw, 0.8125rem);
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 0;
+  white-space: pre-line;
+  text-wrap: balance;
+}
+
+/* ---------- CONTENT GRID ---------- */
+.contentSection {
+  padding: clamp(5rem, 10vw, 10rem) 0;
+  background: #ffffff;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 6rem);
+}
+
+/* On Desktop, split into a visually balanced 2-column layout */
+@media (min-width: 900px) {
+  .grid {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+/* Left Column */
+.leftCol {
+  flex: 1;
+  max-width: 500px;
+}
+
+.headline {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Right Column */
+.rightCol {
+  flex: 1.2;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.paragraph {
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  line-height: 1.6;
+  color: var(--soft);
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+}
+
+/* MNC Grade Button Animation */
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--red);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.125rem);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 14px 0 rgba(237, 4, 15, 0.39);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s ease;
+}
+
+.btnIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Contains the dropping icon */
+}
+
+.btnIcon {
+  font-size: 1.25rem;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.downloadBtn:hover {
+  background: var(--red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(237, 4, 15, 0.5);
+}
+
+/* Hover causes the download arrow to drop down slightly, mimicking a download action */
+.downloadBtn:hover .btnIcon {
+  transform: translateY(3px);
+}
+
+.downloadBtn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.note {
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  line-height: 1.5;
+  color: var(--soft);
+  margin: 1.5rem 0 0;
+}
+
+.note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .downloadBtn {
+    transition: none;
+  }
+  .downloadBtn:hover .btnIcon {
+    transform: none;
+  }
+}

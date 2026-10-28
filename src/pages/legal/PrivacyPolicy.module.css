@@ -1,0 +1,327 @@
+.page {
+  --black: #000000;
+  --dark: #0d1017;
+  --light: #ffffff;
+  --grey: #f4f5f6;
+  --ink: #0d1017;
+  --soft: #5b6270;
+  --red: #ed040f;
+  
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* ---------- 1. HERO ---------- */
+.hero {
+  background: var(--dark);
+  color: #fff;
+  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 6rem));
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  text-align: left;
+  margin-top: calc(var(--nav-h) * -1); /* Pulls up under the transparent navbar */
+}
+
+.heroContent {
+  max-width: 1000px;
+  padding: 0;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.7rem, 2vw, 0.8125rem);
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+/* ---------- 2. CONTENT GRID ---------- */
+.contentSection {
+  padding: clamp(4rem, 8vw, 8rem) 0;
+  background: #ffffff;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 6rem);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+/* ---------- SIDEBAR (LEFT) ---------- */
+.sidebar {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.stickyNav {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.navHeader {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--soft);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 0 0.75rem 1rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-family: inherit;
+  color: var(--soft);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.3s var(--ease-out);
+}
+
+.navItem:hover {
+  color: var(--ink);
+}
+
+.activeNav {
+  color: var(--ink);
+  font-weight: 500;
+  border-left-color: var(--ink);
+}
+
+/* ---------- MAIN CONTENT (RIGHT) ---------- */
+.mainContent {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4rem, 8vw, 6rem);
+  padding-bottom: 20vh; /* Extra space so the last item can scroll into the active zone */
+}
+
+/* Animation & Scrolling Logic */
+.policyBlock {
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+
+.activeBlock {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.inactiveBlock {
+  opacity: 0.3;
+  transform: translateX(-10px);
+}
+
+@media (max-width: 899px) {
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+  .stickyNav {
+    position: static;
+  }
+}
+
+/* Typography */
+.policyTitle {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  color: var(--ink);
+}
+
+.policyText {
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.8;
+  color: var(--soft);
+  margin: 0 0 2rem 0;
+  max-width: 800px;
+}
+
+/* ---------- CUSTOM UI COMPONENTS ---------- */
+
+/* Section 1: Role Cards */
+.roleCardsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2rem);
+  max-width: 900px;
+}
+
+@media (min-width: 768px) {
+  .roleCardsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.roleCard {
+  background: var(--grey);
+  border-radius: clamp(1rem, 1.5vw, 1.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.iconSquarePlaceholder {
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.cardEyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.cardTitle {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+
+.cardDesc {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  line-height: 1.6;
+  color: var(--soft);
+  margin: 0;
+}
+
+/* Section 2: Telemetry List & Note Card */
+.telemetryList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetryItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.telemetryItem:last-child {
+  border-bottom: none;
+}
+
+.bulletSquare {
+  width: 24px;
+  height: 24px;
+  background-color: var(--grey);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.noteCard {
+  background: var(--grey);
+  border-radius: clamp(0.75rem, 1.5vw, 1rem);
+  padding: clamp(1.5rem, 2vw, 2rem);
+  max-width: 800px;
+}
+
+.noteDesc {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  line-height: 1.6;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Section 3: AI Guarantee Card (Dark) */
+.aiGuaranteeCard {
+  background: var(--ink);
+  border-radius: clamp(1rem, 1.5vw, 1.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .aiGuaranteeCard {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.aiIconSquare {
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 8px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.aiGuaranteeText {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+  color: #ffffff;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .policyBlock {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+}

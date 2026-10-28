@@ -1,0 +1,254 @@
+.page {
+  --black: #000000;
+  --dark: #0d1017;
+  --light: #ffffff;
+  --ink: #0d1017;
+  --soft: #6e7687;
+  --red: #ed040f;
+  
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* ---------- Scroll Reveal Animation (MNC Grade) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.reveal[data-in='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- 1. HERO ---------- */
+.hero {
+  background: var(--dark);
+  color: #fff;
+  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 6rem));
+  padding-bottom: clamp(5rem, 10vw, 7rem);
+  text-align: center;
+  margin-top: calc(var(--nav-h) * -1); /* Pulls up under the transparent navbar */
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.7rem, 2vw, 0.8125rem);
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 0 0 1.5rem;
+  white-space: pre-line;
+}
+
+.heroLead {
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* ---------- 2. CONTENT GRID ---------- */
+.contentSection {
+  padding: clamp(4rem, 8vw, 8rem) 0;
+  background: #ffffff;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 6rem);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+/* ---------- SIDEBAR (LEFT) ---------- */
+.sidebar {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.stickyNav {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.navHeader {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--soft);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 0 0.75rem 1rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-family: inherit;
+  color: var(--soft);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.3s var(--ease-out);
+}
+
+.navItem:hover {
+  color: var(--ink);
+}
+
+.activeNav {
+  color: var(--ink);
+  font-weight: 500;
+  border-left-color: var(--ink);
+}
+
+/* ---------- MAIN CONTENT (RIGHT) ---------- */
+.mainContent {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4rem, 8vw, 6rem);
+  padding-bottom: 20vh; /* Extra space so the last item can scroll into the active zone */
+}
+
+.articleWrapper {
+  width: 100%;
+}
+
+.policyBlock {
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+
+/* Scroll-Spy Focus Interaction */
+.activeBlock {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.inactiveBlock {
+  opacity: 0.3;
+  transform: translateX(-10px);
+}
+
+/* On mobile, disable the scroll-spy fade effect for better readability */
+@media (max-width: 899px) {
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+  .stickyNav {
+    position: static;
+  }
+}
+
+.policyTitle {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+}
+
+.policyText {
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.8;
+  color: var(--soft);
+  margin: 0 0 2rem 0;
+  max-width: 800px;
+}
+
+/* Custom Bullet Points (Grey Squares from Design) */
+.bulletList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bulletItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bulletSquare {
+  width: 24px;
+  height: 24px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.bulletText {
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Accessibility for Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .policyBlock {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+}

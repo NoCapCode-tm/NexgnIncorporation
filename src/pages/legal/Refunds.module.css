@@ -1,0 +1,192 @@
+.page {
+  --black: #000000;
+  --dark: #0d1017;
+  --light: #ffffff;
+  --ink: #0d1017;
+  --soft: #5b6270;
+  --red: #ed040f;
+  
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  box-sizing: border-box;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  background: var(--dark);
+  color: #fff;
+  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 6rem));
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+  text-align: center;
+  margin-top: calc(var(--nav-h) * -1); /* Pulls up under the transparent navbar */
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.7rem, 2vw, 0.8125rem);
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  margin: 0;
+  white-space: pre-line; /* Allows the \n in the string to break lines */
+}
+
+/* ---------- CONTENT GRID ---------- */
+.contentSection {
+  padding: clamp(4rem, 8vw, 8rem) 0;
+  background: #ffffff;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 6rem);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+/* ---------- SIDEBAR (LEFT) ---------- */
+.sidebar {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.stickyNav {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.navHeader {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--soft);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 0 0.75rem 1rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-family: inherit;
+  color: var(--soft);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.3s var(--ease-out);
+}
+
+.navItem:hover {
+  color: var(--ink);
+}
+
+.activeNav {
+  color: var(--ink);
+  font-weight: 500;
+  border-left-color: var(--ink); /* The black vertical line from the design */
+}
+
+/* ---------- MAIN CONTENT (RIGHT) ---------- */
+.mainContent {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4rem, 8vw, 6rem);
+  padding-bottom: 20vh; /* Extra space so the last item can scroll into the active zone */
+}
+
+.policyBlock {
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+
+/* The magic interaction: Fading out inactive sections */
+.activeBlock {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.inactiveBlock {
+  opacity: 0.3;
+  transform: translateX(-10px); /* Subtle shift to draw focus away */
+}
+
+/* On mobile, disable the fade effect so it's readable when scrolling normally */
+@media (max-width: 899px) {
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+  .stickyNav {
+    position: static;
+  }
+}
+
+.policyTitle {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+}
+
+.policyText {
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.8;
+  color: var(--soft);
+  margin: 0;
+  max-width: 800px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .policyBlock {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .inactiveBlock {
+    opacity: 1;
+    transform: none;
+  }
+}
