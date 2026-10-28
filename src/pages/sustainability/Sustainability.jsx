@@ -1,250 +1,203 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SEOHead } from '../../components/seo/SEOHead';
+import Reveal from '../../components/common/Reveal';
+import ImpactStats from '../../components/common/ImpactStats';
 import CtaBanner from '../../components/common/CtaBanner';
 import styles from './Sustainability.module.css';
 
-// Import the specific CTA image
-import ctaOtherImg from '../../assets/home/cta_other.png';
-
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
 const LOGIN_URL = 'https://sign.nexgn.cloud/login';
+const LANGS = ['en', 'es', 'hi'];
 
 /* =====================================================================
-   Scroll & Animation Helpers
+   IMAGES
+   Drop photos into  src/assets/sustainability/  (the folder must exist). Files are picked up by
+   NAME, any extension (png / jpg / jpeg / webp / avif / svg). A missing file never breaks the build.
+
+     hero       dark photo behind the hero (hands holding a seedling)
+     intro      picture next to "The paperwork doesn't end..." (grey box until added)
+     practice   large visual above the three pledges (empty card until added)
+     (the bottom CTA photo is shared: src/assets/common/cta.*)
    ===================================================================== */
-const useInView = (threshold = 0.15) => {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(() => typeof IntersectionObserver === 'undefined');
+const imageContext = require.context('../../assets/sustainability', false, /\.(png|jpe?g|webp|avif|svg)$/i);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { threshold, rootMargin: '0px 0px -6% 0px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [threshold]);
-
-  return [ref, inView];
+const findImage = (name) => {
+  const key = imageContext
+    .keys()
+    .find((k) => k.replace(/^\.\//, '').replace(/\.[^.]+$/, '').toLowerCase() === name);
+  if (!key) return null;
+  const mod = imageContext(key);
+  return (mod && mod.default) || mod;
 };
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-const Reveal = ({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) => {
-  const [ref, inView] = useInView();
-  return (
-    <Tag
-      ref={ref}
-      className={`${styles.reveal} ${className}`}
-      data-in={inView}
-      style={{ '--d': `${delay}ms` }}
-      {...rest}
-    >
-      {children}
-    </Tag>
-  );
+const IMAGES = {
+  hero: findImage('hero'),
+  intro: findImage('intro'),
+  practice: findImage('practice'),
 };
 
-const CountUp = ({ to, suffix = '', duration = 1800 }) => {
-  const [ref, inView] = useInView(0.4);
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return undefined;
-    if (prefersReducedMotion()) {
-      setValue(to);
-      return undefined;
-    }
-    let raf;
-    const start = performance.now();
-    const tick = (now) => {
-      const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 4); // easeOutQuart
-      setValue(Math.round(to * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, to, duration]);
-
-  return (
-    <span ref={ref}>
-      {value.toLocaleString('en-US')}
-      {suffix}
-    </span>
-  );
-};
-
-/* =====================================================================
-   Data
-   ===================================================================== */
-const STATS = [
+const PILLARS = [
   {
-    key: 'paper',
-    big: '2L+',
-    value: 2,
-    suffix: 'L+',
-    label: 'Estimated paper sheets saved',
-    vars: { '--g1x': '28%', '--g1y': '8%', '--g2x': '86%', '--g2y': '92%', '--bx': '46cqw', '--by': '-13cqw' },
+    key: 'measure',
+    title: 'We Measure & Disclose',
+    text: 'We track the avoided environmental impact of digital workflows from paper sheets saved to transit avoided. We openly publish the methodology behind our Live Impact Tracker and refuse to use "greenwashing" estimates.',
   },
   {
-    key: 'hours',
-    big: '150+',
-    value: 150,
-    suffix: '+',
-    label: 'Admin Hours Reclaimed',
-    vars: { '--g1x': '2%', '--g1y': '10%', '--g2x': '-10%', '--g2y': '110%', '--bx': '9cqw', '--by': '-11cqw' },
+    key: 'code',
+    title: 'We Optimize Our Code',
+    text: 'Heavy software requires heavy servers. We build Nexgn using optimized React and Node.js architectures to ensure low latency, reduced server load, and minimized carbon emissions from our data centers.',
   },
   {
-    key: 'co2',
-    big: '1000+',
-    value: 1000,
-    suffix: '+',
-    label: 'Kg CO₂ Mitigated',
-    vars: { '--g1x': '6%', '--g1y': '30%', '--g2x': '100%', '--g2y': '84%', '--bx': '6cqw', '--by': '-12cqw' },
+    key: 'longterm',
+    title: 'We Build for the Long Term.',
+    text: 'We pledge to align our operations with global sustainability frameworks (like GHG Protocol) as we scale, continually auditing our digital footprint.',
   },
 ];
 
 const Sustainability = () => {
   const { t } = useTranslation();
+  const { lng } = useParams();
+  const currentLng = LANGS.includes(lng) ? lng : 'en';
   const tr = (key, fallback) => t(`sustainability.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Our Sustainability Pledge | Nexgn');
+  const seoTitle = tr('seo.title', 'Sustainability Pledge | Nexgn');
   const seoDescription = tr(
     'seo.description',
-    'Nexgn is committed to reducing environmental impact. Learn how digital agreements save paper, lower carbon emissions, and reclaim administrative hours.'
+    'Better agreements, a lighter footprint. See how Nexgn measures and reduces the environmental cost of agreements, optimizes its code and builds for the long term.'
   );
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: seoTitle,
+    description: seoDescription,
+    url: 'https://nexgn.cloud/sustainability',
+    inLanguage: currentLng,
+    isPartOf: { '@id': 'https://nexgn.cloud/#website' },
+  };
 
   return (
     <div className={styles.page}>
-      <SEOHead title={seoTitle} description={seoDescription} url="/sustainability" />
+      <SEOHead title={seoTitle} description={seoDescription} url="/sustainability" schema={schema} />
 
       {/* ============ 1. HERO ============ */}
-      <section className={styles.hero}>
-        <div className={styles.heroBg} aria-hidden="true" />
+      <section
+        className={styles.hero}
+        style={IMAGES.hero ? { '--img': `url("${IMAGES.hero}")` } : undefined}
+        aria-labelledby="sus-title"
+      >
+        <div className={styles.photo} aria-hidden="true" />
         <div className={styles.shade} aria-hidden="true" />
-        
+
         <div className={styles.container}>
-          <Reveal className={styles.heroContent}>
-            <p className={styles.eyebrow}>{tr('hero.eyebrow', 'THE NEXGN SUSTAINABILITY PLEDGE')}</p>
-            <h1 className={styles.heroTitle}>
-              {tr('hero.title1', 'Better agreements.')} <br/>
-              {tr('hero.title2', 'A lighter ')} <span className={styles.red}>{tr('hero.title3', 'footprint.')}</span>
-            </h1>
-            <p className={styles.heroLead}>
-              {tr('hero.lead', 'We’re building a more efficient way to manage agreements with a commitment to measuring our impact, improving our technology and being transparent about our progress.')}
-            </p>
-          </Reveal>
+          <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.rise}`}>
+            {tr('hero.eyebrow', 'The Nexgn Sustainability Pledge')}
+          </p>
+          <h1 id="sus-title" className={styles.heroTitle}>
+            <span className={styles.heroLine} style={{ '--d': '100ms' }}>
+              {tr('hero.line1', 'Better agreements.')}
+            </span>
+            <span className={styles.heroLine} style={{ '--d': '220ms' }}>
+              {tr('hero.line2a', 'A lighter')} <span className={styles.red}>{tr('hero.line2b', 'footprint')}</span>.
+            </span>
+          </h1>
+          <p className={`${styles.heroText} ${styles.rise}`} style={{ '--d': '360ms' }}>
+            {tr(
+              'hero.text',
+              'We’re building a more efficient way to manage agreements with a commitment to measuring our impact, improving our technology and being transparent about our progress.'
+            )}
+          </p>
         </div>
       </section>
 
-      {/* ============ 2. TWO COLUMN INTRO ============ */}
-      <section className={styles.introSection}>
-        <div className={`${styles.container} ${styles.twoCol}`}>
-          <Reveal className={styles.textCol}>
-            <h2 className={styles.sectionTitle}>
+      {/* ============ 2. INTRO ============ */}
+      <section className={`${styles.section} ${styles.intro}`}>
+        <div className={`${styles.container} ${styles.introGrid}`}>
+          <Reveal className={styles.introText}>
+            <h2 className={styles.introTitle}>
               {tr('intro.title', 'The paperwork doesn’t end when the deal is done.')}
             </h2>
-            <p className={styles.paragraph}>
-              {tr('intro.p1', 'Traditional agreement workflows can involve printing, scanning, couriering, storing and manually tracking documents. Each step adds work—and can carry an environmental cost.')}
+            <p>
+              {tr(
+                'intro.p1',
+                'Traditional agreement workflows can involve printing, scanning, couriering, storing and manually tracking documents. Each step adds work—and can carry an environmental cost.'
+              )}
             </p>
-            <p className={styles.paragraph}>
-              {tr('intro.p2', 'Nexgn helps teams move those processes into a connected digital workflow. Our responsibility is to make that workflow more efficient while understanding and reducing the footprint of the technology behind it.')}
+            <p>
+              {tr(
+                'intro.p2',
+                'Nexgn helps teams move these processes into a connected digital workflow. Our responsibility is to make that workflow more efficient while understanding and reducing the footprint of the technology behind it.'
+              )}
             </p>
           </Reveal>
-          
-          <Reveal className={styles.imageCol} delay={200}>
-            {/* Placeholder for real image: replace className with <OptimizedImage> later */}
-            <div className={styles.placeholderImg} aria-label="Visual of digital workflow vs paper"></div>
+
+          <Reveal delay={120} className={styles.introMedia}>
+            {IMAGES.intro && <img src={IMAGES.intro} alt="" loading="lazy" />}
           </Reveal>
         </div>
       </section>
 
-      {/* ============ 3. IMPACT STATS ============ */}
-      <section className={styles.statsSection}>
+      {/* ============ 3. IMPACT ============ */}
+      <section className={`${styles.section} ${styles.impact}`}>
         <div className={styles.container}>
-          <Reveal className={styles.headCenter}>
-            <h2 className={styles.statsTitle}>
-              {tr('stats.title1', 'Every Agreement Leaves a Smaller')} <br/>
-              <span className={styles.red}>{tr('stats.title2', 'Footprint')}</span>
+          <Reveal className={styles.head}>
+            <h2 className={styles.title}>
+              <span className={styles.line}>{tr('impact.title1', 'Every Agreement Leaves a Smaller')}</span>{' '}
+              <span className={`${styles.line} ${styles.red}`}>{tr('impact.title2', 'Footprint')}</span>
             </h2>
           </Reveal>
+          <ImpactStats />
+        </div>
+      </section>
 
-          <ul className={styles.statsGrid}>
-            {STATS.map((stat, i) => (
-              <Reveal
-                as="li"
-                key={stat.key}
-                delay={i * 150}
-                className={styles.statCard}
-                style={{ '--d': `${i * 100}ms`, ...stat.vars }}
-              >
-                <span className={styles.statBig} aria-hidden="true">
-                  {stat.big}
-                </span>
-                <p className={styles.statValue}>
-                  <CountUp to={stat.value} suffix={stat.suffix} />
-                </p>
-                <p className={styles.statLabel}>{tr(`impact.${stat.key}`, stat.label)}</p>
+      {/* ============ 4. PLEDGE IN PRACTICE ============ */}
+      <section className={`${styles.section} ${styles.practice}`}>
+        <div className={styles.container}>
+          <Reveal className={styles.head}>
+            <p className={`${styles.eyebrow} ${styles.eyebrowSlate}`}>
+              {tr('practice.eyebrow', 'Our pledge in practice')}
+            </p>
+            <h2 className={styles.title}>
+              <span className={styles.line}>{tr('practice.title1', 'Responsibility isn’t a tagline.')}</span>{' '}
+              <span className={styles.line}>{tr('practice.title2', 'It’s a practice.')}</span>
+            </h2>
+            <p className={styles.lead}>
+              {tr(
+                'practice.text',
+                'We’re focusing on three areas where Nexgn can make meaningful improvements as our platform grows.'
+              )}
+            </p>
+          </Reveal>
+
+          <Reveal className={styles.practiceMedia}>
+            {IMAGES.practice && <img src={IMAGES.practice} alt="" loading="lazy" />}
+          </Reveal>
+
+          <ul className={styles.pillars}>
+            {PILLARS.map((p, i) => (
+              <Reveal as="li" key={p.key} delay={i * 100} className={styles.pillar}>
+                <h3 className={styles.pillarTitle}>{tr(`pillars.${p.key}.title`, p.title)}</h3>
+                <p className={styles.pillarText}>{tr(`pillars.${p.key}.text`, p.text)}</p>
               </Reveal>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ============ 4. OUR PRACTICE ============ */}
-      <section className={styles.practiceSection}>
-        <div className={styles.container}>
-          <Reveal className={styles.headCenter}>
-            <p className={styles.eyebrowDark}>{tr('practice.eyebrow', 'MEASURING OUR PROGRESS')}</p>
-            <h2 className={styles.sectionTitle}>
-              {tr('practice.title', 'Responsibility isn’t a tagline. It’s a practice.')}
-            </h2>
-            <p className={styles.practiceLead}>
-              {tr('practice.subtitle', 'We’re focusing on three areas where Nexgn can make meaningful improvements as our platform grows.')}
-            </p>
-          </Reveal>
-
-          <Reveal className={styles.practiceImageWrapper} delay={200}>
-             <div className={styles.practiceLargePlaceholder}></div>
-          </Reveal>
-
-          <div className={styles.pillarsGrid}>
-            <Reveal className={styles.pillar} delay={100}>
-              <h3>{tr('practice.pillar1.title', 'We Measure & Disclose')}</h3>
-              <p>{tr('practice.pillar1.desc', 'We track the combined environmental impact of digital workflows (vs paper sheets saved by every user). We openly publish the methodology behind our footprint tracker and refine it over time to ensure accuracy.')}</p>
-            </Reveal>
-            <Reveal className={styles.pillar} delay={200}>
-              <h3>{tr('practice.pillar2.title', 'We Optimize Our Code')}</h3>
-              <p>{tr('practice.pillar2.desc', 'Heavy software requires heavy servers. We build Nexgn using optimized React and Node.js architectures to ensure low latency, reduced server load, and minimized carbon emissions from our data centers.')}</p>
-            </Reveal>
-            <Reveal className={styles.pillar} delay={300}>
-              <h3>{tr('practice.pillar3.title', 'We Build for the Long Term')}</h3>
-              <p>{tr('practice.pillar3.desc', 'We pledge to align our operations with global sustainability frameworks (like GHG Protocol) as we scale, continually auditing our digital footprint.')}</p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ 5. CTA BANNER ============ */}
+      {/* ============ 5. CTA (CtaBanner: shared photo from src/assets/common/cta.*) ============ */}
       <CtaBanner
-        image={ctaOtherImg}
+        imagePosition="center 40%"
+        height="max(28rem, 40.7vw)"
         title={tr('cta.title', 'Start signing documents')}
         highlight={tr('cta.highlight', 'signing')}
-        text={tr('cta.text', 'Start signing documents the simpler way. Join modern businesses reducing their paper trail securely with Nexgn.')}
+        text={tr(
+          'cta.text',
+          'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
+        )}
         primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}
         secondary={{ label: tr('cta.secondary', 'Login'), href: LOGIN_URL }}
-        // Override overlay positioning to focus on the tablet signing context from the design
-        imagePosition="center 70%"
       />
     </div>
   );

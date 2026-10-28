@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaLinkedinIn, FaGithub } from 'react-icons/fa';
+import { FaLinkedinIn } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
+import { FaInstagram } from 'react-icons/fa';
 import { FiGlobe } from 'react-icons/fi';
 import styles from './Footer.module.css';
 
@@ -84,7 +85,7 @@ const COLUMNS = [
 const SOCIALS = [
   { key: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/company/nexgncloud', Icon: FaLinkedinIn },
   { key: 'x', label: 'X', href: 'https://x.com/nexgncloud', Icon: FaXTwitter },
-  { key: 'github', label: 'GitHub', href: 'https://github.com/', Icon: FaGithub },
+  { key: 'Instagram', label: 'Instagram', href: 'https://www.instagram.com/nexgn.cloud', Icon: FaInstagram },
 ];
 
 const LANGUAGES = [

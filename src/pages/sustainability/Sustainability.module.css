@@ -1,28 +1,40 @@
-/* Sizing variables inherited and refined for fluid 4K scaling */
-.page {
-  --black: #000000;
-  --light: #fdfdfd;
-  --grey: #f0f1f2;
-  --ink: #0d1017;
-  --soft: #5b6270;
-  --red: #ed040f;
+/* Sustainability page: responsive from mobile (320px) to 4K (3840px+).
+   Desktop sizes are in vw (scaled from the 1440px design); below 768px the type switches to
+   mobile sizes and the layouts stack. Navbar + Footer come from LanguageWrapper. */
 
+.page {
+  --red: #ed040f;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
+  --slate: #6b7691;
   --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
-  
-  --fs-eyebrow: clamp(0.6875rem, 3vw, 0.875rem);
-  --fs-h1: clamp(2.5rem, 6vw, 5.5rem);
-  --fs-h2: clamp(1.75rem, 4vw, 3.5rem);
-  --fs-h3: clamp(1.125rem, 1.5vw, 1.5rem);
-  --fs-lead: clamp(1rem, 2vw, 1.25rem);
-  --fs-body: clamp(0.9rem, 1.2vw, 1.125rem);
-  
+
+  --fs-eyebrow: clamp(0.6875rem, 2.9vw, 0.8125rem);
+  --fs-h1: clamp(2.1rem, 10.5vw, 4rem);
+  --fs-h2: clamp(1.75rem, 7.5vw, 2.75rem);
+  --fs-intro: clamp(1.5rem, 6.5vw, 2.25rem);
+  --fs-lead: clamp(0.9375rem, 3.8vw, 1.125rem);
+  --fs-body: clamp(0.9375rem, 3.8vw, 1.125rem);
+  --fs-pillar-title: clamp(1rem, 4.2vw, 1.125rem);
+  --fs-pillar: clamp(0.875rem, 3.6vw, 1rem);
+
   width: 100%;
-  background: var(--light);
-  color: var(--ink);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fff;
+  color: #0d1017;
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+  .page {
+    --fs-eyebrow: max(0.75rem, 0.9vw);
+    --fs-h1: 6.1vw;
+    --fs-h2: 3.9vw;
+    --fs-intro: 2.8vw;
+    --fs-lead: max(1rem, 1.4vw);
+    --fs-body: max(0.9375rem, 1.35vw);
+    --fs-pillar-title: max(1rem, 1.25vw);
+    --fs-pillar: max(0.875rem, 1.1vw);
+  }
 }
 
 .container {
@@ -33,42 +45,67 @@
   margin: 0 auto;
 }
 
-.red {
-  color: var(--red);
-}
-
-/* ---------- Scroll reveal ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
-  transition-delay: var(--d, 0ms);
-}
-
-.reveal[data-in='true'] {
-  opacity: 1;
-  transform: none;
-}
-
-/* ---------- 1. Hero Section ---------- */
-.hero {
-  position: relative;
-  isolation: isolate;
-  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 10rem));
-  padding-bottom: clamp(5rem, 10vw, 12rem);
+.section {
   padding-left: var(--pad-x);
   padding-right: var(--pad-x);
-  text-align: center;
-  color: #fff;
-  margin-top: calc(var(--nav-h) * -1); /* Pull under transparent navbar */
+  box-sizing: border-box;
 }
 
-.heroBg {
+.red {
+  color: #ff0a14;
+}
+
+.line {
+  display: inline;
+}
+
+@media (min-width: 640px) {
+  .line {
+    display: block;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.eyebrowLight {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.eyebrowSlate {
+  color: var(--slate);
+}
+
+.rise,
+.heroLine {
+  animation: fadeUp 0.9s var(--ease-out) var(--d, 0ms) backwards;
+}
+
+/* ---------- 1. Hero ---------- */
+
+.hero {
+  --fallback: radial-gradient(50% 60% at 50% 55%, rgba(60, 90, 50, 0.55), transparent 70%),
+    linear-gradient(180deg, #0f1a12, #0a0f0b);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: max(3rem, 6.6vw) var(--pad-x) max(3rem, 7.3vw);
+  color: #fff;
+  text-align: center;
+}
+
+.photo {
   position: absolute;
   inset: 0;
   z-index: -2;
-  /* Dark forest/soil gradient fallback until you add the actual image */
-  background: linear-gradient(135deg, #182218, #0a0e0a);
+  background-image: var(--img, var(--fallback));
   background-size: cover;
   background-position: center;
 }
@@ -77,276 +114,227 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.heroContent {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.eyebrow {
-  margin: 0 0 1rem;
-  font-family: 'DM Mono', monospace;
-  font-size: var(--fs-eyebrow);
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.42);
 }
 
 .heroTitle {
-  margin: 0 0 1.5rem;
+  margin: max(0.9rem, 2.6vw) auto 0;
   font-size: var(--fs-h1);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  text-wrap: balance;
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
 }
 
-.heroLead {
+.heroLine {
+  display: block;
+}
+
+.heroText {
+  max-width: 44vw;
+  margin: max(1rem, 2.1vw) auto 0;
   font-size: var(--fs-lead);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
-  max-width: 48rem;
-  margin: 0 auto;
-  text-wrap: balance;
+  line-height: 1.32;
+  color: rgba(255, 255, 255, 0.92);
 }
 
-/* ---------- 2. Two Column Intro ---------- */
-.introSection {
-  padding: clamp(4rem, 8vw, 10rem) var(--pad-x);
-  background: #ffffff;
+@media (max-width: 767px) {
+  .heroText {
+    max-width: 32rem;
+  }
 }
 
-.twoCol {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(3rem, 6vw, 6rem);
+/* ---------- 2. Intro ---------- */
+
+.intro {
+  padding-top: max(3rem, 7.2vw);
+  padding-bottom: max(3rem, 7.2vw);
+  background: #fafafa;
+}
+
+.introGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: max(1.75rem, 4.4vw);
   align-items: center;
 }
 
-@media (min-width: 900px) {
-  .twoCol {
-    flex-direction: row;
-    align-items: center;
+.introTitle {
+  margin: 0 0 max(1.25rem, 3.5vw);
+  font-size: var(--fs-intro);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+}
+
+.introText p {
+  margin: 0 0 1.1em;
+  max-width: 28em;
+  font-size: var(--fs-body);
+  line-height: 1.3;
+  color: #111;
+}
+
+.introMedia {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #aaaaaa;
+  border-radius: max(1rem, 1.95vw);
+}
+
+.introMedia img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .introGrid {
+    grid-template-columns: minmax(0, 528fr) minmax(0, 504fr);
+  }
+
+  .introMedia {
+    aspect-ratio: 504 / 442;
   }
 }
 
-.textCol, .imageCol {
-  flex: 1;
-  width: 100%;
+/* ---------- 3. Impact ---------- */
+
+.impact {
+  padding-top: max(3rem, 5.7vw);
+  padding-bottom: max(3rem, 6.1vw);
+  background: #fff;
 }
 
-.sectionTitle {
+.head {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
   font-size: var(--fs-h2);
   font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  margin-bottom: 1.5rem;
-  text-wrap: balance;
-}
-
-.paragraph {
-  font-size: var(--fs-body);
-  color: var(--soft);
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-.placeholderImg {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #a8a8a8; /* Matches the gray box from the design */
-  border-radius: clamp(1rem, 2vw, 2rem);
-}
-
-/* ---------- 3. Impact Stats ---------- */
-.statsSection {
-  padding: clamp(4rem, 8vw, 10rem) var(--pad-x);
-  background: #fdfdfd;
-}
-
-.headCenter {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto clamp(3rem, 6vw, 5rem);
-}
-
-.statsTitle {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 500;
   line-height: 1.1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
+  text-wrap: wrap;
 }
 
-.statsGrid {
+.impact .head {
+  margin-bottom: max(1.75rem, 3.6vw);
+}
+
+/* ---------- 4. Pledge in practice ---------- */
+
+.practice {
+  padding-top: max(3rem, 7.7vw);
+  padding-bottom: max(3rem, 7.5vw);
+  background: #eff2f3;
+}
+
+.practice .title {
+  margin-top: max(0.75rem, 1.5vw);
+}
+
+.lead {
+  max-width: 42vw;
+  margin: max(0.9rem, 2.1vw) auto 0;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--slate);
+}
+
+@media (max-width: 767px) {
+  .lead {
+    max-width: 30rem;
+  }
+}
+
+.practiceMedia {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  margin-top: max(1.75rem, 4.1vw);
+  background: #f9fbfb;
+  border-radius: max(1.25rem, 2.8vw);
+}
+
+.practiceMedia img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .practiceMedia {
+    aspect-ratio: 1096 / 422;
+  }
+}
+
+.pillars {
   list-style: none;
-  margin: 0;
+  margin: max(1.75rem, 4.1vw) 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1rem, 2.3vw, 2rem);
+  gap: max(1.5rem, 2vw);
 }
 
 @media (min-width: 768px) {
-  .statsGrid {
+  .pillars {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-.statCard {
-  position: relative;
-  container-type: inline-size;
-  overflow: hidden;
-  aspect-ratio: 13 / 20;
-  background: #000;
-  color: #fff;
-  border-radius: clamp(1rem, 1.75vw, 2rem);
-  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+.pillar {
+  min-width: 0;
 }
 
-.statCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 30px 60px -24px rgba(237, 4, 15, 0.45);
-}
-
-/* Glow effect identical to Home.module.css */
-.statCard::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse 36% 24% at var(--g1x) var(--g1y),
-      rgba(150, 24, 24, 1),
-      rgba(130, 20, 20, 0.5) 50%,
-      transparent
-    ),
-    radial-gradient(
-      ellipse 30% 20% at var(--g2x) var(--g2y),
-      rgba(150, 24, 24, 0.95),
-      rgba(130, 20, 20, 0.45) 50%,
-      transparent
-    );
-  animation: glowPulse 5s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-.statBig {
-  position: absolute;
-  top: var(--by);
-  left: var(--bx);
-  font-size: 50cqw;
+.pillarTitle {
+  margin: 0 0 0.6em;
+  font-size: var(--fs-pillar-title);
   font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.06em;
-  color: #fff;
-  white-space: nowrap;
-  user-select: none;
+  line-height: 1.3;
+  color: #0d1017;
 }
 
-.statValue {
-  position: absolute;
-  top: 45cqw;
-  left: 10cqw;
+.pillarText {
   margin: 0;
-  font-size: 28cqw;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  color: #ff0a14;
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-pillar);
+  line-height: 1.5;
+  color: var(--slate);
 }
 
-.statLabel {
-  position: absolute;
-  left: 9.5cqw;
-  right: 9.5cqw;
-  bottom: 24cqw;
-  margin: 0;
-  font-size: max(0.8125rem, 5.9cqw);
-  line-height: 1.4;
-  color: #fff;
-}
+/* ---------- Container caps (mirror Navbar + Footer) ---------- */
 
-/* ---------- 4. Our Practice ---------- */
-.practiceSection {
-  padding: clamp(3rem, 6vw, 8rem) var(--pad-x) clamp(5rem, 10vw, 12rem);
-  background: #f7f7f7; /* Very subtle off-white for contrast */
-}
-
-.eyebrowDark {
-  margin: 0 0 1rem;
-  font-family: 'DM Mono', monospace;
-  font-size: var(--fs-eyebrow);
-  letter-spacing: 0.15em;
-  color: var(--soft);
-}
-
-.practiceLead {
-  font-size: var(--fs-lead);
-  color: var(--soft);
-  max-width: 600px;
-  margin: 1.5rem auto 0;
-  line-height: 1.6;
-}
-
-.practiceImageWrapper {
-  width: 100%;
-  margin: clamp(2rem, 5vw, 4rem) 0;
-}
-
-.practiceLargePlaceholder {
-  width: 100%;
-  aspect-ratio: 16 / 7;
-  background: #fff;
-  border-radius: clamp(1rem, 2vw, 2rem);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.03);
-}
-
-@media (max-width: 768px) {
-  .practiceLargePlaceholder {
-    aspect-ratio: 4 / 3;
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1920px;
   }
 }
 
-.pillarsGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 4rem);
-}
-
-@media (min-width: 768px) {
-  .pillarsGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
   }
 }
 
-.pillar h3 {
-  font-size: var(--fs-h3);
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: var(--ink);
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3200px;
+  }
 }
 
-.pillar p {
-  font-size: var(--fs-body);
-  color: var(--soft);
-  line-height: 1.6;
-}
-
-/* ---------- Keyframes ---------- */
-@keyframes glowPulse {
-  from { opacity: 0.75; }
-  to { opacity: 1; }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-  .statCard::before {
+  .rise,
+  .heroLine {
     animation: none;
   }
 }

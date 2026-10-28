@@ -1,0 +1,121 @@
+/* ImpactStats: responsive from mobile to 4K. Everything inside a card is sized in cqw
+   (1cqw = 1% of the card width), so each card scales as one piece. */
+
+.stats {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: max(1rem, 2.4vw);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.stat {
+  position: relative;
+  container-type: inline-size;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: #000;
+  color: #fff;
+  border-radius: max(1rem, 1.75vw);
+  transition: translate 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out),
+    opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: 0s, 0s, var(--d, 0ms), var(--d, 0ms);
+}
+
+.stat:hover {
+  translate: 0 -6px;
+  box-shadow: 0 30px 60px -24px rgba(237, 4, 15, 0.45);
+}
+
+/* the two soft red glows */
+.stat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 36% 24% at var(--g1x) var(--g1y),
+      rgba(150, 24, 24, 1),
+      rgba(130, 20, 20, 0.5) 50%,
+      transparent
+    ),
+    radial-gradient(
+      ellipse 30% 20% at var(--g2x) var(--g2y),
+      rgba(150, 24, 24, 0.95),
+      rgba(130, 20, 20, 0.45) 50%,
+      transparent
+    );
+  animation: glowPulse 5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* oversized white number, cropped by the card edge */
+.big {
+  position: absolute;
+  top: var(--by);
+  left: var(--bx);
+  font-size: 50cqw;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: #fff;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.value {
+  position: absolute;
+  top: 45cqw;
+  left: 10cqw;
+  margin: 0;
+  font-size: 28cqw;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: #ff0a14;
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  position: absolute;
+  left: 9.5cqw;
+  right: 9.5cqw;
+  bottom: 24cqw;
+  margin: 0;
+  max-width: 80cqw;
+  font-size: max(0.8125rem, 5.9cqw);
+  line-height: 1.4;
+  color: #fff;
+}
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stat {
+    aspect-ratio: 13 / 20;
+  }
+}
+
+@keyframes glowPulse {
+  from {
+    opacity: 0.75;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat::before {
+    animation: none;
+  }
+
+  .stat {
+    transition: none;
+  }
+}

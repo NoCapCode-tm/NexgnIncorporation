@@ -1,20 +1,17 @@
+/* DPA: shares the hero with the other Legal Hub pages (LegalLayout). Responsive from mobile to 4K. */
+
 .page {
-  --black: #000000;
-  --dark: #0d1017;
-  --light: #ffffff;
   --ink: #0d1017;
   --soft: #6e7687;
   --red: #ed040f;
   --red-hover: #d1030d;
-  
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
   --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
-  
+
   width: 100%;
-  background: var(--light);
+  background: #fafafa;
   color: var(--ink);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   overflow-x: clip;
 }
 
@@ -26,132 +23,97 @@
   box-sizing: border-box;
 }
 
-/* ---------- Scroll Reveal Animation ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
-  transition-delay: var(--d, 0ms);
-}
-.reveal[data-in='true'] {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ---------- HERO ---------- */
-.hero {
-  background: var(--dark);
-  color: #fff;
-  padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 6rem));
-  padding-bottom: clamp(5rem, 10vw, 8rem);
-  text-align: center;
-  margin-top: calc(var(--nav-h) * -1); /* Pulls up under the transparent navbar */
-}
-
-.heroContent {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
-
-.eyebrow {
-  margin: 0 0 1.25rem;
-  font-family: 'DM Mono', monospace;
-  font-size: clamp(0.7rem, 2vw, 0.8125rem);
-  letter-spacing: 0.25em;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-}
-
-.heroTitle {
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  margin: 0;
-  white-space: pre-line;
-  text-wrap: balance;
-}
-
-/* ---------- CONTENT GRID ---------- */
-.contentSection {
-  padding: clamp(5rem, 10vw, 10rem) 0;
-  background: #ffffff;
-}
-
-.grid {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(3rem, 6vw, 6rem);
-}
-
-/* On Desktop, split into a visually balanced 2-column layout */
-@media (min-width: 900px) {
-  .grid {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3600px;
   }
 }
 
-/* Left Column */
-.leftCol {
-  flex: 1;
-  max-width: 500px;
+.contentSection {
+  padding: max(3.5rem, 7vw) 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: max(2rem, 4vw);
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: max(3rem, 6vw);
+    align-items: start;
+  }
 }
 
 .headline {
-  font-size: clamp(2rem, 4vw, 3.5rem);
+  margin: 0;
+  max-width: 9em;
+  font-size: clamp(2rem, 8vw, 3rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.04em;
-  color: var(--ink);
-  margin: 0;
   text-wrap: balance;
 }
 
-/* Right Column */
+@media (min-width: 900px) {
+  .headline {
+    font-size: 3.4vw;
+  }
+}
+
 .rightCol {
-  flex: 1.2;
-  max-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
 .paragraph {
-  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  margin: 0 0 max(1.75rem, 2.6vw);
+  max-width: 34em;
+  font-size: clamp(1rem, 4vw, 1.125rem);
   line-height: 1.6;
   color: var(--soft);
-  margin: 0 0 clamp(2rem, 4vw, 3rem);
 }
 
-/* MNC Grade Button Animation */
+@media (min-width: 900px) {
+  .paragraph {
+    font-size: max(1rem, 1.35vw);
+  }
+}
+
+/* Download button: lift, glow, sheen sweep and a dropping arrow */
 .downloadBtn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
+  overflow: hidden;
+  padding: 1em 1.8em;
   background: var(--red);
-  color: #ffffff;
-  padding: 1rem 2rem;
+  color: #fff;
   border-radius: 0.5rem;
-  font-size: clamp(0.9rem, 1.5vw, 1.125rem);
+  font-size: clamp(0.9rem, 3.8vw, 1rem);
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 4px 14px 0 rgba(237, 4, 15, 0.39);
   transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s ease;
 }
 
-.btnIconWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden; /* Contains the dropping icon */
+@media (min-width: 900px) {
+  .downloadBtn {
+    font-size: max(0.9375rem, 1.17vw);
+  }
 }
 
-.btnIcon {
-  font-size: 1.25rem;
-  transition: transform 0.3s var(--ease-out);
+.downloadBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.25) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ease-out);
 }
 
 .downloadBtn:hover {
@@ -160,20 +122,40 @@
   box-shadow: 0 10px 24px -6px rgba(237, 4, 15, 0.5);
 }
 
-/* Hover causes the download arrow to drop down slightly, mimicking a download action */
-.downloadBtn:hover .btnIcon {
-  transform: translateY(3px);
+.downloadBtn:hover::after {
+  transform: translateX(120%);
 }
 
 .downloadBtn:active {
   transform: translateY(0) scale(0.98);
 }
 
+.downloadBtn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.btnIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnIcon {
+  font-size: 1.25em;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.downloadBtn:hover .btnIcon {
+  transform: translateY(3px);
+}
+
 .note {
-  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  margin: 1.5rem 0 0;
+  max-width: 34em;
+  font-size: max(0.8125rem, 1vw);
   line-height: 1.5;
   color: var(--soft);
-  margin: 1.5rem 0 0;
 }
 
 .note strong {
@@ -181,16 +163,13 @@
   font-weight: 600;
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
+  .downloadBtn,
+  .downloadBtn::after,
+  .btnIcon {
     transition: none;
   }
-  .downloadBtn {
-    transition: none;
-  }
+
   .downloadBtn:hover .btnIcon {
     transform: none;
   }

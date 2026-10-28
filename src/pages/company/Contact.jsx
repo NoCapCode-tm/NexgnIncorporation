@@ -6,7 +6,7 @@ import CtaBanner from '../../components/common/CtaBanner';
 import styles from './Contact.module.css';
 
 // Import images from your assets folder
-import ctaOtherImg from '../../assets/home/cta_other.png';
+import ctaOtherImg from '../../assets/common/cta.png';
 import phonesBgImg from '../../assets/contact/phones-bg.png'; // <-- 1. Import your phones image here
 
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';

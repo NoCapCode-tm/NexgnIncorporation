@@ -2,13 +2,29 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './CtaBanner.module.css';
 
+/* Shared default photo: put ONE file named  cta.(png|jpg|jpeg|webp|avif)  in  src/assets/common/
+   and every CtaBanner uses it. The folder must exist. A page can still pass its own `image` to override. */
+const commonContext = require.context('../../assets/common', false, /\.(png|jpe?g|webp|avif|svg)$/i);
+
+const findCommonImage = (name) => {
+  const key = commonContext
+    .keys()
+    .find((k) => k.replace(/^\.\//, '').replace(/\.[^.]+$/, '').toLowerCase() === name);
+  if (!key) return null;
+  const mod = commonContext(key);
+  return (mod && mod.default) || mod;
+};
+
+const DEFAULT_IMAGE = findCommonImage('cta');
+
 /* =====================================================================
    CtaBanner: full-width photo call-to-action, reusable on any page.
 
    <CtaBanner
-     image={ctaImg}                        // photo for THIS page (import it, or pass a URL). Optional.
+     image={otherImg}                      // optional override. Leave out to use src/assets/common/cta.*
      imagePosition="center 30%"            // CSS background-position (default "center")
      overlay={0.5}                         // 0 to 1, how dark the photo is (default 0.5)
+     height="max(28rem, 40.7vw)"             // optional: banner height (default max(30rem, 46.8vw))
      title="Start signing documents"
      highlight="signing"                   // optional word(s) of the title shown in red
      text="Start signing documents the simpler way..."
@@ -78,6 +94,7 @@ const CtaBanner = ({
   image,
   imagePosition = 'center',
   overlay = 0.5,
+  height,
   title,
   highlight,
   text,
@@ -86,10 +103,12 @@ const CtaBanner = ({
   className = '',
 }) => {
   const [ref, inView] = useInView();
+  const photo = image || DEFAULT_IMAGE;
   const vars = {
     '--shade': Math.min(Math.max(overlay, 0), 1),
     '--pos': imagePosition,
-    ...(image ? { '--img': `url("${image}")` } : {}),
+    ...(height ? { '--h': height } : {}),
+    ...(photo ? { '--img': `url("${photo}")` } : {}),
   };
 
   return (

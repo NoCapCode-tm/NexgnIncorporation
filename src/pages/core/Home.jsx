@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiShield, FiStar, FiX } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
+import ImpactStats from '../../components/common/ImpactStats';
 import styles from './Home.module.css';
 
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
@@ -94,37 +95,6 @@ const Reveal = ({ as: Tag = 'div', delay = 0, className = '', children, ...rest 
   );
 };
 
-// Number that counts up when it scrolls into view
-const CountUp = ({ to, suffix = '', duration = 1800 }) => {
-  const [ref, inView] = useInView(0.4);
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return undefined;
-    if (prefersReducedMotion()) {
-      setValue(to);
-      return undefined;
-    }
-    let raf;
-    const start = performance.now();
-    const tick = (now) => {
-      const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 4); // easeOutQuart
-      setValue(Math.round(to * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, to, duration]);
-
-  return (
-    <span ref={ref}>
-      {value.toLocaleString('en-US')}
-      {suffix}
-    </span>
-  );
-};
-
 /* =====================================================================
    Content (every string has an i18n key + English default)
    ===================================================================== */
@@ -134,39 +104,11 @@ const TRUST_TAGS = ['IT Act 2000', 'ESIGN and UETA', 'eIDAS', 'AES-256 encrypted
 // TODO: drop real logo files into src/assets/logos and set `src`. Until then the name is shown as text.
 // Only show logos of companies that have given you permission.
 const LOGOS = [
-  { key: 'amazon', name: 'amazon', src: null },
-  { key: 'cme', name: 'CME Group', src: null },
-  { key: 'entergy', name: 'entergy', src: null },
-  { key: 'everest', name: 'everest', src: null },
-  { key: 'orbit', name: 'orbit', src: null },
-];
-
-// g1/g2 = positions of the two red glows, bx/by = offset of the oversized cropped number (all in % / cqw)
-const STATS = [
-  {
-    key: 'paper',
-    big: '2L+',
-    value: 2,
-    suffix: 'L+',
-    label: 'Estimated paper sheets saved',
-    vars: { '--g1x': '28%', '--g1y': '8%', '--g2x': '86%', '--g2y': '92%', '--bx': '46cqw', '--by': '-13cqw' },
-  },
-  {
-    key: 'hours',
-    big: '150+',
-    value: 150,
-    suffix: '+',
-    label: 'Admin Hours Reclaimed',
-    vars: { '--g1x': '2%', '--g1y': '10%', '--g2x': '-10%', '--g2y': '110%', '--bx': '9cqw', '--by': '-11cqw' },
-  },
-  {
-    key: 'co2',
-    big: '1000+',
-    value: 1000,
-    suffix: '+',
-    label: 'Kg CO₂ Mitigated',
-    vars: { '--g1x': '6%', '--g1y': '30%', '--g2x': '100%', '--g2y': '84%', '--bx': '6cqw', '--by': '-12cqw' },
-  },
+  { key: 'amazon', name: 'amazon', src: null }, // Example: src/assets/logos/amazon.png
+  { key: 'cme', name: 'CME Group', src: null }, // Example: src/assets/logos/cme.png
+  { key: 'entergy', name: 'entergy', src: null }, // Example: src/assets/logos/entergy.png
+  { key: 'everest', name: 'everest', src: null }, // Example: src/assets/logos/everest.png
+  { key: 'orbit', name: 'orbit', src: null }, // Example: src/assets/logos/orbit.png
 ];
 
 // Hover (or tap / focus) a step on the left and the panel on the right switches to it.
@@ -485,25 +427,7 @@ const Home = () => {
             </h2>
           </Reveal>
 
-          <ul className={styles.stats}>
-            {STATS.map((stat, i) => (
-              <Reveal
-                as="li"
-                key={stat.key}
-                delay={i * 100}
-                className={styles.stat}
-                style={{ '--d': `${i * 100}ms`, ...stat.vars }}
-              >
-                <span className={styles.statBig} aria-hidden="true">
-                  {stat.big}
-                </span>
-                <p className={styles.statValue}>
-                  <CountUp to={stat.value} suffix={stat.suffix} />
-                </p>
-                <p className={styles.statLabel}>{tr(`impact.${stat.key}`, stat.label)}</p>
-              </Reveal>
-            ))}
-          </ul>
+          <ImpactStats />
         </div>
       </section>
 
