@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import PageLoader from '../components/common/PageLoader'; // Loading spinner for lazy-loaded pages
 
 // Global Layout Components
 import Navbar from '../components/layout/Navbar';

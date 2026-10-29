@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import './i18n'; // <-- IMPORT THIS HERE
+import PageLoader from './components/common/PageLoader'; // Loading spinner for lazy-loaded pages
 import { AppRouter } from './routes/AppRouter';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import './index.css';
@@ -14,7 +15,7 @@ root.render(
   <React.StrictMode>
     <ErrorBoundary>
       <HelmetProvider>
-        <React.Suspense fallback={<div className="spinner">Loading...</div>}>
+        <React.Suspense fallback={<PageLoader />}>
           <AppRouter />
         </React.Suspense>
       </HelmetProvider>
