@@ -69,13 +69,14 @@ const AUP = lazy(() => import('../pages/legal/AUP'));
 const DPA = lazy(() => import('../pages/legal/DPA'));
 const Refunds = lazy(() => import('../pages/legal/Refunds'));
 
-// 8. Company Pages
+// 8. Company & Support Pages
 const Contact = lazy(() => import('../pages/company/Contact'));
 const About = lazy(() => import('../pages/company/About'));
 const Careers = lazy(() => import('../pages/company/Careers'));
 const Press = lazy(() => import('../pages/company/Press'));
 const Partners = lazy(() => import('../pages/company/Partners'));
 const Blog = lazy(() => import('../pages/company/Blog'));
+const HelpCenter = lazy(() => import('../pages/help/HelpCenter')); // Added Help Center
 
 // ==========================================
 // CONSTANTS
@@ -191,12 +192,13 @@ const LanguageWrapper = () => {
             <Route path="/legal/dpa" element={<DPA />} />
             <Route path="/legal/refunds" element={<Refunds />} />
 
-            {/* Company Routes */}
+            {/* Company & Support Routes */}
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/press" element={<Press />} />
             <Route path="/partners" element={<Partners />} />
+            <Route path="/help" element={<HelpCenter />} />
             
             {/* Blog Routes */}
             <Route path="/blog" element={<Blog />} />
