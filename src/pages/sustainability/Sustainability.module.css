@@ -7,6 +7,7 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --slate: #6b7691;
   --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
 
   --fs-eyebrow: clamp(0.6875rem, 2.9vw, 0.8125rem);
   --fs-h1: clamp(2.1rem, 10.5vw, 4rem);
@@ -96,7 +97,9 @@
   isolation: isolate;
   overflow: hidden;
   box-sizing: border-box;
-  padding: max(3rem, 6.6vw) var(--pad-x) max(3rem, 7.3vw);
+  /* slides under the transparent Navbar_Alt, then keeps the original spacing below it */
+  margin-top: calc(var(--nav-h) * -1);
+  padding: calc(var(--nav-h) + max(1.5rem, 10.6vw)) var(--pad-x) max(3rem, 10.6vw);
   color: #fff;
   text-align: center;
 }
@@ -114,7 +117,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgba(0, 0, 0, 0.42);
+  /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 32%), rgba(0, 0, 0, 0.42); */
 }
 
 .heroTitle {
@@ -250,44 +253,55 @@
   }
 }
 
-.practiceMedia {
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  margin-top: max(1.75rem, 4.1vw);
-  background: #f9fbfb;
-  border-radius: max(1.25rem, 2.8vw);
-}
-
-.practiceMedia img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@media (min-width: 768px) {
-  .practiceMedia {
-    aspect-ratio: 1096 / 422;
-  }
+/* White band holding the three tilted cards */
+.pledges {
+  padding-top: max(2.5rem, 4.4vw);
+  padding-bottom: max(3.5rem, 8vw);
+  background: #fff;
 }
 
 .pillars {
   list-style: none;
-  margin: max(1.75rem, 4.1vw) 0 0;
+  margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: max(1.5rem, 2vw);
-}
-
-@media (min-width: 768px) {
-  .pillars {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  gap: max(1.75rem, 2.4vw);
 }
 
 .pillar {
   min-width: 0;
+}
+
+/* The card is tilted on an inner element, because Reveal owns the li's transform */
+.pledge {
+  display: flex;
+  flex-direction: column;
+  gap: max(1rem, 1.3vw);
+  padding: max(0.9rem, 1.15vw);
+  background: #fff;
+  border-radius: max(1.1rem, 1.6vw);
+  box-shadow: 0 1px 2px rgba(13, 16, 23, 0.06), 0 22px 50px -26px rgba(13, 16, 23, 0.35);
+  transform: rotate(calc(var(--r, 0deg) * 0.3));
+  transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out);
+}
+
+.pledge:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 1px 2px rgba(13, 16, 23, 0.06), 0 34px 70px -28px rgba(13, 16, 23, 0.45);
+}
+
+.pledgeMedia {
+  aspect-ratio: 4 / 4.4;
+  background-color: #e3e7ea;
+  background-image: var(--img);
+  background-size: inherit;
+  background-position: center;
+  border-radius: max(0.75rem, 1.1vw);
+}
+
+.pledgeCopy {
+  padding: 0 max(0.25rem, 0.4vw) max(0.25rem, 0.4vw);
 }
 
 .pillarTitle {
@@ -301,8 +315,28 @@
 .pillarText {
   margin: 0;
   font-size: var(--fs-pillar);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--slate);
+}
+
+@media (min-width: 768px) {
+  .pillars {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .pledge {
+    transform: rotate(var(--r, 0deg));
+  }
+
+  /* staggered like the design: left card lowest, middle highest */
+  .pillar:nth-child(1) {
+    margin-top: max(1.5rem, 4vw);
+  }
+
+  .pillar:nth-child(3) {
+    margin-top: max(0.75rem, 2vw);
+  }
 }
 
 /* ---------- Container caps (mirror Navbar + Footer) ---------- */
@@ -336,5 +370,11 @@
   .rise,
   .heroLine {
     animation: none;
+  }
+
+  .pledge,
+  .pledge:hover {
+    transition: none;
+    transform: none;
   }
 }

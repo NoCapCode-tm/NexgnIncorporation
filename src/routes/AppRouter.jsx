@@ -1,10 +1,11 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import PageLoader from '../components/common/PageLoader'; // Loading spinner for lazy-loaded pages
+import PageLoader from '../components/common/PageLoader'; // Nexgn wave loader for lazy-loaded pages
 
 // Global Layout Components
-import Navbar from '../components/layout/Navbar';
+import Navbar from '../components/layout/Navbar'; // homepage: dark glass
+import NavbarAlt from '../components/layout/Navbar_Alt'; // all other pages: transparent + frosted
 import Footer from '../components/layout/Footer';
 import { ScrollToTop } from '../components/layout/ScrollToTop';
 
@@ -86,31 +87,17 @@ const HelpCenter = lazy(() => import('../pages/help/HelpCenter')); // Added Help
 const SUPPORTED_LANGUAGES = ['en', 'es', 'hi'];
 
 // ==========================================
-// FALLBACK LOADER UI
-// ==========================================
-// Rendered inside <main>, so Navbar and Footer stay visible while a page loads.
-const PageLoader = () => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '60vh',
-      width: '100%',
-    }}
-  >
-    <div className="spinner" role="status" aria-label="Loading"></div>
-  </div>
-);
-
-// ==========================================
 // LANGUAGE ROUTER WRAPPER
 // ==========================================
 const LanguageWrapper = () => {
   const { lng } = useParams();
   const { i18n } = useTranslation();
+  const location = useLocation();
 
   const isSupported = SUPPORTED_LANGUAGES.includes(lng);
+
+  // /en or /en/ is the homepage; everything else gets the transparent navbar
+  const isHome = location.pathname.split('/').filter(Boolean).length <= 1;
 
   useEffect(() => {
     if (!isSupported) return;
@@ -130,10 +117,11 @@ const LanguageWrapper = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
+      {isHome ? <Navbar /> : <NavbarAlt />}
 
       {/* flex: 1 pushes the Footer to the bottom on short pages */}
       <main style={{ flex: 1 }}>
+        {/* PageLoader shows the Nexgn loader after 150ms if a page is still downloading */}
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Core Routes */}

@@ -3,33 +3,92 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
+import Reveal from '../../components/common/Reveal';
 import styles from './VulnDisclosure.module.css';
 
+// TODO: confirm before launch
 const SECURITY_EMAIL = 'security@nexgn.cloud';
-const PGP_URL = '/pgp.txt'; // served from public/pgp.txt
+const PGP_KEY_URL = '/pgp.txt'; // already in public/
 
 const LANGS = ['en', 'es', 'hi'];
 
-// ---------- Content (each string has an i18n key + English default) ----------
+/* =====================================================================
+   IMAGES
+   Drop files into  src/assets/trust/  (same folder as Privacy / Legality). Picked up by NAME with
+   any extension; a missing file never breaks the build (grey box / gradient shows instead).
+   Restart the dev server after adding a file.
 
-const DO = [
-  { key: 'd1', text: 'Provide detailed reports with reproducible steps.' },
-  { key: 'd2', text: 'Submit one vulnerability per report (unless chained for impact).' },
-  { key: 'd3', text: 'Use your own test accounts (e.g., researcher+1@email.com) when evaluating the platform.' },
-  { key: 'd4', text: 'Delete any test data upon completion of your research.' },
+     vuln-hero         photo behind the hero (hands on a laptop)
+     vuln-safe-harbor  wide picture under "Safe Harbor Authorization"
+     vuln-hof-1        Hall of Fame card 1 (Security Swag)
+     vuln-hof-2        Hall of Fame card 2 (Hall of Fame listing)
+     vuln-hof-3        Hall of Fame card 3 (Letter of recommendation)
+   ===================================================================== */
+const imageContext = require.context('../../assets/trust', false, /\.(png|jpe?g|webp|avif|svg)$/i);
+
+const findImage = (name) => {
+  const key = imageContext
+    .keys()
+    .find((k) => k.replace(/^\.\//, '').replace(/\.[^.]+$/, '').toLowerCase() === name);
+  if (!key) return null;
+  const mod = imageContext(key);
+  return (mod && mod.default) || mod;
+};
+
+const IMAGES = {
+  hero: findImage('vuln-hero'),
+  safeHarbor: findImage('vuln-safe-harbor'),
+  hof: [findImage('vuln-hof-1'), findImage('vuln-hof-2'), findImage('vuln-hof-3')],
+};
+
+const bg = (src) => (src ? { '--img': `url("${src}")` } : undefined);
+
+// ---------- Content (every string has an i18n key + English default) ----------
+
+const DOS = [
+  'Provide detailed reports with reproducible steps.',
+  'Submit one vulnerability per report (unless chained for impact).',
+  'Use your own test accounts (e.g., researcher+1@email.com) when evaluating the platform.',
+  'Delete any test data upon completion of your research.',
 ];
 
-const DONT = [
-  { key: 'n1', text: 'Do not attempt Denial of Service (DoS/DDoS) attacks.' },
-  { key: 'n2', text: 'Do not interact with, access, or modify data belonging to other users.' },
-  { key: 'n3', text: 'Do not perform social engineering, phishing, or physical attacks against Nexgn employees or facilities.' },
-  { key: 'n4', text: 'Do not use automated vulnerability scanners that generate excessive traffic.' },
+const DONTS = [
+  'Do not attempt Denial of Service (DoS/DDoS) attacks.',
+  'Do not interact with, access, or modify data belonging to other users.',
+  'Do not perform social engineering, phishing, or physical attacks against Nexgn employees or facilities.',
+  'Do not use automated vulnerability scanners that generate excessive traffic.',
 ];
 
-const REPORT_INCLUDES = [
-  { key: 'i1', text: 'A description of the vulnerability and its potential impact.' },
-  { key: 'i2', text: 'Clear, step-by-step instructions to reproduce the issue.' },
-  { key: 'i3', text: 'A Proof of Concept (PoC) video or screenshots (highly appreciated).' },
+const SCOPE = [
+  { key: 'app', asset: 'app.nexgn.cloud', inScope: true, text: 'The primary frontend application.' },
+  { key: 'api', asset: 'api.nexgn.cloud', inScope: true, text: 'The backend Node.js REST API.' },
+  { key: 'wild', asset: '*.nexgn.cloud', inScope: true, text: 'Subdomains actively hosting Nexgn infrastructure.' },
+  { key: 'blog', asset: 'blog.nexgn.cloud', inScope: false, text: 'Marketing/CMS sites with no customer data.' },
+  {
+    key: 'third',
+    asset: 'Third-Party Services',
+    inScope: false,
+    text: 'Razorpay, Resend, Google Drive integrations (report directly to vendors).',
+  },
+];
+
+const STEPS = [
+  {
+    key: 'reported',
+    title: 'Reported',
+    bullets: [
+      'A description of the vulnerability and its potential impact.',
+      'Clear, step-by-step instructions to reproduce the issue.',
+      'A Proof of Concept (PoC) video or screenshots (highly appreciated).',
+    ],
+  },
+  { key: 'acknowledged', title: 'Acknowledged', text: 'Within 48 business hours.' },
+  { key: 'triaged', title: 'Triaged', text: 'Within 5 business days.' },
+  {
+    key: 'remediated',
+    title: 'Remediated',
+    text: 'We aim to deploy fixes for critical vulnerabilities within 24 hours of triage, and non-critical issues within our standard sprint cycles.',
+  },
 ];
 
 const REWARDS = [
@@ -49,7 +108,7 @@ const VulnDisclosure = () => {
   const seoTitle = tr('seo.title', 'Vulnerability Disclosure Program');
   const seoDescription = tr(
     'seo.description',
-    'Found a security issue? Read Nexgn’s safe harbor policy, program rules, scope and response timelines, and report vulnerabilities to security@nexgn.cloud.'
+    'Report a security vulnerability to Nexgn. Read our safe harbor policy, program guidelines, scope, reporting timelines and Security Hall of Fame.'
   );
 
   const pageUrl = `https://nexgn.cloud/${currentLng}/trust/vulnerability-disclosure`;
@@ -78,194 +137,201 @@ const VulnDisclosure = () => {
 
   return (
     <div className={styles.page}>
-      <SEOHead
-        title={seoTitle}
-        description={seoDescription}
-        url="/trust/vulnerability-disclosure"
-        schema={schema}
-      />
+      <SEOHead title={seoTitle} description={seoDescription} url="/trust/vulnerability-disclosure" schema={schema} />
 
-      {/* ============ 1. HERO (dark) ============ */}
-      <section className={`${styles.section} ${styles.dark} ${styles.hero}`}>
+      {/* ============ 1. HERO (photo + frosted card) ============ */}
+      <section className={styles.hero}>
+        <div className={styles.heroPhoto} style={bg(IMAGES.hero)} aria-hidden="true" />
         <div className={styles.container}>
-          <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.eyebrowCenter}`}>
-            {tr('hero.eyebrow', 'Nexgn Security')}
-          </p>
-          <h1 className={styles.heroTitle}>
-            {tr('hero.title1', 'Securing Nexgn,')}{' '}
-            <span className={styles.muted}>{tr('hero.title2', 'Together.')}</span>
-          </h1>
-          <p className={`${styles.lead} ${styles.leadLight}`}>
-            {tr(
-              'hero.text',
-              'The safety of our users’ agreements is our highest priority. We deeply value the global security research community and actively encourage ethical hackers to help us identify and remediate potential vulnerabilities.'
-            )}
-          </p>
-          <div className={styles.actions}>
-            <a href={`mailto:${SECURITY_EMAIL}`} className={styles.btnPrimary}>
-              {tr('hero.report', 'Report a Vulnerability')}
-            </a>
-            <a href={PGP_URL} className={styles.btnOutline} download>
-              {tr('hero.pgp', 'Download PGP Key')}
-            </a>
+          <div className={styles.heroCard}>
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.rise}`}>
+              {tr('hero.eyebrow', 'Nexgn Security')}
+            </p>
+            <h1 className={`${styles.heroTitle} ${styles.rise}`} style={{ '--d': '100ms' }}>
+              {tr('hero.title1', 'Securing Nexgn,')}{' '}
+              <span className={styles.muted}>{tr('hero.title2', 'Together.')}</span>
+            </h1>
+            <p className={`${styles.lead} ${styles.leadLight} ${styles.rise}`} style={{ '--d': '200ms' }}>
+              {tr(
+                'hero.text',
+                'The safety of our users’ agreements is our highest priority. We deeply value the global security research community and actively encourage ethical hackers to help us identify and remediate potential vulnerabilities.'
+              )}
+            </p>
+            <div className={`${styles.actions} ${styles.rise}`} style={{ '--d': '300ms' }}>
+              <a
+                href={`mailto:${SECURITY_EMAIL}?subject=${encodeURIComponent('Vulnerability report')}`}
+                className={styles.btnPrimary}
+              >
+                {tr('hero.report', 'Report a Vulnerability')}
+              </a>
+              <a href={PGP_KEY_URL} className={styles.btnGlass} download>
+                {tr('hero.pgp', 'Download PGP Key')}
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ============ 2. SAFE HARBOR (tint) ============ */}
-      <section className={`${styles.section} ${styles.tint}`}>
+      {/* ============ 2. SAFE HARBOR (light, left aligned) ============ */}
+      <section className={`${styles.section} ${styles.light}`}>
         <div className={styles.container}>
-          <p className={styles.eyebrow}>{tr('safe.eyebrow', 'Safe Harbor Policy')}</p>
-          <h2 className={`${styles.title} ${styles.titleLeft}`}>
-            {tr('safe.title', 'Safe Harbor Authorization')}
-          </h2>
+          <Reveal className={styles.headLeft}>
+            <p className={`${styles.eyebrow} ${styles.eyebrowLeft}`}>{tr('harbor.eyebrow', 'Safe Harbor')}</p>
+            <h2 className={`${styles.title} ${styles.titleLeft}`}>
+              {tr('harbor.title', 'Safe Harbor Authorization')}
+            </h2>
+          </Reveal>
 
-          {/* Illustration slot: swap for an <img> or SVG when the artwork is ready */}
-          <div className={`${styles.media} ${styles.mediaSafe}`} aria-hidden="true" />
+          <Reveal delay={100}>
+            <div className={`${styles.media} ${styles.mediaHarbor}`} style={bg(IMAGES.safeHarbor)} aria-hidden="true" />
+          </Reveal>
 
-          <p className={styles.statement}>
-            {tr(
-              'safe.text',
-              'We consider security research conducted in accordance with this policy to be “authorized” conduct. We will not initiate legal action or law enforcement investigations against researchers who make a good faith effort to comply with these guidelines. If legal action is initiated by a third party against you for activities conducted under this policy, we will take steps to make it known that your actions were conducted in compliance with this policy.'
-            )}
-          </p>
+          <Reveal delay={150}>
+            <p className={styles.harborText}>
+              {tr(
+                'harbor.text',
+                'We consider security research conducted in accordance with this policy to be “authorized” conduct. We will not initiate legal action or law enforcement investigations against researchers who make a good faith effort to comply with these guidelines. If legal action is initiated by a third party against you for activities conducted under this policy, we will take steps to make it known that your actions were conducted in compliance with this policy.'
+              )}
+            </p>
+          </Reveal>
         </div>
       </section>
 
       {/* ============ 3. PROGRAM GUIDELINES (light) ============ */}
-      <section className={`${styles.section} ${styles.light}`}>
+      <section className={`${styles.section} ${styles.white}`}>
         <div className={styles.container}>
-          <header className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
-              {tr('rules.eyebrow', 'Rules of Engagement')}
-            </p>
-            <h2 className={styles.title}>{tr('rules.title', 'Program Guidelines')}</h2>
+          <Reveal as="header" className={styles.head}>
+            <p className={styles.eyebrow}>{tr('guidelines.eyebrow', 'Rules of Engagement')}</p>
+            <h2 className={styles.title}>{tr('guidelines.title', 'Program Guidelines')}</h2>
             <p className={styles.lead}>
               {tr(
-                'rules.text',
+                'guidelines.text',
                 'To protect our customers and infrastructure, we require all researchers to adhere to the following rules:'
               )}
             </p>
-          </header>
+          </Reveal>
 
-          <div className={styles.rules}>
-            <div className={`${styles.ruleCard} ${styles.ruleDo}`}>
-              <h3 className={styles.ruleTitle}>{tr('rules.doTitle', 'Do')}</h3>
+          <div className={styles.twoCol}>
+            <Reveal className={`${styles.ruleCard} ${styles.ruleDo} ${styles.lift}`}>
+              <h3 className={styles.ruleTitle}>{tr('guidelines.doTitle', 'Do')}</h3>
               <ul className={styles.ruleList}>
-                {DO.map((item) => (
-                  <li key={item.key} className={styles.ruleItem}>
-                    <span className={`${styles.ruleIcon} ${styles.iconDo}`} aria-hidden="true">
+                {DOS.map((text, i) => (
+                  <li key={i} className={styles.ruleItem}>
+                    <span className={`${styles.mark} ${styles.markYes}`} aria-hidden="true">
                       <FiCheck />
                     </span>
-                    <span>{tr(`rules.do.${item.key}`, item.text)}</span>
+                    <span>{tr(`guidelines.do${i + 1}`, text)}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
 
-            <div className={`${styles.ruleCard} ${styles.ruleDont}`}>
-              <h3 className={styles.ruleTitle}>{tr('rules.dontTitle', 'Do Not')}</h3>
+            <Reveal delay={120} className={`${styles.ruleCard} ${styles.ruleDont} ${styles.lift}`}>
+              <h3 className={styles.ruleTitle}>{tr('guidelines.dontTitle', 'Do Not')}</h3>
               <ul className={styles.ruleList}>
-                {DONT.map((item) => (
-                  <li key={item.key} className={styles.ruleItem}>
-                    <span className={`${styles.ruleIcon} ${styles.iconDont}`} aria-hidden="true">
+                {DONTS.map((text, i) => (
+                  <li key={i} className={styles.ruleItem}>
+                    <span className={`${styles.mark} ${styles.markNo}`} aria-hidden="true">
                       <FiX />
                     </span>
-                    <span>{tr(`rules.dont.${item.key}`, item.text)}</span>
+                    <span>{tr(`guidelines.dont${i + 1}`, text)}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ============ 4. SCOPE MATRIX (tint) ============ */}
+      {/* ============ 4. SCOPE (tint) ============ */}
       <section className={`${styles.section} ${styles.tint}`}>
         <div className={styles.container}>
-          <header className={`${styles.head} ${styles.headTight}`}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
-              {tr('scope.eyebrow', 'Scope Matrix')}
-            </p>
+          <Reveal as="header" className={styles.head}>
+            <p className={styles.eyebrow}>{tr('scope.eyebrow', 'Scope Matrix')}</p>
             <h2 className={styles.title}>{tr('scope.title', 'In Scope vs. Out of Scope')}</h2>
-          </header>
+          </Reveal>
 
-          {/* Scope table slot: replace with a real table or illustration */}
-          <div className={`${styles.media} ${styles.mediaScope}`} aria-hidden="true" />
+          <Reveal delay={100} className={styles.tableCard}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th scope="col">{tr('scope.colAsset', 'Asset / Endpoint')}</th>
+                  <th scope="col">{tr('scope.colStatus', 'Status')}</th>
+                  <th scope="col">{tr('scope.colDesc', 'Description')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SCOPE.map((row) => (
+                  <tr key={row.key}>
+                    <th scope="row" className={styles.rowLabel}>
+                      {tr(`scope.${row.key}.asset`, row.asset)}
+                    </th>
+                    <td data-label={tr('scope.colStatus', 'Status')}>
+                      <span className={`${styles.badge} ${row.inScope ? styles.badgeIn : styles.badgeOut}`}>
+                        <span className={styles.badgeDot} aria-hidden="true" />
+                        {row.inScope ? tr('scope.in', 'In Scope') : tr('scope.out', 'Out of Scope')}
+                      </span>
+                    </td>
+                    <td data-label={tr('scope.colDesc', 'Description')} className={styles.cellDesc}>
+                      {tr(`scope.${row.key}.text`, row.text)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Reveal>
         </div>
       </section>
 
-      {/* ============ 5. HOW TO SUBMIT (dark) ============ */}
+      {/* ============ 5. HOW TO SUBMIT (dark, timeline) ============ */}
       <section className={`${styles.section} ${styles.dark}`}>
         <div className={styles.container}>
-          <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
-            {tr('submit.eyebrow', 'Reporting Guidelines & Timelines')}
-          </p>
-          <h2 className={`${styles.title} ${styles.titleLeft}`}>
-            {tr('submit.title', 'How to Submit a Report')}
-          </h2>
-          <p className={`${styles.lead} ${styles.leadLeft} ${styles.leadLight}`}>
-            {tr('submit.text1', 'Send your findings via email to')}{' '}
-            <a href={`mailto:${SECURITY_EMAIL}`} className={styles.inlineLink}>
-              {SECURITY_EMAIL}
-            </a>
-            {tr(
-              'submit.text2',
-              '. If you are sharing sensitive Proof of Concept (PoC) code, please encrypt your email using our public PGP key.'
-            )}
-          </p>
+          <Reveal className={styles.headLeft}>
+            <p className={`${styles.eyebrow} ${styles.eyebrowLeft} ${styles.eyebrowLight}`}>
+              {tr('submit.eyebrow', 'Reporting Guidelines & Timelines')}
+            </p>
+            <h2 className={`${styles.title} ${styles.titleLeft}`}>{tr('submit.title', 'How to Submit a Report')}</h2>
+            <p className={`${styles.lead} ${styles.leadLeft} ${styles.leadLight}`}>
+              {tr('submit.text1', 'Send your findings via email to')}{' '}
+              <a className={styles.mailLink} href={`mailto:${SECURITY_EMAIL}`}>
+                {SECURITY_EMAIL}
+              </a>
+              {'. '}
+              {tr(
+                'submit.text2',
+                'If you are sharing sensitive Proof of Concept (PoC) code, please encrypt your email using our public PGP key.'
+              )}
+            </p>
+          </Reveal>
 
-          <ol className={styles.timeline}>
-            <li className={`${styles.step} ${styles.stepActive}`}>
-              <span className={styles.dot} aria-hidden="true" />
-              <h3 className={styles.stepTitle}>{tr('submit.reported', 'Reported')}</h3>
-              <ul className={styles.stepList}>
-                {REPORT_INCLUDES.map((item) => (
-                  <li key={item.key} className={styles.stepItem}>
-                    <FiCheck className={styles.stepCheck} aria-hidden="true" />
-                    <span>{tr(`submit.includes.${item.key}`, item.text)}</span>
-                  </li>
-                ))}
-              </ul>
-            </li>
-
-            <li className={styles.step}>
-              <span className={styles.dot} aria-hidden="true" />
-              <h3 className={styles.stepTitle}>{tr('submit.acknowledged', 'Acknowledged')}</h3>
-              <p className={styles.stepText}>
-                {tr('submit.acknowledgedText', 'Within 48 business hours.')}
-              </p>
-            </li>
-
-            <li className={styles.step}>
-              <span className={styles.dot} aria-hidden="true" />
-              <h3 className={styles.stepTitle}>{tr('submit.triaged', 'Triaged')}</h3>
-              <p className={styles.stepText}>
-                {tr('submit.triagedText', 'Within 5 business days.')}
-              </p>
-            </li>
-
-            <li className={styles.step}>
-              <span className={styles.dot} aria-hidden="true" />
-              <h3 className={styles.stepTitle}>{tr('submit.remediated', 'Remediated')}</h3>
-              <p className={styles.stepText}>
-                {tr(
-                  'submit.remediatedText',
-                  'We aim to deploy fixes for critical vulnerabilities within 24 hours of triage, and non-critical issues within our standard sprint cycles.'
+          <ol className={styles.steps}>
+            {STEPS.map((step, i) => (
+              <Reveal as="li" key={step.key} delay={i * 120} className={styles.step}>
+                <span className={`${styles.stepDot} ${i === 0 ? styles.stepDotActive : ''}`} aria-hidden="true" />
+                <h3 className={styles.stepTitle}>{tr(`submit.${step.key}.title`, step.title)}</h3>
+                {step.bullets ? (
+                  <ul className={styles.stepBullets}>
+                    {step.bullets.map((b, n) => (
+                      <li key={n} className={styles.stepBullet}>
+                        <FiCheck aria-hidden="true" />
+                        <span>{tr(`submit.${step.key}.b${n + 1}`, b)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className={styles.stepText}>{tr(`submit.${step.key}.text`, step.text)}</p>
                 )}
-              </p>
-            </li>
+              </Reveal>
+            ))}
           </ol>
         </div>
       </section>
 
       {/* ============ 6. HALL OF FAME (light) ============ */}
-      <section className={`${styles.section} ${styles.light} ${styles.sectionLast}`}>
+      <section className={`${styles.section} ${styles.white} ${styles.sectionLast}`}>
         <div className={styles.container}>
-          <header className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
-              {tr('fame.eyebrow', 'Recognition & Rewards')}
-            </p>
+          <Reveal as="header" className={styles.head}>
+            <p className={styles.eyebrow}>{tr('fame.eyebrow', 'Recognition & Rewards')}</p>
             <h2 className={styles.title}>{tr('fame.title', 'The Nexgn Security Hall of Fame')}</h2>
             <p className={styles.lead}>
               {tr(
@@ -273,14 +339,14 @@ const VulnDisclosure = () => {
                 'While we do not currently operate a paid bug bounty program, we believe in recognizing the hard work of the infosec community. Valid, critical, and high-severity reports that lead to a code change will be rewarded with:'
               )}
             </p>
-          </header>
+          </Reveal>
 
-          <ul className={styles.rewards}>
-            {REWARDS.map((r) => (
-              <li key={r.key} className={styles.reward}>
-                <div className={`${styles.media} ${styles.mediaReward}`} aria-hidden="true" />
-                <p className={styles.rewardText}>{tr(`fame.${r.key}`, r.text)}</p>
-              </li>
+          <ul className={styles.threeCol}>
+            {REWARDS.map(({ key, text }, i) => (
+              <Reveal as="li" key={key} delay={i * 110} className={`${styles.card} ${styles.lift}`}>
+                <div className={`${styles.media} ${styles.mediaReward}`} style={bg(IMAGES.hof[i])} aria-hidden="true" />
+                <p className={styles.rewardText}>{tr(`fame.${key}`, text)}</p>
+              </Reveal>
             ))}
           </ul>
         </div>

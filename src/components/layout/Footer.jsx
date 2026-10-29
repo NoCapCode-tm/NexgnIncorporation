@@ -65,6 +65,7 @@ const COLUMNS = [
       { key: 'about', label: 'About Us', to: '/about' },
       { key: 'careers', label: 'Careers', to: '/careers' },
       { key: 'contact', label: 'Contact', to: '/contact' },
+      { key: 'help', label: 'Help Center', to: '/help' },
       { key: 'partners', label: 'Partners', to: '/partners' },
       { key: 'blog', label: 'Blog', to: '/blog' }, // Added Blog Route Here
     ],

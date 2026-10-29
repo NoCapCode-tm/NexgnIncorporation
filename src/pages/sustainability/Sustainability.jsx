@@ -18,7 +18,9 @@ const LANGS = ['en', 'es', 'hi'];
 
      hero       dark photo behind the hero (hands holding a seedling)
      intro      picture next to "The paperwork doesn't end..." (grey box until added)
-     practice   large visual above the three pledges (empty card until added)
+     practice-1  photo on the "We Measure & Disclose" card (paper + calculator)
+     practice-2  picture on the "We Optimize Our Code" card (code editor)
+     practice-3  photo on the "We Build for the Long Term" card (globe on grass)
      (the bottom CTA photo is shared: src/assets/common/cta.*)
    ===================================================================== */
 const imageContext = require.context('../../assets/sustainability', false, /\.(png|jpe?g|webp|avif|svg)$/i);
@@ -35,22 +37,26 @@ const findImage = (name) => {
 const IMAGES = {
   hero: findImage('hero'),
   intro: findImage('intro'),
-  practice: findImage('practice'),
+  practice: [findImage('practice-1'), findImage('practice-2'), findImage('practice-3')],
 };
 
 const PILLARS = [
   {
     key: 'measure',
+    tilt: -4,
     title: 'We Measure & Disclose',
     text: 'We track the avoided environmental impact of digital workflows from paper sheets saved to transit avoided. We openly publish the methodology behind our Live Impact Tracker and refuse to use "greenwashing" estimates.',
   },
   {
     key: 'code',
+    tilt: 0,
+    textFirst: true,
     title: 'We Optimize Our Code',
     text: 'Heavy software requires heavy servers. We build Nexgn using optimized React and Node.js architectures to ensure low latency, reduced server load, and minimized carbon emissions from our data centers.',
   },
   {
     key: 'longterm',
+    tilt: 4,
     title: 'We Build for the Long Term.',
     text: 'We pledge to align our operations with global sustainability frameworks (like GHG Protocol) as we scale, continually auditing our digital footprint.',
   },
@@ -122,7 +128,7 @@ const Sustainability = () => {
             <p>
               {tr(
                 'intro.p1',
-                'Traditional agreement workflows can involve printing, scanning, couriering, storing and manually tracking documents. Each step adds work—and can carry an environmental cost.'
+                'Traditional agreement workflows can involve printing, scanning, couriering, storing and manually tracking documents. Each step adds work and can carry an environmental cost.'
               )}
             </p>
             <p>
@@ -170,18 +176,44 @@ const Sustainability = () => {
               )}
             </p>
           </Reveal>
+        </div>
+      </section>
 
-          <Reveal className={styles.practiceMedia}>
-            {IMAGES.practice && <img src={IMAGES.practice} alt="" loading="lazy" />}
-          </Reveal>
-
+      <section className={`${styles.section} ${styles.pledges}`}>
+        <div className={styles.container}>
           <ul className={styles.pillars}>
-            {PILLARS.map((p, i) => (
-              <Reveal as="li" key={p.key} delay={i * 100} className={styles.pillar}>
-                <h3 className={styles.pillarTitle}>{tr(`pillars.${p.key}.title`, p.title)}</h3>
-                <p className={styles.pillarText}>{tr(`pillars.${p.key}.text`, p.text)}</p>
-              </Reveal>
-            ))}
+            {PILLARS.map((p, i) => {
+              const media = (
+                <div
+                  className={styles.pledgeMedia}
+                  style={IMAGES.practice[i] ? { '--img': `url("${IMAGES.practice[i]}")` } : undefined}
+                  aria-hidden="true"
+                />
+              );
+              const copy = (
+                <div className={styles.pledgeCopy}>
+                  <h3 className={styles.pillarTitle}>{tr(`pillars.${p.key}.title`, p.title)}</h3>
+                  <p className={styles.pillarText}>{tr(`pillars.${p.key}.text`, p.text)}</p>
+                </div>
+              );
+              return (
+                <Reveal as="li" key={p.key} delay={i * 120} className={styles.pillar}>
+                  <article className={styles.pledge} style={{ '--r': `${p.tilt}deg` }}>
+                    {p.textFirst ? (
+                      <>
+                        {copy}
+                        {media}
+                      </>
+                    ) : (
+                      <>
+                        {media}
+                        {copy}
+                      </>
+                    )}
+                  </article>
+                </Reveal>
+              );
+            })}
           </ul>
         </div>
       </section>

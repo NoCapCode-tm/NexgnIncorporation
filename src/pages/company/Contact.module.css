@@ -1,378 +1,492 @@
-/* Responsive variables mapping */
+/* Contact page: responsive from mobile (320px) to 4K (3840px+).
+   Navbar_Alt + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+
 .page {
-  --black: #000000;
-  --dark: #0d1017;
-  --light: #ffffff;
-  --grey: #f4f5f6;
   --ink: #0d1017;
   --soft: #5b6270;
+  --tint: #eff2f3;
   --red: #ed040f;
-  --red-hover: #d1030d;
-  
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
-  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
-  
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+  --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem)); /* same as Home / Sustainability */
+
+  --fs-eyebrow: clamp(0.6875rem, 0.2vw + 0.62rem, 1.35rem);
+  --fs-h1: clamp(2.75rem, 5vw + 0.75rem, 11rem);
+  --fs-h2: clamp(1.75rem, 2.4vw + 0.8rem, 6rem);
+  --fs-h3: clamp(1.0625rem, 0.6vw + 0.95rem, 2.5rem);
+  --fs-body: clamp(0.875rem, 0.3vw + 0.78rem, 1.7rem);
+  --radius: clamp(1.25rem, 2vw, 4.5rem);
+
   width: 100%;
-  background: var(--light);
+  background: #fff;
   color: var(--ink);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   overflow-x: clip;
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 2400px;
   margin: 0 auto;
-  padding: 0 var(--pad-x);
+}
+
+.section {
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
   box-sizing: border-box;
 }
 
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  border: 0;
-}
-
 .red {
-  color: var(--red);
+  color: #ff0a14;
 }
 
-/* ---------- Scroll reveal ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
-  transition-delay: var(--d, 0ms);
-}
-.reveal[data-in='true'] {
-  opacity: 1;
-  transform: none;
+.rise {
+  animation: rise 0.9s var(--ease-out) var(--d, 0ms) backwards;
 }
 
-/* ---------- 1. HERO ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* ---------- 1. Hero (slides under the transparent Navbar_Alt) ---------- */
+
 .hero {
-  background: var(--dark);
-  color: #fff;
-  padding-top: calc(var(--nav-h) + clamp(3rem, 6vw, 6rem));
-  padding-bottom: clamp(3rem, 6vw, 6rem);
-  text-align: center;
-  margin-top: calc(var(--nav-h) * -1); /* Pull under transparent navbar */
-}
-
-.heroContent {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.eyebrow {
-  margin: 0 0 1rem;
-  font-family: 'DM Mono', monospace;
-  font-size: clamp(0.7rem, 2vw, 0.8125rem);
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-}
-
-.heroTitle {
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  margin: 0 0 1.5rem;
-}
-
-.heroLead {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.6;
-}
-
-/* ---------- 2. FORM SECTION ---------- */
-.formSection {
   position: relative;
-  padding: clamp(4rem, 8vw, 8rem) 0;
-  display: flex;
-  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-top: calc(var(--nav-h) * -1);
+  padding: calc(var(--nav-h) + clamp(1.5rem, 1.6vw, 4rem)) var(--pad-x) clamp(3rem, 7vw, 14rem);
+  color: #fff;
+  text-align: center;
+  background: #050505;
 }
 
-.formBg {
+.heroPhoto {
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* Add your background image here when you have it: */
-  /* background-image: url('../../assets/contact/phones-bg.jpg'); */
-  background-color: #d1d5db; /* Fallback gray */
+  background-color: #070707;
+  background-image: var(--img, radial-gradient(40% 70% at 50% 40%, #3a3a3a, #070707 70%));
   background-size: cover;
   background-position: center;
 }
 
-/* 
-  FIX: Removed the massive white card wrapper, borders, and backdrop-filter.
-  Now the elements float directly over the background image.
-*/
-.formWrapper {
-  width: 100%;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: clamp(2rem, 5vw, 4rem) 1rem;
-  text-align: center;
+.heroPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.25));
 }
 
-.formTitle {
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  font-weight: 500;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.contactForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.inputGroup {
-  width: 100%;
-  text-align: left;
-}
-
-/* FIX: Pure white floating boxes, no borders, soft shadow */
-.input, .textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1.25rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: #ffffff;
-  font-family: inherit;
-  font-size: 1rem;
-  color: var(--ink);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
-}
-
-.input:focus, .textarea:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(237, 4, 15, 0.2), 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 150px;
-}
-
-/* FIX: Stop button from stretching full width, make it a centered pill */
-.submitBtn {
-  align-self: center;
-  background: var(--red);
-  color: #fff;
-  border: none;
-  padding: 1.25rem 3rem;
-  border-radius: 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  margin-top: 1.5rem;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.submitBtn:hover {
-  background: var(--red-hover);
-  transform: translateY(-2px);
-}
-
-/* ---------- 3. CONTACT INFO CARDS ---------- */
-.infoSection {
-  padding: clamp(4rem, 8vw, 8rem) 0;
-  background: #ffffff;
-}
-
-.infoHead {
-  text-align: center;
-  margin-bottom: clamp(3rem, 6vw, 4rem);
-}
-
-.eyebrowDark {
+.eyebrow {
   margin: 0;
-  font-family: 'DM Mono', monospace;
-  font-size: clamp(0.7rem, 2vw, 0.8125rem);
-  letter-spacing: 0.2em;
-  color: var(--ink);
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.cardsGrid {
+.heroTitle {
+  margin: clamp(0.9rem, 1.6vw, 3rem) 0 0;
+  font-size: var(--fs-h1);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.heroText {
+  max-width: 26em;
+  margin: clamp(1.25rem, 2.4vw, 5rem) auto 0;
+  font-size: calc(var(--fs-body) * 1.2);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---------- 2. Get in touch + form (on crumpled black paper) ---------- */
+
+.touch {
+  position: relative;
+  isolation: isolate;
+  padding-top: clamp(3rem, 6vw, 12rem);
+  padding-bottom: clamp(3rem, 6vw, 12rem);
+  background: #0a0a0a;
+  color: #fff;
+}
+
+.touchPaper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: #0b0b0b;
+  background-image: var(--img, radial-gradient(60% 80% at 30% 20%, #222, #0a0a0a 70%));
+  background-size: cover;
+  background-position: center;
+}
+
+.touchGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1.5rem, 3vw, 2rem);
-  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  gap: clamp(1.5rem, 3vw, 7rem);
+  align-items: start;
 }
 
-@media (min-width: 900px) {
-  .cardsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.infoCard {
-  background: var(--grey);
-  padding: clamp(2.5rem, 5vw, 4rem);
-  border-radius: clamp(1rem, 2vw, 1.5rem);
-}
-
-.cardNumber {
-  display: block;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.875rem;
-  color: var(--soft);
-  margin-bottom: 1.5rem;
+/* glass card */
+.card {
+  min-width: 0;
+  padding: clamp(1.5rem, 2.6vw, 6rem);
+  background: rgba(228, 232, 233, 0.9);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius);
+  color: var(--ink);
 }
 
 .cardTitle {
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 600;
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
+  margin: 0 0 clamp(1.5rem, 2.4vw, 5rem);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-align: center;
 }
 
-.cardDesc {
-  font-size: clamp(0.9rem, 1.5vw, 1rem);
-  line-height: 1.6;
+.channel + .channel {
+  margin-top: clamp(1.5rem, 2.4vw, 5rem);
+}
+
+.channelNo {
+  margin: 0 0 0.6em;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.1em;
   color: var(--soft);
-  margin-bottom: 2rem;
-  max-width: 400px;
 }
 
-.linkList {
-  list-style: none;
-  padding: 0;
+.channelTitle {
+  margin: 0 0 0.5em;
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.channelText {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  max-width: 30em;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  color: var(--soft);
 }
 
-.contactLink {
+.emails {
+  list-style: none;
+  margin: clamp(0.9rem, 1.4vw, 3rem) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em clamp(0.9rem, 1.4vw, 3rem);
+}
+
+.email {
   display: inline-flex;
   align-items: center;
-  gap: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 0.55em;
+  font-size: var(--fs-body);
   color: var(--ink);
   text-decoration: none;
-  transition: color 0.2s ease;
 }
 
-.contactLink:hover {
-  color: var(--red);
+.emailText {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
 }
 
-.iconCircle {
-  display: flex;
+.emailIcon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
   background: var(--ink);
   color: #fff;
-  border-radius: 50%;
-  font-size: 1rem;
-  transition: background 0.2s ease;
+  font-size: 1em;
+  transition: transform 0.4s var(--ease-out), background 0.3s ease;
 }
 
-.contactLink:hover .iconCircle {
+.email:hover .emailIcon {
+  transform: translateX(4px);
   background: var(--red);
 }
 
-/* ---------- HQ BLOCK ---------- */
-.hqBlock {
-  background: var(--grey);
-  border-radius: clamp(1rem, 2vw, 1.5rem);
-  padding: clamp(2.5rem, 5vw, 4rem);
+.email:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* form */
+.formWrap {
+  min-width: 0;
+}
+
+.form {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: clamp(1rem, 1.5vw, 3.5rem);
 }
 
-@media (min-width: 900px) {
-  .hqBlock {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
-.hqContent {
-  flex: 2;
-  max-width: 400px;
+.label {
+  font-size: var(--fs-body);
+  color: #fff;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85em 1em;
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: 0.45em;
+  font: inherit;
+  font-size: var(--fs-body);
+  color: var(--ink);
+  outline: 0;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.input::placeholder {
+  font-style: italic;
+  color: #8a919b;
+}
+
+.input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 0.25em rgba(237, 4, 15, 0.25);
+}
+
+.textarea {
+  min-height: clamp(7rem, 11vw, 20rem);
+  resize: vertical;
+}
+
+.trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.formFoot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9em;
+  margin-top: clamp(0.25rem, 0.8vw, 2rem);
+}
+
+.send {
+  padding: 0.8em 1.7em;
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  border-radius: 0.4em;
+  font: inherit;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.35s var(--ease-out);
+}
+
+.send:hover:not(:disabled) {
+  background: #d1040e;
+  transform: translateY(-2px);
+}
+
+.send:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.send:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.status {
+  min-height: 1.4em;
+  margin: 0;
+  font-size: var(--fs-body);
+  text-align: center;
+  color: #6fe3a0;
+}
+
+.statusError {
+  color: #ff8a91;
+}
+
+/* ---------- 3. Headquarters ---------- */
+
+.hq {
+  padding-top: clamp(3rem, 6vw, 12rem);
+  padding-bottom: clamp(3rem, 6vw, 12rem);
+  background: #fafafa;
+}
+
+.hqCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 7rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 7rem);
+  background: var(--tint);
+  border-radius: var(--radius);
 }
 
 .hqTitle {
-  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  margin: 0 0 0.6em;
+  font-size: var(--fs-h3);
   font-weight: 600;
-  margin-bottom: 1rem;
+  line-height: 1.25;
 }
 
-.hqDesc {
-  font-size: clamp(0.9rem, 1.5vw, 1rem);
+.hqText {
+  margin: 0;
+  max-width: 24em;
+  font-size: var(--fs-body);
   line-height: 1.6;
   color: var(--soft);
+}
+
+.offices {
+  list-style: none;
   margin: 0;
-}
-
-.hqAddress {
-  flex: 1;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--ink);
-}
-
-.hqAddress p {
-  margin: 0;
-}
-
-.hqAction {
-  flex: 0;
+  padding: 0;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
+  gap: clamp(1rem, 1.6vw, 3.5rem);
 }
+
+.office {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1rem, 2vw, 4rem);
+}
+
+.officeAddress {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+.officeName {
+  font-weight: 500;
+}
+
+.officeMap {
+  flex: none;
+  width: clamp(5rem, 7.5vw, 15rem);
+  aspect-ratio: 1;
+  background-color: #1d2430;
+  background-image: var(--img, radial-gradient(circle at 40% 40%, #34405a, #1d2430 70%));
+  background-size: cover;
+  background-position: center;
+  border-radius: clamp(0.6rem, 0.9vw, 1.75rem);
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+
+.officeMap:hover {
+  transform: scale(1.05);
+  box-shadow: 0 18px 36px -18px rgba(13, 16, 23, 0.6);
+}
+
+.officeMap:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---------- Breakpoints ---------- */
 
 @media (min-width: 900px) {
-  .hqAction {
-    justify-content: flex-end;
+  .touchGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 9rem);
+  }
+
+  .hqCard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 9rem);
+  }
+
+  /* the form sits level with the card, like the design */
+  .formWrap {
+    padding-top: clamp(0.5rem, 1.6vw, 4rem);
+  }
+
+  .hqIntro {
+    padding-left: clamp(0rem, 6vw, 14rem);
+  }
+
+  .offices {
+    padding-right: clamp(0rem, 4vw, 10rem);
   }
 }
 
-.iconCircleLarge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  background: var(--ink);
-  color: #fff;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  transition: background 0.2s ease, transform 0.2s ease;
+/* Container caps: mirror Navbar + Footer */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1920px;
+  }
 }
 
-.iconCircleLarge:hover {
-  background: var(--red);
-  transform: translateY(-4px);
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+}
+
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3200px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
+  .rise {
+    animation: none;
+  }
+
+  .emailIcon,
+  .officeMap,
+  .send,
+  .input {
     transition: none;
+  }
+
+  .email:hover .emailIcon,
+  .officeMap:hover,
+  .send:hover:not(:disabled) {
+    transform: none;
   }
 }

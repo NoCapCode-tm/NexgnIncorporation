@@ -1,0 +1,799 @@
+/* /trust/subprocessors — responsive from mobile (320px) to 4K (3840px+).
+   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+
+.page {
+  --dark: #0d1017;
+  --light: #f9fafa;
+  --tint: #eef2f4;
+  --white: #ffffff;
+  --ink: #0d1017;
+  --ink-soft: #5b6270;
+  --on-dark: #fafbfb;
+  --on-dark-soft: #9aa0a9;
+  --line: #dfe4e8;
+  --red: #ee0510;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+
+  /* fluid scale */
+  --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
+  --section-y: clamp(3.5rem, 7vw, 14rem);
+  --gap: clamp(1rem, 1.6vw, 3.5rem);
+  --radius: clamp(1rem, 1.4vw, 2.5rem);
+
+  --fs-eyebrow: clamp(0.6875rem, 0.2vw + 0.62rem, 1.35rem);
+  --fs-h1: clamp(2.5rem, 4.2vw + 0.75rem, 10rem);
+  --fs-h2: clamp(1.75rem, 2.6vw + 0.75rem, 6.5rem);
+  --fs-h3: clamp(1.0625rem, 0.5vw + 0.95rem, 2.5rem);
+  --fs-lead: clamp(0.9375rem, 0.35vw + 0.85rem, 2.1rem);
+  --fs-body: clamp(0.8125rem, 0.25vw + 0.75rem, 1.65rem);
+  --fs-framework: clamp(2.25rem, 3vw + 0.75rem, 8rem);
+
+  width: 100%;
+  background: var(--light);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  overflow-x: clip;
+}
+
+/* ---------- Layout primitives ---------- */
+
+.section {
+  padding: var(--section-y) var(--pad-x);
+  box-sizing: border-box;
+}
+
+.dark {
+  background: var(--dark);
+  color: var(--on-dark);
+}
+
+.light {
+  background: var(--light);
+}
+
+.tint {
+  background: var(--tint);
+}
+
+.sectionLast {
+  padding-bottom: calc(var(--section-y) * 1.1);
+}
+
+.container {
+  width: 100%;
+  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  margin: 0 auto;
+}
+
+/* ---------- Typography ---------- */
+
+.eyebrow {
+  text-align: center;
+  margin: 0 0 clamp(1rem, 1.4vw, 2.5rem);
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.eyebrowLight {
+  color: var(--on-dark-soft);
+}
+
+.head {
+  max-width: 62rem;
+  margin: 0 auto clamp(2rem, 4vw, 8rem);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 clamp(1rem, 1.6vw, 3rem);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 0 auto;
+  max-width: 44rem;
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.leadLight {
+  color: var(--on-dark-soft);
+}
+
+.body {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ---------- Buttons ---------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 1vw, 2rem);
+  margin-top: clamp(1.75rem, 2.5vw, 5rem);
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
+  padding: 0 1.6em;
+  border-radius: 0.4em;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btnPrimary {
+  background: var(--red);
+  color: #fff;
+  border: 1px solid var(--red);
+}
+
+.btnPrimary:hover {
+  background: #d1040e;
+  border-color: #d1040e;
+}
+
+/* ---------- 1. Hero: photo behind a frosted card; slides under the transparent Navbar_Alt ---------- */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  margin-top: calc(var(--nav-h) * -1);
+  padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
+  background: #2a2420;
+  color: var(--on-dark);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.heroPhoto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: #3a2f27;
+  background-image: var(--img, radial-gradient(60% 70% at 70% 45%, #c79a6d, #5a4636 55%, #2a2420));
+  background-size: cover;
+  background-position: center;
+  animation: heroZoom 1.8s var(--ease-out) both;
+}
+
+/* darkens the top so the transparent navbar stays readable on any photo */
+.heroPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(13, 16, 23, 0.55), rgba(13, 16, 23, 0) 38%);
+}
+
+.heroCard {
+  max-width: min(100%, 78rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 8rem) clamp(1.25rem, 4vw, 8rem);
+  background: rgba(14, 17, 23, 0.569);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: clamp(1.25rem, 2vw, 4rem);
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.heroTitle {
+  margin: 0 auto clamp(1.25rem, 2vw, 4rem);
+  max-width: 12em;
+  font-size: var(--fs-h1);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.btnGlass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
+  padding: 0 1.6em;
+  border-radius: 0.4em;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out);
+}
+
+.btnGlass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+.btnGlass:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+.rise {
+  animation: rise 0.9s var(--ease-out) backwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.06);
+    opacity: 0.6;
+  }
+}
+
+/* ---------- Cards & grids ---------- */
+
+.card {
+  min-width: 0;
+  padding: clamp(1.25rem, 1.8vw, 3.5rem);
+  background: var(--tint);
+  border-radius: var(--radius);
+}
+
+.cardTitle {
+  margin: clamp(1.5rem, 2.5vw, 5rem) 0 clamp(0.6rem, 0.9vw, 1.75rem);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.iconBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
+  height: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
+  background: var(--white);
+  border-radius: clamp(0.5rem, 0.6vw, 1.25rem);
+  color: var(--ink-soft);
+  font-size: clamp(1.1rem, 0.6vw + 0.9rem, 2.5rem);
+}
+
+/* hover lift for cards */
+.lift {
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px -34px rgba(13, 16, 23, 0.35);
+}
+
+/* ---------- Media placeholders (artwork slots) ---------- */
+
+/* ---------- 4. Split section ---------- */
+
+/* ---------- 6. Frameworks ---------- */
+
+/* ---------- 4. Evidence table ---------- */
+
+.tableCard {
+  padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.table thead th {
+  padding: clamp(1rem, 1.6vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(0.9rem, 1.2vw, 2.25rem) 0;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.table tbody tr {
+  border-top: 1px solid var(--line);
+  transition: background 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(13, 16, 23, 0.025);
+}
+
+.table tbody th,
+.table tbody td {
+  padding: clamp(1rem, 1.5vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(1rem, 1.5vw, 3rem) 0;
+  vertical-align: top;
+}
+
+.rowLabel {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---------- extra layout bits ---------- */
+
+.white {
+  background: #fff;
+}
+
+.headLeft {
+  max-width: 62rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 6rem);
+}
+
+.eyebrowLeft,
+.titleLeft,
+.leadLeft {
+  text-align: left;
+}
+
+.leadLeft {
+  margin: 0;
+}
+
+/* ---------- shared split (heading left, text right) ---------- */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 6rem);
+  align-items: start;
+}
+
+.splitHead {
+  min-width: 0;
+}
+
+.splitBody {
+  min-width: 0;
+}
+
+.splitTitle {
+  margin: 0;
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.splitTitleSmall {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.copy {
+  margin: 0;
+  font-size: var(--fs-lead);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.copySmall {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+/* ---------- 2. Guarantee card ---------- */
+
+.guarantee {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.9rem, 1.4vw, 2.5rem);
+  margin-top: clamp(1.25rem, 2vw, 4rem);
+  padding: clamp(1.1rem, 1.8vw, 3.5rem);
+  background: var(--tint);
+  border-radius: var(--radius);
+}
+
+.guaranteeIcon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2rem, 1.2vw + 1.4rem, 4.5rem);
+  height: clamp(2rem, 1.2vw + 1.4rem, 4.5rem);
+  background: #dfe4e8;
+  border-radius: clamp(0.5rem, 0.6vw, 1.25rem);
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 0.5vw + 0.85rem, 2.1rem);
+}
+
+.tagSmall {
+  margin: 0 0 0.6em;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.guaranteeText {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* ---------- 3. Registry tables ---------- */
+
+.registryBlock + .registryBlock {
+  margin-top: clamp(2.5rem, 5vw, 10rem);
+}
+
+.registryHead {
+  margin-bottom: clamp(1.25rem, 2.4vw, 5rem);
+}
+
+.table td {
+  vertical-align: top;
+  width: auto;
+  color: var(--ink-soft);
+}
+
+.table tbody th {
+  vertical-align: top;
+}
+
+.vendor {
+  display: block;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  background: var(--tint);
+  font-size: calc(var(--fs-body) * 0.85);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.emptyRow {
+  padding: clamp(1.5rem, 3vw, 5rem) 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: var(--fs-body);
+}
+
+/* ---------- 4. BYOS note ---------- */
+
+.note {
+  max-width: 62rem;
+}
+
+/* ---------- 5. Stay informed (dark) ---------- */
+
+.form {
+  min-width: 0;
+}
+
+.fieldWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: clamp(0.3rem, 0.4vw, 0.8rem);
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: 0.7em;
+  font-size: var(--fs-body);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fieldWrap:focus-within {
+  border-color: var(--red);
+  box-shadow: 0 0 0 0.3em rgba(238, 5, 16, 0.22);
+}
+
+.fieldWrapError {
+  border-color: #ff6b73;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+  padding: 0.8em 0.9em;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  color: var(--ink);
+}
+
+.field::placeholder {
+  color: #9aa0a9;
+}
+
+.submit {
+  flex: none;
+  padding: 0.8em 1.4em;
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  border-radius: 0.5em;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.3s var(--ease-out);
+}
+
+.submit:hover:not(:disabled) {
+  background: #d1040e;
+  transform: translateY(-1px);
+}
+
+.submit:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.submit:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.formNote {
+  margin: clamp(0.9rem, 1.2vw, 2.25rem) 0 0;
+  font-size: calc(var(--fs-body) * 0.85);
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--on-dark-soft);
+}
+
+.status {
+  margin: clamp(0.7rem, 1vw, 2rem) 0 0;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: #6fe3a0;
+}
+
+.statusError {
+  color: #ff8a91;
+}
+
+/* ---------- 6. Changelog ---------- */
+
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.logItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.4rem clamp(1.25rem, 3vw, 6rem);
+  padding: clamp(1.1rem, 1.8vw, 3.5rem) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+}
+
+.logDate {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: calc(var(--fs-body) * 0.9);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.logDot {
+  flex: none;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.logText {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* ---------- Focus ---------- */
+
+.btnPrimary:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---------- Mobile: the table becomes stacked cards ---------- */
+
+@media (max-width: 767px) {
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+    width: auto;
+  }
+
+  .table tbody th,
+  .table tbody td {
+    padding: 0;
+  }
+
+  .table tbody tr {
+    padding: 1.1rem 0;
+  }
+
+  .rowLabel {
+    margin-bottom: 0.7rem;
+    font-size: 1.05em;
+  }
+
+  .table td + td {
+    margin-top: 0.7rem;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+}
+
+/* ---------- Breakpoints ---------- */
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 5vw, 12rem);
+  }
+
+  .logItem {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+}
+
+/* Container caps: mirror Navbar + Footer */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1920px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+}
+
+@media (min-width: 3200px) {
+  .container {
+    max-width: 3200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .heroPhoto {
+    animation: none;
+  }
+
+  .lift,
+  .lift:hover,
+  .btnGlass,
+  .btnGlass:hover,
+  .field,
+  .submit {
+    transition: none;
+  }
+
+  .lift:hover,
+  .btnGlass:hover {
+    transform: none;
+  }
+
+  .btnPrimary {
+    transition: none;
+  }
+}
+
+/* ---------- small helpers ---------- */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.splitTitleLight {
+  margin-bottom: clamp(1rem, 1.6vw, 3rem);
+}
+
+.copyLight {
+  font-size: var(--fs-body);
+  color: var(--on-dark-soft);
+}
+
+.noteTitle {
+  margin-bottom: clamp(0.75rem, 1.2vw, 2.25rem);
+}
+
+.eyebrowLeft {
+  text-align: left;
+}
+
+@media (max-width: 479px) {
+  .fieldWrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .submit {
+    width: 100%;
+  }
+}
