@@ -16,6 +16,10 @@ Disallow: /*?*
 # --------------------------------------------------
 # 2. AI & LLM CRAWLERS (Aggressive AEO Whitelist)
 # --------------------------------------------------
+
+User-agent: OAI-SearchBot
+Allow: /
+
 # OpenAI
 User-agent: GPTBot
 Allow: /
