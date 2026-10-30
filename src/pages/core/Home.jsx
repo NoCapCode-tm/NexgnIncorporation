@@ -5,6 +5,8 @@ import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiShield, FiSta
 import { SEOHead } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
 import ImpactStats from '../../components/common/ImpactStats';
+import useHomeAnimations from '../../hooks/useHomeAnimations';
+import gsap from 'gsap';
 import styles from './Home.module.css';
 
 const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
@@ -52,48 +54,56 @@ const bg = (src) => (src ? { '--img': `url("${src}")` } : undefined);
    Small hooks / helpers
    ===================================================================== */
 
-// Fires once when an element scrolls into view (used for reveals + count-up)
-const useInView = (threshold = 0.15) => {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(() => typeof IntersectionObserver === 'undefined');
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { threshold, rootMargin: '0px 0px -6% 0px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [threshold]);
-
-  return [ref, inView];
-};
-
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Fade + rise when scrolled into view
-const Reveal = ({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) => {
-  const [ref, inView] = useInView();
-  return (
-    <Tag
-      ref={ref}
-      className={`${styles.reveal} ${className}`}
-      data-in={inView}
-      style={{ '--d': `${delay}ms` }}
-      {...rest}
-    >
-      {children}
-    </Tag>
-  );
+// Splits a headline into words, each inside its own mask, so GSAP can slide them up one by one.
+// (Done in JSX, not by editing the DOM, so React and translations keep working.)
+const Words = ({ text, className = '', a = 'word' }) => {
+  const words = String(text).split(' ').filter(Boolean);
+  return words.map((word, i) => (
+    <React.Fragment key={`${word}-${i}`}>
+      <span className={styles.w}>
+        <span className={`${styles.wi} ${className}`} data-a={a}>
+          {word}
+        </span>
+      </span>
+      {i < words.length - 1 ? ' ' : null}
+    </React.Fragment>
+  ));
 };
+
+// The red "Sign." cycles through five signature typefaces (see useHomeAnimations + .signV* in the CSS).
+// Variants 2-4 are drawn with CSS (data-text), so crawlers and screen readers see "Sign." only once.
+const SIGNATURE_FONTS = [
+  'DM Sans',
+  'Allison',
+  'Alex Brush',
+  'Sacramento',
+  'Herr Von Muellerhoff',
+];
+
+const SignCycle = ({ text }) => (
+  <span className={`${styles.sign} ${styles.red}`} data-a="hero-sign">
+    <span
+      className={`${styles.signV} ${styles.signV0}`}
+      data-sign-v
+      data-sign-font={SIGNATURE_FONTS[0]}
+    >
+      {text}
+    </span>
+    {[1, 2, 3, 4].map((n) => (
+      <span
+        key={n}
+        className={`${styles.signV} ${styles[`signV${n}`]}`}
+        data-sign-v
+        data-sign-font={SIGNATURE_FONTS[n]}
+        data-text={text}
+        aria-hidden="true"
+      />
+    ))}
+  </span>
+);
 
 /* =====================================================================
    Content (every string has an i18n key + English default)
@@ -275,6 +285,47 @@ const Home = () => {
   const [billing, setBilling] = useState('monthly');
   const [currency, setCurrency] = useState('USD');
   const tabRefs = useRef([]);
+  const rootRef = useRef(null);
+  const flowReady = useRef(false);
+  const priceReady = useRef(false);
+
+  // All page motion (GSAP + ScrollTrigger) lives in this hook
+  useHomeAnimations(rootRef, [currentLng]);
+
+  // Workflow: when a step changes, its text, bullets and image come in one after another
+  useEffect(() => {
+    if (!flowReady.current) {
+      flowReady.current = true;
+      return;
+    }
+    if (prefersReducedMotion()) return;
+    const root = rootRef.current;
+    if (!root) return;
+    const body = root.querySelector(`#panel-${activeTab}`);
+    if (body) {
+      gsap.fromTo(
+        body.children,
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power3.out', overwrite: true }
+      );
+    }
+  }, [activeTab]);
+
+  // Pricing: the numbers roll in when the billing period or currency changes
+  useEffect(() => {
+    if (!priceReady.current) {
+      priceReady.current = true;
+      return;
+    }
+    if (prefersReducedMotion()) return;
+    const root = rootRef.current;
+    if (!root) return;
+    gsap.fromTo(
+      root.querySelectorAll('[data-price]'),
+      { yPercent: 40, opacity: 0 },
+      { yPercent: 0, opacity: 1, duration: 0.55, stagger: 0.06, ease: 'power3.out', overwrite: true }
+    );
+  }, [billing, currency]);
 
   const scrollToFlow = (e) => {
     e.preventDefault();
@@ -335,7 +386,8 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={rootRef}>
+      <div className={styles.progress} data-a="progress" aria-hidden="true" />
       <SEOHead title={seoTitle} description={seoDescription} url="/" schema={schema} />
 
       {/* ============ 1. HERO ============ */}
@@ -343,45 +395,47 @@ const Home = () => {
         className={`${styles.hero} ${styles.photoSection}`}
         style={bg(IMAGES.hero)}
         aria-labelledby="home-title"
+        data-a="hero"
       >
-        <div className={`${styles.photo} ${styles.photoHero}`} aria-hidden="true" />
+        <div className={`${styles.photo} ${styles.photoHero}`} data-a="hero-photo" aria-hidden="true" />
         <div className={`${styles.shade} ${styles.shadeHero}`} aria-hidden="true" />
 
-        <div className={styles.container}>
+        <div className={styles.container} data-a="hero-content">
           <h1 id="home-title" className={styles.heroTitle}>
-            <span className={styles.heroLine} style={{ '--d': '80ms' }}>
-              {tr('hero.line1a', 'Create.')} <span className={styles.red}>{tr('hero.line1b', 'Sign.')}</span>
+            <span className={styles.heroLine}>
+              <Words text={tr('hero.line1a', 'Create.')} a="hero-word" />{' '}
+              <SignCycle text={tr('hero.line1b', 'Sign.')} />
             </span>
-            <span className={styles.heroLine} style={{ '--d': '200ms' }}>
-              {tr('hero.line2', 'Automate. Trust.')}
+            <span className={styles.heroLine}>
+              <Words text={tr('hero.line2', 'Automate. Trust.')} a="hero-word" />
             </span>
           </h1>
 
-          <p className={`${styles.heroText} ${styles.rise}`} style={{ '--d': '340ms' }}>
+          <p className={styles.heroText} data-a="hero-fade">
             <span>{tr('hero.text1', 'Send, sign and track legally binding documents from any device.')}</span>{' '}
             <span>{tr('hero.text2', 'Built in India, compliant worldwide, free to start.')}</span>
           </p>
 
-          <div className={`${styles.actions} ${styles.rise}`} style={{ '--d': '460ms' }}>
-            <a href={SIGNUP_URL} className={styles.btnPrimary}>
+          <div className={styles.actions} data-a="hero-fade">
+            <a href={SIGNUP_URL} className={styles.btnPrimary} data-a="magnet">
               {tr('hero.cta', 'Start for free')}
             </a>
-            <a href="#how-it-works" className={styles.btnGhost} onClick={scrollToFlow}>
+            <a href="#how-it-works" className={styles.btnGhost} onClick={scrollToFlow} data-a="magnet">
               {tr('hero.secondary', 'See how it works')}
             </a>
           </div>
 
-          <p className={`${styles.note} ${styles.rise}`} style={{ '--d': '560ms' }}>
+          <p className={styles.note} data-a="hero-fade">
             {tr('hero.note', 'No credit card. Signers don’t need an account.')}
           </p>
 
-          <div className={`${styles.legalStrip} ${styles.rise}`} style={{ '--d': '680ms' }}>
+          <div className={styles.legalStrip} data-a="hero-fade">
             <span className={styles.legalLead}>
               {tr('hero.legal', 'Legally valid in India, the US and the EU')}
             </span>
             <ul className={styles.tags}>
               {TRUST_TAGS.map((tag) => (
-                <li key={tag} className={styles.tag}>
+                <li key={tag} className={styles.tag} data-a="hero-tag">
                   {tag}
                 </li>
               ))}
@@ -393,10 +447,10 @@ const Home = () => {
       {/* ============ 2. TRUSTED BY ============ */}
       <section className={styles.trusted} aria-label={tr('trusted.label', 'Trusted by')}>
         <div className={styles.container}>
-          <Reveal className={styles.trustedRow}>
+          <div className={styles.trustedRow} data-a="up">
             <p className={styles.trustedLabel}>{tr('trusted.label', 'Trusted By')}</p>
             <div className={styles.marquee}>
-              <ul className={styles.marqueeTrack}>
+              <ul className={styles.marqueeTrack} data-a="marquee">
                 {[...LOGOS, ...LOGOS].map((logo, i) => (
                   <li
                     key={`${logo.key}-${i}`}
@@ -412,22 +466,26 @@ const Home = () => {
                 ))}
               </ul>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
       {/* ============ 3. SUSTAINABILITY ============ */}
       <section className={`${styles.section} ${styles.impact}`}>
         <div className={styles.container}>
-          <Reveal className={styles.head}>
-            <p className={styles.eyebrow}>{tr('impact.eyebrow', 'Sustainability & Efficiency')}</p>
-            <h2 className={styles.title}>
-              {tr('impact.title1', 'Every Agreement Leaves a Smaller')}{' '}
-              <span className={styles.red}>{tr('impact.title2', 'Footprint')}</span>
+          <div className={styles.head}>
+            <p className={styles.eyebrow} data-a="up">
+              {tr('impact.eyebrow', 'Sustainability & Efficiency')}
+            </p>
+            <h2 className={styles.title} data-a="title">
+              <Words text={tr('impact.title1', 'Every Agreement Leaves a Smaller')} />{' '}
+              <Words text={tr('impact.title2', 'Footprint')} className={styles.red} />
             </h2>
-          </Reveal>
+          </div>
 
-          <ImpactStats />
+          <div data-a="up">
+            <ImpactStats />
+          </div>
         </div>
       </section>
 
@@ -437,29 +495,31 @@ const Home = () => {
         className={`${styles.flowSection} ${styles.photoSection}`}
         style={bg(IMAGES.workflow)}
       >
-        <div className={`${styles.photo} ${styles.photoFlow}`} aria-hidden="true" />
+        <div className={`${styles.photo} ${styles.photoFlow}`} data-a="parallax" data-speed="7" aria-hidden="true" />
         <div className={`${styles.shade} ${styles.shadeFlow}`} aria-hidden="true" />
 
         <div className={styles.container}>
-          <Reveal className={`${styles.head} ${styles.headLight}`}>
-            <h2 className={styles.title}>
-              {tr('flow.title1', 'More than a signature.')}
+          <div className={`${styles.head} ${styles.headLight}`}>
+            <h2 className={styles.title} data-a="title">
+              <Words text={tr('flow.title1', 'More than a signature.')} />
               <br />
-              {tr('flow.title2a', 'A complete')} <span className={styles.red}>{tr('flow.title2b', 'workflow.')}</span>
+              <Words text={tr('flow.title2a', 'A complete')} />{' '}
+              <Words text={tr('flow.title2b', 'workflow.')} className={styles.red} />
             </h2>
-          </Reveal>
+          </div>
 
           <div className={styles.flow}>
-            <Reveal className={styles.flowIntro}>
+            <div className={styles.flowIntro} data-a="up">
               <p className={styles.flowLead}>
                 {tr('flow.lead1', 'Everything your agreements need.')}
                 <br />
                 {tr('flow.lead2', 'Nothing they don’t.')}
               </p>
-            </Reveal>
+            </div>
 
             <div
               className={styles.tabs}
+              data-a="stagger"
               role="tablist"
               aria-orientation="vertical"
               aria-label={tr('flow.tabs', 'Workflow steps')}
@@ -493,7 +553,7 @@ const Home = () => {
             </div>
 
             {/* All four panels sit in the same grid cell and cross-fade, so the card never changes size */}
-            <div className={styles.flowPanel}>
+            <div className={styles.flowPanel} data-a="panel">
               <div className={styles.flowMedia}>
                 {FLOW.map((step) => (
                   <div
@@ -537,7 +597,7 @@ const Home = () => {
               </div>
             </div>
 
-            <Reveal as="figure" className={styles.quote}>
+            <figure className={styles.quote} data-a="up">
               <div className={styles.rating} aria-label="5.0 out of 5">
                 <span className={styles.stars} aria-hidden="true">
                   {[0, 1, 2, 3, 4].map((s) => (
@@ -555,7 +615,7 @@ const Home = () => {
               <figcaption className={styles.quoteBy}>
                 {tr('flow.quoteBy', 'Sales Manager, Orbit.')}
               </figcaption>
-            </Reveal>
+            </figure>
           </div>
         </div>
       </section>
@@ -563,35 +623,42 @@ const Home = () => {
       {/* ============ 5. COMPLIANCE ============ */}
       <section className={`${styles.section} ${styles.law}`}>
         <div className={styles.container}>
-          <Reveal className={styles.head}>
-            <h2 className={`${styles.title} ${styles.lawTitle}`}>
-              {tr('law.title1', 'Designed for')} <span className={styles.red}>{tr('law.title2', 'global')}</span>{' '}
-              {tr('law.title3', 'legal compliance.')}
+          <div className={styles.head}>
+            <h2 className={`${styles.title} ${styles.lawTitle}`} data-a="title">
+              <Words text={tr('law.title1', 'Designed for')} />{' '}
+              <Words text={tr('law.title2', 'global')} className={styles.red} />{' '}
+              <Words text={tr('law.title3', 'legal compliance.')} />
             </h2>
-            <p className={styles.lead}>
+            <p className={styles.lead} data-a="up">
               {tr(
                 'law.text',
                 'Your contracts are only as good as the evidence behind them. Nexgn is built to support legally meaningful electronic agreements worldwide.'
               )}
             </p>
-          </Reveal>
+          </div>
 
           <ul className={styles.cards}>
-            {COMPLIANCE.map((card, i) => (
-              <Reveal as="li" key={card.key} delay={(i % 2) * 100} className={styles.card}>
-                {IMAGES[card.key] ? (
-                  <img
-                    className={styles.cardMedia}
-                    src={IMAGES[card.key]}
-                    alt={card.alt}
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className={styles.cardMedia} data-k={card.key} role="img" aria-label={card.alt} />
-                )}
-                <h3 className={styles.cardTitle}>{tr(`law.${card.key}.title`, card.title)}</h3>
-                <p className={styles.cardText}>{tr(`law.${card.key}.text`, card.text)}</p>
-              </Reveal>
+            {COMPLIANCE.map((card) => (
+              <li key={card.key} className={styles.card} data-a="card">
+                <div className={styles.cardFrame} data-a="frame">
+                  {IMAGES[card.key] ? (
+                    <img
+                      className={styles.cardMedia}
+                      src={IMAGES[card.key]}
+                      alt={card.alt}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className={styles.cardMedia} data-k={card.key} role="img" aria-label={card.alt} />
+                  )}
+                </div>
+                <h3 className={styles.cardTitle} data-a="card-text">
+                  {tr(`law.${card.key}.title`, card.title)}
+                </h3>
+                <p className={styles.cardText} data-a="card-text">
+                  {tr(`law.${card.key}.text`, card.text)}
+                </p>
+              </li>
             ))}
           </ul>
         </div>
@@ -603,25 +670,27 @@ const Home = () => {
         style={bg(IMAGES.pricing)}
         aria-labelledby="home-pricing"
       >
-        <div className={`${styles.photo} ${styles.photoPricing}`} aria-hidden="true" />
+        <div className={`${styles.photo} ${styles.photoPricing}`} data-a="parallax" data-speed="7" aria-hidden="true" />
         <div className={`${styles.shade} ${styles.shadePricing}`} aria-hidden="true" />
 
         <div className={styles.container}>
-          <Reveal className={`${styles.head} ${styles.headLight}`}>
-            <h2 id="home-pricing" className={styles.title}>
-              <span className={styles.pLine}>{tr('pricing.title1', 'Simple pricing.')}</span>
+          <div className={`${styles.head} ${styles.headLight}`}>
+            <h2 id="home-pricing" className={styles.title} data-a="title">
+              <span className={styles.pLine}>
+                <Words text={tr('pricing.title1', 'Simple pricing.')} />
+              </span>
               <span className={`${styles.pLine} ${styles.pWrap}`}>
-                {tr('pricing.title2a', 'Start')}{' '}
-                <span className={styles.red}>{tr('pricing.title2b', 'free')}</span>
-                {tr('pricing.title2c', ', scale when you’re ready.')}
+                <Words text={tr('pricing.title2a', 'Start')} />{' '}
+                <Words text={tr('pricing.title2b', 'free')} className={styles.red} />
+                <Words text={tr('pricing.title2c', ', scale when you’re ready.')} />
               </span>
             </h2>
-            <p className={styles.pricingNote}>
+            <p className={styles.pricingNote} data-a="up">
               {tr('pricing.note', 'No credit card to start. Cancel anytime.')}
             </p>
-          </Reveal>
+          </div>
 
-          <Reveal className={styles.toggles}>
+          <div className={styles.toggles} data-a="up">
             <div className={styles.toggle} role="group" aria-label={tr('pricing.billing', 'Billing period')}>
               <button
                 type="button"
@@ -654,17 +723,16 @@ const Home = () => {
                 </button>
               ))}
             </div>
-          </Reveal>
+          </div>
 
           <ul className={styles.plans}>
-            {PLANS.map((plan, i) => {
+            {PLANS.map((plan) => {
               const { perMonth, yearlyTotal } = priceInfo(plan.price[currency], billing);
               const isFree = plan.price[currency] === 0;
               return (
-                <Reveal
-                  as="li"
+                <li
                   key={plan.key}
-                  delay={i * 100}
+                  data-a="plan"
                   className={`${styles.plan} ${
                     plan.key === 'free'
                       ? styles.planFree
@@ -687,7 +755,11 @@ const Home = () => {
 
                     <div className={styles.panel}>
                       <div className={styles.priceRow}>
-                        <span className={styles.amount}>{formatMoney(perMonth, currency)}</span>
+                        <span className={styles.amountMask}>
+                          <span className={styles.amount} data-price>
+                            {formatMoney(perMonth, currency)}
+                          </span>
+                        </span>
                         <span className={styles.priceMeta}>
                           <span>/ {tr('pricing.month', 'month')}</span>
                           {!isFree && (
@@ -726,7 +798,7 @@ const Home = () => {
                       </a>
                     </div>
                   </div>
-                </Reveal>
+                </li>
               );
             })}
           </ul>
@@ -734,17 +806,19 @@ const Home = () => {
       </section>
 
       {/* ============ 7. FINAL CTA (reusable: src/components/common/CtaBanner) ============ */}
-      <CtaBanner
-        image={IMAGES.cta}
+      <div data-a="expand">
+        <CtaBanner
+          image={IMAGES.cta}
         title={tr('cta.title', 'Start signing documents')}
         highlight={tr('cta.highlight', 'signing')}
         text={tr(
           'cta.text',
           'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
         )}
-        primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}
-        secondary={{ label: tr('cta.secondary', 'Login'), href: LOGIN_URL }}
-      />
+          primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}
+          secondary={{ label: tr('cta.secondary', 'Login'), href: LOGIN_URL }}
+        />
+      </div>
     </div>
   );
 };

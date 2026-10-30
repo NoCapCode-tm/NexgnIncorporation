@@ -116,24 +116,113 @@
   pointer-events: none;
 }
 
-/* ---------- Scroll reveal ---------- */
+/* ---------- Scroll motion (GSAP drives it: see hooks/useHomeAnimations.js) ---------- */
 
-.reveal {
+/* reading-progress bar */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 60;
+  background: var(--red);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* headline words: each word sits in a mask and slides up from below */
+.w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.wi {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* parallax photos are taller than their section so they can drift */
+.photo[data-a='parallax'],
+.photoHero {
+  inset: -9% 0;
+}
+
+/* ---------- Cycling "Sign." ---------- */
+
+.sign {
+  display: inline-grid;
+  vertical-align: baseline;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.signV {
+  grid-area: 1 / 1;
+  justify-self: start;
+  display: inline-block;
+  white-space: nowrap;
+  color: var(--red);
+  line-height: 1.12;
+}
+
+.signV[data-text]::before {
+  content: attr(data-text);
+}
+
+/* Each face uses the same CSS font-size. The typeface itself must create the visual change. */
+.signV {
+  font-size: 1em;
+  line-height: 1.12;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-synthesis: none;
+  font-kerning: normal;
+}
+
+/* 1 · DM Sans — clean, modern baseline before the handwritten signatures */
+.signV0 {
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* 2 · Allison — natural, personal handwritten signature */
+.signV1 {
+  font-family: 'Allison', 'Segoe Print', cursive;
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s var(--ease-out), transform 0.9s var(--ease-out);
-  transition-delay: var(--d, 0ms);
 }
 
-.reveal[data-in='true'] {
-  opacity: 1;
-  transform: none;
+/* 3 · Alex Brush — confident, readable brush signature */
+.signV2 {
+  font-family: 'Alex Brush', 'Brush Script MT', cursive;
+  opacity: 0;
 }
 
-/* Hero entrance */
-.rise,
-.heroLine {
-  animation: fadeUp 0.9s var(--ease-out) var(--d, 0ms) backwards;
+/* 4 · Sacramento — clean, modern handwritten signature */
+.signV3 {
+  font-family: 'Sacramento', 'Segoe Script', cursive;
+  opacity: 0;
+}
+
+/* 5 · Herr Von Muellerhoff — expressive, artistic signature */
+.signV4 {
+  font-family: 'Herr Von Muellerhoff', 'Lucida Handwriting', cursive;
+  opacity: 0;
+}
+
+/* cards: the picture sits in a frame so it can zoom inside it */
+.cardFrame {
+  overflow: hidden;
+  border-radius: max(0.75rem, 1vw);
+}
+
+.amountMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
 }
 
 /* ---------- Typography ---------- */
@@ -361,11 +450,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  animation: marquee 38s linear infinite;
-}
-
-.marquee:hover .marqueeTrack {
-  animation-play-state: paused;
 }
 
 .logoItem {
@@ -863,8 +947,7 @@ div.cardMedia[data-k='storage'] {
 }
 
 .card:hover .cardMedia {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 50px -28px rgba(13, 16, 23, 0.5);
+  transform: scale(1.05);
 }
 
 .cardTitle {
@@ -1265,19 +1348,6 @@ div.cardMedia[data-k='storage'] {
 
 /* ---------- Keyframes ---------- */
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes glowPulse {
   from {
     opacity: 0.75;
@@ -1290,17 +1360,19 @@ div.cardMedia[data-k='storage'] {
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .stat::before {
+    animation: none;
   }
 
-  .rise,
-  .heroLine,
-  .stat::before,
-  .marqueeTrack {
-    animation: none;
+  .progress {
+    display: none;
+  }
+
+  .signV1,
+  .signV2,
+  .signV3,
+  .signV4 {
+    display: none;
   }
 
   .marquee {

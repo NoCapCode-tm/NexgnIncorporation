@@ -2,61 +2,200 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  
-  <!-- Preconnect to Google Fonts for speed -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;400&display=swap" rel="stylesheet">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+  />
 
-  <!-- Base URL (Required for GitHub Pages routing if NOT using a custom domain. Change to "/" if using nexgn.cloud) -->
+  <!-- ==========================================================
+       GOOGLE FONTS
+       ========================================================== -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <!-- Primary website font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Existing display font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;400&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Nexgn animated signature fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Allison&family=Alex+Brush&family=Herr+Von+Muellerhoff&family=Sacramento&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ==========================================================
+       BASE URL
+       ========================================================== -->
+
   <base href="/" />
 
-  <!-- Primary Meta Tags (Fallback for bots that don't run JS) -->
+  <!-- ==========================================================
+       PRIMARY SEO META TAGS
+       ========================================================== -->
+
   <title>Nexgn | The Modern Agreement Platform</title>
-  <meta name="title" content="Nexgn | The Modern Agreement Platform" />
-  <meta name="description" content="Create, sign, automate, and trust agreements. Nexgn brings document preparation, electronic signatures, and workflow automation into one secure workspace." />
-  <meta name="keywords" content="esignature, electronic signature, contract management, digital signature, nexgn, document workflows" />
+
+  <meta
+    name="title"
+    content="Nexgn | The Modern Agreement Platform"
+  />
+
+  <meta
+    name="description"
+    content="Create, sign, automate, and trust agreements. Nexgn brings document preparation, electronic signatures, and workflow automation into one secure workspace."
+  />
+
+  <meta
+    name="keywords"
+    content="esignature, electronic signature, contract management, digital signature, nexgn, document workflows"
+  />
+
   <meta name="author" content="Nexgn" />
 
-  <!-- Open Graph / Facebook / LinkedIn -->
+  <!-- ==========================================================
+       OPEN GRAPH / FACEBOOK / LINKEDIN
+       ========================================================== -->
+
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://nexgn.cloud/" />
-  <meta property="og:title" content="Nexgn | The Modern Agreement Platform" />
-  <meta property="og:description" content="Create, sign, automate, and trust agreements securely." />
-  <meta property="og:image" content="https://nexgn.cloud/og-image.jpg" />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://nexgn.cloud/" />
-  <meta property="twitter:title" content="Nexgn | The Modern Agreement Platform" />
-  <meta property="twitter:description" content="Create, sign, automate, and trust agreements securely." />
-  <meta property="twitter:image" content="https://nexgn.cloud/og-image.jpg" />
+  <meta
+    property="og:url"
+    content="https://nexgn.cloud/"
+  />
 
-  <!-- Device Specific Icons & PWA Manifest -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="mask-icon" href="/favicon.ico" color="#FF0915" />
-  <meta name="msapplication-TileColor" content="#FF0915" />
-  <meta name="theme-color" content="#FF0915" />
+  <meta
+    property="og:title"
+    content="Nexgn | The Modern Agreement Platform"
+  />
 
-<!-- Strict CSP: Only allows scripts from our domain, Google Fonts, and Razorpay -->
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self'; 
-    script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; 
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
-    font-src 'self' https://fonts.gstatic.com; 
-    img-src 'self' data: https://*; 
-    connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com;
-  ">
+  <meta
+    property="og:description"
+    content="Create, sign, automate, and trust agreements securely."
+  />
 
-  <!-- PRELOAD LCP: Forces the browser to load the hero image instantly -->
-  <link rel="preload" as="image" href="/assets/hero-image.webp" type="image/webp" />
+  <meta
+    property="og:image"
+    content="https://nexgn.cloud/og-image.jpg"
+  />
 
-  <!-- CORRECTED: JSON-LD Structured Data for AEO/GEO Indexing -->
+  <!-- ==========================================================
+       TWITTER / X
+       ========================================================== -->
+
+  <meta
+    property="twitter:card"
+    content="summary_large_image"
+  />
+
+  <meta
+    property="twitter:url"
+    content="https://nexgn.cloud/"
+  />
+
+  <meta
+    property="twitter:title"
+    content="Nexgn | The Modern Agreement Platform"
+  />
+
+  <meta
+    property="twitter:description"
+    content="Create, sign, automate, and trust agreements securely."
+  />
+
+  <meta
+    property="twitter:image"
+    content="https://nexgn.cloud/og-image.jpg"
+  />
+
+  <!-- ==========================================================
+       FAVICONS / PWA
+       ========================================================== -->
+
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="/apple-touch-icon.png"
+  />
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="/favicon-32x32.png"
+  />
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="/favicon-16x16.png"
+  />
+
+  <link
+    rel="manifest"
+    href="/site.webmanifest"
+  />
+
+  <link
+    rel="mask-icon"
+    href="/favicon.ico"
+    color="#FF0915"
+  />
+
+  <meta
+    name="msapplication-TileColor"
+    content="#FF0915"
+  />
+
+  <meta
+    name="theme-color"
+    content="#FF0915"
+  />
+
+  <!-- ==========================================================
+       CONTENT SECURITY POLICY
+       ========================================================== -->
+
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://analytics.ahrefs.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https://*;
+      connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com https://analytics.ahrefs.com;
+    "
+  />
+
+  <!-- ==========================================================
+       PRELOAD HERO IMAGE
+       ========================================================== -->
+
+  <link
+    rel="preload"
+    as="image"
+    href="/assets/hero-image.webp"
+    type="image/webp"
+  />
+
+  <!-- ==========================================================
+       ORGANIZATION STRUCTURED DATA
+       ========================================================== -->
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -65,60 +204,71 @@
     "url": "https://nexgn.cloud",
     "logo": "https://nexgn.cloud/favicon.ico",
     "sameAs": [
-        "https://instagram.com/nexgn.cloud",
-        "https://linkedin.com/company/nexgncloud"
+      "https://instagram.com/nexgn.cloud",
+      "https://linkedin.com/company/nexgncloud"
     ],
     "knowsAbout": [
-        "Electronic Signatures",
-        "US ESIGN Act",
-        "EU eIDAS Regulation",
-        "India IT Act 2000",
-        "Contract Automation"
+      "Electronic Signatures",
+      "US ESIGN Act",
+      "EU eIDAS Regulation",
+      "India IT Act 2000",
+      "Contract Automation"
     ]
   }
   </script>
 
-  <script src="https://analytics.ahrefs.com/analytics.js" data-key="s2bqBNN/4cxUOJs+7C8o4w" async></script>
+  <!-- ==========================================================
+       AHREFS ANALYTICS
+       Load only once. Do not duplicate the script.
+       ========================================================== -->
+
+  <script
+    src="https://analytics.ahrefs.com/analytics.js"
+    data-key="s2bqBNN/4cxUOJs+7C8o4w"
+    async
+  ></script>
+
+  <!-- ==========================================================
+       GOOGLE ANALYTICS
+       Enable when finalizing production deployment.
+
+       Measurement ID: G-VVPNVGMZ2V
+       ========================================================== -->
+
+  <!--
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-VVPNVGMZ2V"
+  ></script>
 
   <script>
-    var ahrefs_analytics_script = document.createElement('script');
-    ahrefs_analytics_script.async = true;
-    ahrefs_analytics_script.src = 'https://analytics.ahrefs.com/analytics.js';
-    ahrefs_analytics_script.setAttribute('data-key', 's2bqBNN/4cxUOJs+7C8o4w');
-    document.getElementsByTagName('head')[0].appendChild(ahrefs_analytics_script);
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-VVPNVGMZ2V');
   </script>
-
-
-    // uncomment when finalizing the site for production deployment.
-
-    <!-- <script src="https://analytics.ahrefs.com/analytics.js" data-key="s2bqBNN/4cxUOJs+7C8o4w" async></script>
-
-    <script>
-    var ahrefs_analytics_script = document.createElement('script');
-    ahrefs_analytics_script.async = true;
-    ahrefs_analytics_script.src = 'https://analytics.ahrefs.com/analytics.js';
-    ahrefs_analytics_script.setAttribute('data-key', 's2bqBNN/4cxUOJs+7C8o4w');
-    document.getElementsByTagName('head')[0].appendChild(ahrefs_analytics_script);
-    </script> -->
-
-    <!-- Google tag (gtag.js) -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVPNVGMZ2V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-VVPNVGMZ2V');
-    </script> -->
+  -->
 
 </head>
+
 <body>
+
   <!-- Fallback for users with JavaScript disabled -->
-  <noscript>You need to enable JavaScript to run the Nexgn platform.</noscript>
-  
+
+  <noscript>
+    You need to enable JavaScript to run the Nexgn platform.
+  </noscript>
+
   <!-- React Mount Point -->
+
   <div id="root"></div>
 
-  <!-- Rsbuild automatically injects the JS script tags here during build -->
+  <!-- Rsbuild automatically injects JS scripts here during build -->
+
 </body>
 </html>
