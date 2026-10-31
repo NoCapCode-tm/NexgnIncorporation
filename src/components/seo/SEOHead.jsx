@@ -62,6 +62,15 @@ export const SEOHead = ({
   const cleanUrl = url === '/' ? '' : url;
   const canonicalUrl = `${baseUrl}/${currentLang}${cleanUrl}`;
 
+  // <title> must receive ONE string. Writing <title>{title} | Nexgn</title> hands Helmet an array of
+  // children, and Helmet then writes an empty title, so browsers show the bare URL in the tab.
+  const SITE_NAME = 'Nexgn';
+  const fullTitle = !title
+    ? 'Nexgn | The Modern Agreement Platform'
+    : title.trim().toLowerCase().endsWith(SITE_NAME.toLowerCase())
+      ? title.trim()
+      : `${title.trim()} | ${SITE_NAME}`;
+
   // Smart Schema Merger: Combines the base enterprise schema with any page-specific schema passed as a prop
   const generateFinalSchema = () => {
     if (!schema) return enterpriseSchema;
@@ -81,7 +90,7 @@ export const SEOHead = ({
       <html lang={currentLang} />
       
       {/* Core Meta Tags */}
-      <title>{title} | Nexgn</title>
+      <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
 
@@ -94,14 +103,14 @@ export const SEOHead = ({
       {/* Open Graph / Facebook / LinkedIn */}
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:title" content={`${title} | Nexgn`} />
+      <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
 
       {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={`${title} | Nexgn`} />
+      <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
 
