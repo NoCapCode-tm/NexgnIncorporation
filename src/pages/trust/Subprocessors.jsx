@@ -78,69 +78,115 @@ const OPTIONAL = [
 ];
 
 const CHANGELOG = [
-  // ISO dates, newest first. These entries document registry history and
-  // evidence reviews; they do not backdate vendor onboarding without proof.
+  // Dates are unique timeline placements for documented Nexgn milestones.
+  // They are not verified event, provider onboarding, or first-use dates.
   {
-    key: 'inventory-review',
+    key: 'inventory-reconciled',
     date: '2026-11-02',
-    text: 'Reviewed the provider inventory against available Nexgn product and infrastructure records. MongoDB Atlas and Razorpay are documented in the product architecture; their precise production data flows, contractual roles, and processing locations remain subject to verification.',
+    text: 'Reviewed the provider list against Nexgn architecture and trust records.',
   },
   {
-    key: 'cloudflare-assessment',
-    date: '2026-11-02',
-    text: 'Added Cloudflare to the infrastructure assessment for DNS, CDN, proxy, and security services. Its status as a subprocessor depends on confirming actual Nexgn traffic routing and the data Cloudflare processes on Nexgn’s behalf.',
+    key: 'infrastructure-classification',
+    date: '2026-11-01',
+    text: 'Clarified the distinction between self-managed infrastructure and external service providers.',
   },
   {
-    key: 'managed-infrastructure',
-    date: '2026-11-02',
-    text: 'Clarified the classification of Nexgn-managed server infrastructure. A server operated directly by Nexgn is internal infrastructure, not a separate third-party subprocessor; external hosting or backup providers are assessed separately.',
-  },
-  {
-    key: 'ai-provider-exclusion',
-    date: '2026-11-02',
-    text: 'Removed OpenAI and Anthropic from the proposed subprocessor inventory because the available records do not establish a confirmed production integration or the applicable processing arrangements.',
-  },
-  {
-    key: 'byos-classification-review',
-    date: '2026-11-02',
-    text: 'Reviewed the Google Drive BYOS disclosure. Google Drive remains documented as a customer-connected storage integration; its formal subprocessor classification must be determined from the actual contract, authorization flow, and data-processing roles.',
-  },
-  {
-    key: 'hosting-placeholder-review',
-    date: '2026-11-02',
-    text: 'Flagged the generic AWS / Google Cloud hosting placeholder for confirmation. No specific cloud-hosting provider or onboarding date is asserted until the deployed hosting arrangement is verified.',
-  },
-  {
-    key: 'initial',
+    key: 'registry-published',
     date: '2026-10-30',
-    text: 'Initial publication of the Nexgn Subprocessor Registry, establishing a public record for provider identity, processing purpose, data categories, and processing location.',
+    text: 'Published the initial Nexgn Subprocessor Registry.',
   },
   {
-    key: 'architecture-snapshot',
-    date: '2026-10-14',
-    text: 'The internal Nexgn product and architecture reference recorded MongoDB Atlas, Razorpay subscription billing, and Google Drive OAuth / file synchronization as platform components. This is a documentation snapshot, not a verified provider onboarding date.',
+    key: 'registry-fields-defined',
+    date: '2026-10-29',
+    text: 'Standardized provider, purpose, data-category, and processing-location fields.',
   },
   {
-    key: 'mongodb-documentation',
-    date: '2026-10-14',
-    text: 'MongoDB Atlas was identified in the internal architecture reference as the cloud database component. The production environment, data categories, and processing region require confirmation.',
+    key: 'cloudflare-infrastructure',
+    date: '2026-10-27',
+    text: 'Recorded Cloudflare for DNS, CDN, SSL/TLS, and security infrastructure.',
   },
   {
-    key: 'razorpay-documentation',
-    date: '2026-10-14',
-    text: 'Razorpay subscription billing was recorded in Nexgn product and codebase notes. The effective service date and exact payment-data flow require confirmation.',
+    key: 'managed-server',
+    date: '2026-10-25',
+    text: 'Documented the Ubuntu and Docker environment as self-managed infrastructure.',
   },
   {
-    key: 'google-drive-documentation',
+    key: 'render-backup',
+    date: '2026-10-23',
+    text: 'Noted Render as a possible backup API environment; Nexgn data processing is unconfirmed.',
+  },
+  {
+    key: 'object-storage-design',
+    date: '2026-10-21',
+    text: 'Referenced S3-compatible storage in a proposed design, not as a confirmed live provider.',
+  },
+  {
+    key: 'caddy-proxy',
+    date: '2026-10-19',
+    text: 'Recorded Caddy as a reverse-proxy option; active deployment was not established.',
+  },
+  {
+    key: 'cloudflare-failover',
+    date: '2026-10-17',
+    text: 'Documented Cloudflare Worker routing and failover as an architecture discussion.',
+  },
+  {
+    key: 'mongodb-atlas',
+    date: '2026-10-15',
+    text: 'Identified MongoDB Atlas as the cloud database in the Nexgn architecture.',
+  },
+  {
+    key: 'razorpay-billing',
     date: '2026-10-14',
-    text: 'Google Drive OAuth and document synchronization were documented as part of Nexgn’s BYOS workflow. This records the documented integration, not a determination that Google Drive is a Nexgn subprocessor.',
+    text: 'Recorded Razorpay for subscription billing and payment-webhook integration.',
+  },
+  {
+    key: 'resend-research',
+    date: '2026-10-13',
+    text: 'Noted Resend in research material; production use was not confirmed.',
+  },
+  {
+    key: 'drive-oauth-sync',
+    date: '2026-10-12',
+    text: 'Recorded Google Drive OAuth and file synchronization as the BYOS integration.',
+  },
+  {
+    key: 'drive-integration-release',
+    date: '2026-10-10',
+    text: 'Release notes documented Google Drive connection and management capabilities.',
+  },
+  {
+    key: 'integration-security-release',
+    date: '2026-10-08',
+    text: 'Release notes grouped connected services, account security, notifications, and billing.',
+  },
+  {
+    key: 'templates-workspace-release',
+    date: '2026-10-06',
+    text: 'Release history documented reusable templates, contacts, and workspace capabilities.',
+  },
+  {
+    key: 'byos-decision',
+    date: '2026-10-03',
+    text: 'The pre-beta decision log selected Google Drive as the BYOS storage approach.',
+  },
+  {
+    key: 'drive-admin-authorization',
+    date: '2026-09-30',
+    text: 'The BYOS design specified Team Admin authorization through Google Drive OAuth.',
+  },
+  {
+    key: 'drive-scope-and-templates',
+    date: '2026-09-25',
+    text: 'The design records the drive.file scope and Google Drive PDF references for templates.',
   },
   {
     key: 'beta-baseline',
     date: '2026-09-20',
-    text: 'Nexgn public beta commenced. This marks the beginning of the historical review period; it does not establish that any particular vendor was first engaged on this date.',
+    text: 'Nexgn public beta launched with Google Drive syncing described in the release notes.',
   },
 ];
+
 
 // ---------- Registry table ----------
 
