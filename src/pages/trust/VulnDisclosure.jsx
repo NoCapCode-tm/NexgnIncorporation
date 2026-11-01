@@ -60,7 +60,7 @@ const DONTS = [
 ];
 
 const SCOPE = [
-  { key: 'app', asset: 'app.nexgn.cloud', inScope: true, text: 'The primary frontend application.' },
+  { key: 'app', asset: 'sign.nexgn.cloud', inScope: true, text: 'The primary frontend application.' },
   { key: 'api', asset: 'api.nexgn.cloud', inScope: true, text: 'The backend Node.js REST API.' },
   { key: 'wild', asset: '*.nexgn.cloud', inScope: true, text: 'Subdomains actively hosting Nexgn infrastructure.' },
   { key: 'blog', asset: 'blog.nexgn.cloud', inScope: false, text: 'Marketing/CMS sites with no customer data.' },
