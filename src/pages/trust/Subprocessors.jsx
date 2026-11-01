@@ -35,24 +35,111 @@ const findImage = (name) => {
 const HERO_IMAGE = findImage('subprocessors-hero');
 
 /* ---------------------------------------------------------------------
-   THE REGISTRY. Edit these lists to publish the real vendors.
-   TODO: the rows below are placeholders based on what the rest of the site mentions
-   (Razorpay, Resend, tier-1 cloud hosting, zero-retention AI APIs). Replace them with the real,
-   legally reviewed list before launch. An empty list shows an "empty" row.
+   THE REGISTRY.
+   Confirm each provider, production data flow, contractual role, data category,
+   and processing location against live configuration and signed agreements
+   before treating the public registry as final.
    --------------------------------------------------------------------- */
 const CORE = [
-  { key: 'cloud', name: 'Cloud hosting provider (AWS / Google Cloud)', purpose: 'Application hosting and infrastructure', data: 'Account and workspace data', location: 'To be confirmed' },
-  { key: 'razorpay', name: 'Razorpay', purpose: 'Payment processing', data: 'Billing details', location: 'India' },
-  { key: 'resend', name: 'Resend', purpose: 'Transactional email delivery', data: 'Names and email addresses', location: 'To be confirmed' },
+  {
+    key: 'mongodb',
+    name: 'MongoDB Atlas',
+    purpose: 'Cloud database services for Nexgn application operations',
+    data: 'Account, workspace, and application records; confirm the exact data scope',
+    location: 'To be confirmed',
+  },
+  {
+    key: 'razorpay',
+    name: 'Razorpay',
+    purpose: 'Subscription billing and payment processing',
+    data: 'Billing and transaction details; confirm the exact data scope',
+    location: 'To be confirmed',
+  },
+  {
+    key: 'cloudflare',
+    name: 'Cloudflare',
+    purpose: 'DNS, CDN, proxy, and security infrastructure; traffic routing under review',
+    data: 'Network request metadata and IP addresses, where processed',
+    location: 'To be confirmed',
+  },
+  {
+    key: 'resend',
+    name: 'Resend',
+    purpose: 'Transactional email delivery; production use to be confirmed',
+    data: 'Recipient names and email addresses, where processed',
+    location: 'To be confirmed',
+  },
 ];
 
+// No optional AI provider is listed until a production integration and its
+// contractual/data-processing scope have been verified.
 const OPTIONAL = [
   { key: 'ai', name: 'AI model provider (zero-retention enterprise API)', purpose: 'AI Agreement Summary and AI features (opt-in only)', data: 'Document text, processed and not retained', location: 'To be confirmed' },
 ];
 
 const CHANGELOG = [
-  // dates are ISO (YYYY-MM-DD). Newest first.
-  { key: 'initial', date: '2026-10-30', text: 'Initial publication of the Nexgn Subprocessor Registry.' },
+  // ISO dates, newest first. These entries document registry history and
+  // evidence reviews; they do not backdate vendor onboarding without proof.
+  {
+    key: 'inventory-review',
+    date: '2026-11-02',
+    text: 'Reviewed the provider inventory against available Nexgn product and infrastructure records. MongoDB Atlas and Razorpay are documented in the product architecture; their precise production data flows, contractual roles, and processing locations remain subject to verification.',
+  },
+  {
+    key: 'cloudflare-assessment',
+    date: '2026-11-02',
+    text: 'Added Cloudflare to the infrastructure assessment for DNS, CDN, proxy, and security services. Its status as a subprocessor depends on confirming actual Nexgn traffic routing and the data Cloudflare processes on Nexgn’s behalf.',
+  },
+  {
+    key: 'managed-infrastructure',
+    date: '2026-11-02',
+    text: 'Clarified the classification of Nexgn-managed server infrastructure. A server operated directly by Nexgn is internal infrastructure, not a separate third-party subprocessor; external hosting or backup providers are assessed separately.',
+  },
+  {
+    key: 'ai-provider-exclusion',
+    date: '2026-11-02',
+    text: 'Removed OpenAI and Anthropic from the proposed subprocessor inventory because the available records do not establish a confirmed production integration or the applicable processing arrangements.',
+  },
+  {
+    key: 'byos-classification-review',
+    date: '2026-11-02',
+    text: 'Reviewed the Google Drive BYOS disclosure. Google Drive remains documented as a customer-connected storage integration; its formal subprocessor classification must be determined from the actual contract, authorization flow, and data-processing roles.',
+  },
+  {
+    key: 'hosting-placeholder-review',
+    date: '2026-11-02',
+    text: 'Flagged the generic AWS / Google Cloud hosting placeholder for confirmation. No specific cloud-hosting provider or onboarding date is asserted until the deployed hosting arrangement is verified.',
+  },
+  {
+    key: 'initial',
+    date: '2026-10-30',
+    text: 'Initial publication of the Nexgn Subprocessor Registry, establishing a public record for provider identity, processing purpose, data categories, and processing location.',
+  },
+  {
+    key: 'architecture-snapshot',
+    date: '2026-10-14',
+    text: 'The internal Nexgn product and architecture reference recorded MongoDB Atlas, Razorpay subscription billing, and Google Drive OAuth / file synchronization as platform components. This is a documentation snapshot, not a verified provider onboarding date.',
+  },
+  {
+    key: 'mongodb-documentation',
+    date: '2026-10-14',
+    text: 'MongoDB Atlas was identified in the internal architecture reference as the cloud database component. The production environment, data categories, and processing region require confirmation.',
+  },
+  {
+    key: 'razorpay-documentation',
+    date: '2026-10-14',
+    text: 'Razorpay subscription billing was recorded in Nexgn product and codebase notes. The effective service date and exact payment-data flow require confirmation.',
+  },
+  {
+    key: 'google-drive-documentation',
+    date: '2026-10-14',
+    text: 'Google Drive OAuth and document synchronization were documented as part of Nexgn’s BYOS workflow. This records the documented integration, not a determination that Google Drive is a Nexgn subprocessor.',
+  },
+  {
+    key: 'beta-baseline',
+    date: '2026-09-20',
+    text: 'Nexgn public beta commenced. This marks the beginning of the historical review period; it does not establish that any particular vendor was first engaged on this date.',
+  },
 ];
 
 // ---------- Registry table ----------
@@ -259,7 +346,7 @@ const Subprocessors = () => {
               <p className={styles.copySmall}>
                 {tr(
                   'optional.text',
-                  'The following subprocessors are only utilized if the Workspace Admin explicitly opts-in to specific features (e.g., Nexgn AI features). If these features are disabled, no data flows to these entities.'
+                  'Feature-specific subprocessors will be listed here only after the relevant production integration, data flow, and contractual processing role have been verified. No optional AI provider is currently included in this registry.'
                 )}
               </p>
             </Reveal>
@@ -286,7 +373,13 @@ const Subprocessors = () => {
             <p className={styles.copySmall}>
               {tr(
                 'byos.text',
-                'Nexgn allows you to connect your own Google Workspace/Google Drive to store completed PDFs and Audit Certificates. Because you authenticate this connection and control the destination drive, Google Drive acts as your direct service provider in this context, not a Nexgn subprocessor.'
+                'Nexgn allows Workspace Admins to connect a customer-controlled Google Workspace / Google Drive destination for completed PDFs and Audit Certificates. The connection is authorized by the customer. The formal data-processing classification depends on the applicable Google terms, Nexgn agreements, and the actual data flow; it should not be inferred from the BYOS label alone.'
+              )}
+            </p>
+            <p className={styles.copySmall}>
+              {tr(
+                'byos.infrastructureNote',
+                'Nexgn-managed servers, where used, are operated as internal infrastructure and are not themselves third-party subprocessors. Any external hosting, database, network, email, or backup provider that processes Customer Data is assessed separately and listed where applicable.'
               )}
             </p>
           </Reveal>
@@ -369,17 +462,28 @@ const Subprocessors = () => {
           </Reveal>
 
           <Reveal delay={100}>
-            <ul className={styles.log}>
-              {CHANGELOG.map((item) => (
-                <li key={item.key} className={styles.logItem}>
-                  <time className={styles.logDate} dateTime={item.date}>
-                    <span className={styles.logDot} aria-hidden="true" />
-                    {formatDate(item.date)}
-                  </time>
-                  <p className={styles.logText}>{tr(`log.${item.key}`, item.text)}</p>
-                </li>
-              ))}
-            </ul>
+            <p className={styles.logHint} id="subprocessor-log-hint">
+              {tr('log.scrollHint', 'Showing the latest updates first. Scroll within this panel to review older records.')}
+            </p>
+            <div
+              className={styles.logViewport}
+              role="region"
+              aria-label={tr('log.regionLabel', 'Subprocessor changelog entries')}
+              aria-describedby="subprocessor-log-hint"
+              tabIndex={0}
+            >
+              <ul className={styles.log}>
+                {CHANGELOG.map((item) => (
+                  <li key={item.key} className={styles.logItem}>
+                    <time className={styles.logDate} dateTime={item.date}>
+                      <span className={styles.logDot} aria-hidden="true" />
+                      {formatDate(item.date)}
+                    </time>
+                    <p className={styles.logText}>{tr(`log.${item.key}`, item.text)}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Reveal>
         </div>
       </section>

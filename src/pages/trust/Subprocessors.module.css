@@ -603,30 +603,67 @@
 
 /* ---------- 6. Changelog ---------- */
 
+.logHint {
+  margin: 0 0 clamp(0.75rem, 1vw, 1.5rem);
+  color: var(--ink-soft);
+  font-size: calc(var(--fs-body) * 0.82);
+  line-height: 1.5;
+}
+
+/*
+ * The viewport is sized to show approximately five entries at a time.
+ * More history remains available through native vertical scrolling.
+ */
+.logViewport {
+  --log-row-unit: clamp(6.25rem, 6.8vw, 9rem);
+  width: 100%;
+  max-height: min(46rem, calc(5 * var(--log-row-unit)));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0.35rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.logViewport:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
 .log {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--line);
 }
 
 .logItem {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.4rem clamp(1.25rem, 3vw, 6rem);
-  padding: clamp(1.1rem, 1.8vw, 3.5rem) 0;
+  grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 1.3fr);
+  align-items: start;
+  gap: 0.75rem clamp(1.25rem, 3vw, 6rem);
+  min-width: 0;
+  padding: clamp(1rem, 1.35vw, 2rem) clamp(0.25rem, 0.5vw, 0.75rem);
   border-bottom: 1px solid var(--line);
   font-size: var(--fs-body);
   line-height: 1.6;
 }
 
+.logItem:last-child {
+  border-bottom: 0;
+}
+
 .logDate {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.8em;
+  min-width: 0;
   font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: calc(var(--fs-body) * 0.9);
-  letter-spacing: 0.06em;
+  font-size: calc(var(--fs-body) * 0.82);
+  letter-spacing: 0.045em;
   text-transform: uppercase;
   color: var(--ink);
 }
@@ -635,13 +672,40 @@
   flex: none;
   width: 0.6em;
   height: 0.6em;
+  margin-top: 0.42em;
   border-radius: 50%;
-  background: var(--ink);
+  background: var(--red);
 }
 
 .logText {
+  min-width: 0;
   margin: 0;
   color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+/* Consistent scrollbar treatment, with native scrolling retained. */
+.logViewport {
+  scrollbar-width: thin;
+  scrollbar-color: #aeb5be transparent;
+}
+
+.logViewport::-webkit-scrollbar {
+  width: 0.55rem;
+}
+
+.logViewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logViewport::-webkit-scrollbar-thumb {
+  background: #aeb5be;
+  border: 2px solid var(--light);
+  border-radius: 999px;
+}
+
+.logViewport::-webkit-scrollbar-thumb:hover {
+  background: #7d8794;
 }
 
 /* ---------- Focus ---------- */
@@ -654,6 +718,27 @@
 /* ---------- Mobile: the table becomes stacked cards ---------- */
 
 @media (max-width: 767px) {
+  .logViewport {
+    --log-row-unit: clamp(7rem, 24vw, 9.5rem);
+    max-height: min(62vh, calc(5 * var(--log-row-unit)));
+    border-radius: 0.25rem;
+  }
+
+  .logItem {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    padding: clamp(1rem, 3.5vw, 1.35rem) 0.35rem;
+  }
+
+  .logDate {
+    font-size: clamp(0.7rem, 2.8vw, 0.82rem);
+  }
+
+  .logText {
+    font-size: clamp(0.82rem, 3.4vw, 1rem);
+    line-height: 1.6;
+  }
+
   .table thead {
     position: absolute;
     width: 1px;
@@ -705,14 +790,20 @@
 /* ---------- Breakpoints ---------- */
 
 @media (min-width: 900px) {
+  .logViewport {
+    --log-row-unit: clamp(6.5rem, 6vw, 9rem);
+    max-height: min(48rem, calc(5 * var(--log-row-unit)));
+  }
+
+  .logItem {
+    grid-template-columns: minmax(12rem, 0.72fr) minmax(0, 1.28fr);
+  }
+
   .split {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     gap: clamp(2rem, 5vw, 12rem);
   }
 
-  .logItem {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  }
 }
 
 /* Container caps: mirror Navbar + Footer */
@@ -732,9 +823,22 @@
   .container {
     max-width: 3200px;
   }
+
+  .logViewport {
+    --log-row-unit: clamp(8rem, 5vw, 10rem);
+    max-height: min(52rem, calc(5 * var(--log-row-unit)));
+  }
+
+  .logItem {
+    gap: clamp(2rem, 3vw, 7rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .logViewport {
+    scroll-behavior: auto;
+  }
+
   .rise,
   .heroPhoto {
     animation: none;
