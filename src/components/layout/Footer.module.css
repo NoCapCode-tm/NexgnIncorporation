@@ -73,10 +73,9 @@
   line-height: 1.4;
   text-decoration: none;
   overflow-wrap: anywhere;
-  transition: color 0.2s ease;
+  display: inline-block; /* GSAP needs a transformable box for the hover nudge */
 }
 
-.link:hover,
 .link:focus-visible {
   color: var(--text);
 }
@@ -108,8 +107,26 @@
   justify-self: center;
 }
 
+/* wordmark letters are animated individually by GSAP */
+.word {
+  display: inline-block;
+}
+
+.letter {
+  display: inline-block;
+  will-change: transform;
+}
+
 .accent {
   color: var(--accent);
+}
+
+/* ---------- Divider (drawn in by GSAP) ---------- */
+
+.rule {
+  width: 100%;
+  height: 1px;
+  background: var(--line);
 }
 
 /* ---------- Bottom bar ---------- */
@@ -119,7 +136,6 @@
   flex-direction: column;
   gap: 1.25rem;
   padding-top: clamp(1.25rem, 2vw, 3rem);
-  border-top: 1px solid var(--line);
   font-size: var(--fs-small);
   color: var(--muted);
 }
@@ -137,14 +153,15 @@
 .builtLink {
   color: inherit;
   text-decoration: none;
-  transition: color 0.2s ease;
+  /* underline is a gradient whose width GSAP animates through --u */
+  --u: 0%;
+  background: linear-gradient(currentColor, currentColor) 0 100% / var(--u) 1px no-repeat;
+  padding-bottom: 0.15em;
 }
 
-.builtLink:hover,
 .builtLink:focus-visible {
   color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  --u: 100%;
 }
 
 .meta {
@@ -162,11 +179,6 @@
   gap: 0.5rem;
   color: inherit;
   cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.lang:hover {
-  color: var(--text);
 }
 
 .langSelect {
@@ -197,13 +209,6 @@
   border: 1px solid var(--line);
   border-radius: clamp(0.5rem, 0.6vw, 1.25rem);
   font-size: calc(var(--icon-box) * 0.45);
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.social:hover {
-  color: var(--text);
-  border-color: var(--muted);
-  background: rgba(255, 255, 255, 0.04);
 }
 
 /* ---------- Breakpoints ---------- */
@@ -258,11 +263,21 @@
   }
 }
 
+/* Reduced motion: GSAP is off, so hovers are plain instant state changes */
 @media (prefers-reduced-motion: reduce) {
-  .link,
-  .social,
-  .lang,
-  .builtLink {
-    transition: none;
+  .link:hover,
+  .lang:hover {
+    color: var(--text);
+  }
+
+  .social:hover {
+    color: var(--text);
+    border-color: var(--muted);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .builtLink:hover {
+    color: var(--text);
+    --u: 100%;
   }
 }

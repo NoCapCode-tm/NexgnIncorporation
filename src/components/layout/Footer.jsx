@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaLinkedinIn } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaInstagram } from 'react-icons/fa';
 import { FiGlobe } from 'react-icons/fi';
+import useFooterAnimations from '../../hooks/useFooterAnimations';
 import styles from './Footer.module.css';
 
 /**
@@ -95,7 +96,16 @@ const LANGUAGES = [
   { code: 'hi', label: 'हिन्दी' },
 ];
 
+const WORDMARK = [
+  { ch: 'N' },
+  { ch: 'e' },
+  { ch: 'x', accent: true },
+  { ch: 'g' },
+  { ch: 'n' },
+];
+
 const Footer = () => {
+  const footerRef = useRef(null);
   const { t } = useTranslation();
   const { lng } = useParams(); 
   const location = useLocation();
@@ -104,6 +114,8 @@ const Footer = () => {
   const currentLng = LANGUAGES.some((l) => l.code === lng) ? lng : 'en';
   const currentLabel = LANGUAGES.find((l) => l.code === currentLng).label;
   const year = new Date().getFullYear();
+
+  useFooterAnimations(footerRef, location.pathname);
 
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
 
@@ -114,11 +126,11 @@ const Footer = () => {
   };
 
   return (
-    <footer className={styles.footer} aria-label={t('footer.label', 'Site footer')}>
+    <footer ref={footerRef} className={styles.footer} aria-label={t('footer.label', 'Site footer')}>
       <div className={styles.container}>
         <nav className={styles.columns} aria-label={t('footer.nav', 'Footer navigation')}>
           {COLUMNS.map((col) => (
-            <div className={styles.column} key={col.key}>
+            <div className={styles.column} key={col.key} data-f="col">
               <h3 className={styles.heading}>{t(`footer.${col.key}.title`, col.title)}</h3>
               <ul className={styles.list}>
                 {col.links.map((link) => (
@@ -127,13 +139,14 @@ const Footer = () => {
                       <a
                         href={link.href}
                         className={styles.link}
+                        data-f="link"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         {t(`footer.${col.key}.${link.key}`, link.label)}
                       </a>
                     ) : (
-                      <Link to={withLng(link.to)} className={styles.link}>
+                      <Link to={withLng(link.to)} className={styles.link} data-f="link">
                         {t(`footer.${col.key}.${link.key}`, link.label)}
                       </Link>
                     )}
@@ -144,19 +157,30 @@ const Footer = () => {
           ))}
         </nav>
 
-        <div className={styles.wordmark} aria-label="Nexgn" role="img">
-          <span aria-hidden="true">
-            Ne<span className={styles.accent}>x</span>gn
+        <div className={styles.wordmark} aria-label="Nexgn" role="img" data-f="word">
+          <span className={styles.word} aria-hidden="true">
+            {WORDMARK.map(({ ch, accent }, i) => (
+              <span
+                key={i}
+                className={`${styles.letter} ${accent ? styles.accent : ''}`}
+                data-f="letter"
+                data-accent={accent ? 'true' : undefined}
+              >
+                {ch}
+              </span>
+            ))}
           </span>
         </div>
 
+        <div className={styles.rule} data-f="rule" aria-hidden="true" />
+
         <div className={styles.bottom}>
-          <p className={styles.copy}>
+          <p className={styles.copy} data-f="bottom">
             © {year} Nexgn. {t('footer.rights', 'All rights reserved.')}
           </p>
 
-          <div className={styles.meta}>
-            <label className={styles.lang}>
+          <div className={styles.meta} data-f="bottom">
+            <label className={styles.lang} data-f="lang">
               <FiGlobe aria-hidden="true" />
               <span>{currentLabel}</span>
               <select
@@ -179,6 +203,7 @@ const Footer = () => {
                   <a
                     href={href}
                     className={styles.social}
+                    data-f="social"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
@@ -194,6 +219,7 @@ const Footer = () => {
               <a
                 href="https://nocapcode.cloud"
                 className={styles.builtLink}
+                data-f="built"
                 target="_blank"
                 rel="noopener noreferrer"
               >

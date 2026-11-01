@@ -647,7 +647,7 @@ export default function useHomeAnimations(rootRef, deps = []) {
             plan.addEventListener('pointermove', move);
             plan.addEventListener('pointerleave', leave);
 
-            ctx.add(() => {
+            ctx.add(() => () => {
               plan.removeEventListener('pointermove', move);
               plan.removeEventListener('pointerleave', leave);
             });
@@ -760,7 +760,7 @@ export default function useHomeAnimations(rootRef, deps = []) {
           holder.addEventListener('mouseenter', over);
           holder.addEventListener('mouseleave', out);
 
-          ctx.add(() => {
+          ctx.add(() => () => {
             holder.removeEventListener('mouseenter', over);
             holder.removeEventListener('mouseleave', out);
           });
@@ -802,7 +802,7 @@ export default function useHomeAnimations(rootRef, deps = []) {
             btn.addEventListener('pointermove', move);
             btn.addEventListener('pointerleave', leave);
 
-            ctx.add(() => {
+            ctx.add(() => () => {
               btn.removeEventListener('pointermove', move);
               btn.removeEventListener('pointerleave', leave);
             });
