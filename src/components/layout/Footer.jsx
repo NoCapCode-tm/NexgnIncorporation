@@ -79,6 +79,7 @@ const COLUMNS = [
       { key: 'privacy', label: 'Privacy Policy', to: '/legal/privacy-policy' },
       { key: 'cookies', label: 'Cookie Policy', to: '/legal/cookies' },
       { key: 'aup', label: 'Acceptable Use Policy', to: '/legal/acceptable-use' },
+      { key: 'refunds', label: 'Refund & Cancellation Policy', to: '/legal/refunds' },
       { key: 'dpa', label: 'Data Processing Addendum (DPA)', to: '/legal/dpa' },
     ],
   },
