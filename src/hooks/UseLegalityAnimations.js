@@ -124,19 +124,6 @@ export default function useLegalityAnimations(rootRef, { lng } = {}) {
 
         /* ================= HOVERS (fine pointers) ================= */
         if (fine) {
-          sel('[data-l~="magnet"]').forEach((el) => {
-            const xTo = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3' });
-            const yTo = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3' });
-            on(el, 'pointermove', (e) => {
-              const r = el.getBoundingClientRect();
-              xTo((e.clientX - (r.left + r.width / 2)) * 0.28);
-              yTo((e.clientY - (r.top + r.height / 2)) * 0.28);
-            });
-            on(el, 'pointerleave', () => {
-              xTo(0);
-              yTo(0);
-            });
-          });
 
           sel('[data-hv~="primary"]').forEach((el) => {
             on(el, 'pointerenter', () =>

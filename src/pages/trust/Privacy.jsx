@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,7 +11,7 @@ import {
   FiToggleRight,
 } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
-import Reveal from '../../components/common/Reveal';
+import usePrivacyAnimations from '../../hooks/usePrivacyAnimations';
 import styles from './Privacy.module.css';
 
 // TODO: confirm these three before launch
@@ -20,16 +20,6 @@ const PRIVACY_PDF_URL = '/nexgn-privacy-policy.pdf'; // put the PDF in public/
 
 const LANGS = ['en', 'es', 'hi'];
 
-/* =====================================================================
-   IMAGES
-   Drop files into  src/assets/trust/  (the folder must exist). They are picked up by NAME with any
-   extension (png / jpg / jpeg / webp / avif / svg); a missing file never breaks the build.
-
-     privacy-hero         photo behind the hero (hand holding a phone)
-     privacy-collection   data-table illustration in "Data Collection for Legal Evidence"
-     privacy-byos         artwork next to "Decentralized Storage for Maximum Privacy"
-   Restart the dev server after adding a file.
-   ===================================================================== */
 const imageContext = require.context('../../assets/trust', false, /\.(png|jpe?g|webp|avif|svg)$/i);
 
 const findImage = (name) => {
@@ -48,8 +38,6 @@ const IMAGES = {
 };
 
 const bg = (src) => (src ? { '--img': `url("${src}")` } : undefined);
-
-// ---------- Content (each string has an i18n key + English default) ----------
 
 const PRINCIPLES = [
   {
@@ -114,7 +102,17 @@ const FRAMEWORKS = [
   },
 ];
 
-// ---------- Page ----------
+const Words = ({ text }) =>
+  text.split(' ').map((w, i, all) => (
+    <React.Fragment key={`${w}-${i}`}>
+      <span className={styles.wMask}>
+        <span className={styles.wIn} data-p="w">
+          {w}
+        </span>
+      </span>
+      {i < all.length - 1 ? ' ' : null}
+    </React.Fragment>
+  ));
 
 const Privacy = () => {
   const { t } = useTranslation();
@@ -122,6 +120,9 @@ const Privacy = () => {
   const currentLng = LANGS.includes(lng) ? lng : 'en';
   const withLng = (path) => `/${currentLng}${path}`;
   const tr = (key, fallback) => t(`privacy.${key}`, fallback);
+
+  const rootRef = useRef(null);
+  usePrivacyAnimations(rootRef, { lng: currentLng });
 
   const seoTitle = tr('seo.title', 'Privacy Center');
   const seoDescription = tr(
@@ -154,38 +155,47 @@ const Privacy = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <SEOHead
-        title={seoTitle}
-        description={seoDescription}
-        url="/trust/privacy"
-        schema={schema}
-      />
+    <div className={styles.page} ref={rootRef}>
+      <SEOHead title={seoTitle} description={seoDescription} url="/trust/privacy" schema={schema} />
 
-      {/* ============ 1. HERO (photo + frosted card) ============ */}
-      <section className={styles.hero}>
-        <div className={styles.heroPhoto} style={bg(IMAGES.hero)} aria-hidden="true" />
+      {/* ============ 1. HERO ============ */}
+      <section className={styles.hero} data-p="hero">
+        <div className={styles.heroPhoto} style={bg(IMAGES.hero)} data-p="photo" aria-hidden="true" />
         <div className={styles.container}>
-          <div className={styles.heroCard}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.eyebrowCenter} ${styles.rise}`}>
+          <div className={styles.heroCard} data-p="card">
+            <span className={styles.cardLine} data-p="cardline" aria-hidden="true" />
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.eyebrowCenter}`} data-p="hr">
               {tr('hero.eyebrow', 'Nexgn Trust Center')}
             </p>
-            <h1 className={`${styles.heroTitle} ${styles.rise}`} style={{ '--d': '100ms' }}>
-              {tr('hero.title1', 'Your agreements are your business.')}{' '} 
+            <h1 className={styles.heroTitle}>
+              <Words text={tr('hero.title1', 'Your agreements are your business.')} />{' '}
               <br />
-              <span className={styles.muted}>{tr('hero.title2', 'Not ours.')}</span>
+              <span className={styles.muted}>
+                <Words text={tr('hero.title2', 'Not ours.')} />
+              </span>
             </h1>
-            <p className={`${styles.lead} ${styles.leadLight} ${styles.rise}`} style={{ '--d': '200ms' }}>
+            <p className={`${styles.lead} ${styles.leadLight}`} data-p="hr">
               {tr(
                 'hero.text',
                 'At Nexgn, we build routing and execution infrastructure. We do not sell, monetize, or needlessly retain your proprietary legal data. Our privacy practices are designed to comply with the GDPR, the CCPA, and India’s DPDP Act.'
               )}
             </p>
-            <div className={`${styles.actions} ${styles.rise}`} style={{ '--d': '300ms' }}>
-              <a href={PRIVACY_PDF_URL} className={styles.btnPrimary} download>
+            <div className={styles.actions} data-p="hr">
+              <a
+                href={PRIVACY_PDF_URL}
+                className={styles.btnPrimary}
+                download
+                data-p="magnet"
+                data-hv="primary"
+              >
                 {tr('hero.pdf', 'Download Privacy Policy (PDF)')}
               </a>
-              <Link to={withLng('/trust/subprocessors')} className={styles.btnGlass}>
+              <Link
+                to={withLng('/trust/subprocessors')}
+                className={styles.btnOutline}
+                data-p="magnet"
+                data-hv="outline"
+              >
                 {tr('hero.subprocessors', 'View Subprocessors')}
               </Link>
             </div>
@@ -193,80 +203,79 @@ const Privacy = () => {
         </div>
       </section>
 
-      {/* ============ 2. PRINCIPLES (light) ============ */}
+      {/* ============ 2. PRINCIPLES ============ */}
       <section className={`${styles.section} ${styles.light}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
+          <header className={styles.head} data-p="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`} data-p="r">
               {tr('principles.eyebrow', 'Our Core Privacy Principles')}
             </p>
             <h2 className={styles.title}>
-              {tr('principles.title', 'Our Commitment to Your Data')}
+              <Words text={tr('principles.title', 'Our Commitment to Your Data')} />
             </h2>
-            <p className={styles.lead}>
+            <p className={styles.lead} data-p="r">
               {tr('principles.text', 'We operate on three fundamental privacy principles:')}
             </p>
-          </Reveal>
+          </header>
 
           <ul className={styles.threeCol}>
-            {PRINCIPLES.map(({ key, Icon, title, text }, i) => (
-              <Reveal as="li" key={key} delay={i * 110} className={`${styles.card} ${styles.lift}`}>
+            {PRINCIPLES.map(({ key, Icon, title, text }) => (
+              <li key={key} className={`${styles.card} ${styles.lift}`} data-p="item spot" data-hv="spot">
                 <span className={styles.iconBox} aria-hidden="true">
                   <Icon />
                 </span>
                 <h3 className={styles.cardTitle}>{tr(`principles.${key}.title`, title)}</h3>
                 <p className={styles.body}>{tr(`principles.${key}.text`, text)}</p>
-              </Reveal>
+              </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ============ 3. DATA COLLECTION (tint) ============ */}
+      {/* ============ 3. DATA COLLECTION ============ */}
       <section className={`${styles.section} ${styles.tint}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
+          <header className={styles.head} data-p="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`} data-p="r">
               {tr('collection.eyebrow', 'What Data We Collect & Why')}
             </p>
             <h2 className={styles.title}>
-              {tr('collection.title', 'Data Collection for Legal Evidence')}
+              <Words text={tr('collection.title', 'Data Collection for Legal Evidence')} />
             </h2>
-            <p className={styles.lead}>
+            <p className={styles.lead} data-p="r">
               {tr(
                 'collection.text',
                 'To ensure that your electronic signatures hold up in court under frameworks like the US ESIGN Act, the EU eIDAS, and the India IT Act, Nexgn must capture specific telemetry to prove the intent and identity of the signer.'
               )}
             </p>
-          </Reveal>
+          </header>
 
-          {/* Data table / illustration slot */}
-          <Reveal delay={100}>
-            <div className={`${styles.media} ${styles.mediaCollection}`} style={bg(IMAGES.collection)} aria-hidden="true" />
-          </Reveal>
+          <div className={`${styles.media} ${styles.mediaCollection}`} style={bg(IMAGES.collection)} data-p="media" aria-hidden="true" />
         </div>
       </section>
 
-      {/* ============ 4. BYOS & RETENTION (light, two columns) ============ */}
+      {/* ============ 4. BYOS & RETENTION ============ */}
       <section className={`${styles.section} ${styles.light}`}>
         <div className={styles.container}>
           <div className={styles.split}>
-            <Reveal className={styles.splitText}>
-              <p className={`${styles.eyebrow} ${styles.eyebrowLeft}`}>
-                {tr('byos.eyebrow', 'Bring Your Own Storage (BYOS) & Retention')}
-              </p>
-              <h2 className={`${styles.title} ${styles.titleLeft}`}>
-                {tr('byos.title', 'Decentralized Storage for Maximum Privacy')}
-              </h2>
-              <p className={`${styles.lead} ${styles.leadLeft}`}>
-                {tr(
-                  'byos.text',
-                  'Nexgn is hosted on tier-1 cloud infrastructure providers (such as AWS/Google Cloud) that maintain stringent, independent security certifications.'
-                )}
-              </p>
+            <div className={styles.splitText}>
+              <header data-p="head">
+                <p className={`${styles.eyebrow} ${styles.eyebrowLeft}`} data-p="r">
+                  {tr('byos.eyebrow', 'Bring Your Own Storage (BYOS) & Retention')}
+                </p>
+                <h2 className={`${styles.title} ${styles.titleLeft}`}>
+                  <Words text={tr('byos.title', 'Decentralized Storage for Maximum Privacy')} />
+                </h2>
+                <p className={`${styles.lead} ${styles.leadLeft}`} data-p="r">
+                  {tr(
+                    'byos.text',
+                    'Nexgn is hosted on tier-1 cloud infrastructure providers (such as AWS/Google Cloud) that maintain stringent, independent security certifications.'
+                  )}
+                </p>
+              </header>
 
               <dl className={styles.facts}>
-                <div className={styles.fact}>
+                <div className={styles.fact} data-p="item">
                   <dt className={styles.factTitle}>{tr('byos.howTitle', 'How it works')}</dt>
                   <dd className={styles.factText}>
                     {tr(
@@ -275,7 +284,7 @@ const Privacy = () => {
                     )}
                   </dd>
                 </div>
-                <div className={styles.fact}>
+                <div className={styles.fact} data-p="item">
                   <dt className={styles.factTitle}>{tr('byos.retentionTitle', 'Data Retention')}</dt>
                   <dd className={styles.factText}>
                     {tr(
@@ -285,34 +294,36 @@ const Privacy = () => {
                   </dd>
                 </div>
               </dl>
-            </Reveal>
+            </div>
 
-            <Reveal delay={150} className={styles.splitMedia}>
-              <div className={`${styles.media} ${styles.mediaSplit}`} style={bg(IMAGES.byos)} aria-hidden="true" />
-            </Reveal>
+            <div className={styles.splitMedia}>
+              <div className={`${styles.media} ${styles.mediaSplit}`} style={bg(IMAGES.byos)} data-p="media" aria-hidden="true" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ============ 5. RESPONSIBLE AI (dark) ============ */}
+      {/* ============ 5. RESPONSIBLE AI ============ */}
       <section className={`${styles.section} ${styles.dark}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.eyebrowCenter}`}>
+          <header className={styles.head} data-p="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.eyebrowCenter}`} data-p="r">
               {tr('ai.eyebrow', 'AI Data Practices')}
             </p>
-            <h2 className={styles.title}>{tr('ai.title', 'Responsible AI & Your Confidential Data')}</h2>
-            <p className={`${styles.lead} ${styles.leadLight}`}>
+            <h2 className={styles.title}>
+              <Words text={tr('ai.title', 'Responsible AI & Your Confidential Data')} />
+            </h2>
+            <p className={`${styles.lead} ${styles.leadLight}`} data-p="r">
               {tr(
                 'ai.text',
                 'As Nexgn introduces intelligent features like the AI Agreement Summary and AI Clause Assistant, we understand the hesitation businesses have regarding proprietary data. Our AI principles are non-negotiable:'
               )}
             </p>
-          </Reveal>
+          </header>
 
           <ul className={styles.threeCol}>
-            {AI_PRACTICES.map(({ key, Icon, title, text }, i) => (
-              <Reveal as="li" key={key} delay={i * 110} className={styles.aiItem}>
+            {AI_PRACTICES.map(({ key, Icon, title, text }) => (
+              <li key={key} className={styles.aiItem} data-p="item">
                 <span className={`${styles.iconBox} ${styles.iconBoxDark}`} aria-hidden="true">
                   <Icon />
                 </span>
@@ -320,63 +331,75 @@ const Privacy = () => {
                   {tr(`ai.${key}.title`, title)}
                 </h3>
                 <p className={`${styles.body} ${styles.bodyLight}`}>{tr(`ai.${key}.text`, text)}</p>
-              </Reveal>
+              </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ============ 6. GLOBAL FRAMEWORKS (light) ============ */}
+      {/* ============ 6. GLOBAL FRAMEWORKS ============ */}
       <section className={`${styles.section} ${styles.light}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
+          <header className={styles.head} data-p="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`} data-p="r">
               {tr('frameworks.eyebrow', 'Global Privacy Compliance')}
             </p>
             <h2 className={styles.title}>
-              {tr('frameworks.title', 'Designed for Global Frameworks')}
+              <Words text={tr('frameworks.title', 'Designed for Global Frameworks')} />
             </h2>
-          </Reveal>
+          </header>
 
           <ul className={styles.threeCol}>
-            {FRAMEWORKS.map(({ key, region, name, text }, i) => (
-              <Reveal as="li" key={key} delay={i * 110} className={`${styles.card} ${styles.framework} ${styles.lift}`}>
+            {FRAMEWORKS.map(({ key, region, name, text }) => (
+              <li key={key} className={`${styles.card} ${styles.framework} ${styles.lift}`} data-p="item spot" data-hv="spot">
                 <span className={styles.tag}>
                   <FiGlobe aria-hidden="true" />
                   <span>{tr(`frameworks.${key}.region`, region)}</span>
                 </span>
                 <p className={styles.frameworkName}>{name}</p>
-                <hr className={styles.rule} />
+                <hr className={styles.rule} data-p="rule" />
                 <p className={styles.body}>{tr(`frameworks.${key}.text`, text)}</p>
-              </Reveal>
+              </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ============ 7. MANAGING YOUR PRIVACY (tint) ============ */}
+      {/* ============ 7. MANAGING YOUR PRIVACY ============ */}
       <section className={`${styles.section} ${styles.tint} ${styles.sectionLast}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={`${styles.head} ${styles.headNoMargin}`}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`}>
+          <header className={`${styles.head} ${styles.headNoMargin}`} data-p="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowCenter}`} data-p="r">
               {tr('manage.eyebrow', 'Take Control of Your Data')}
             </p>
-            <h2 className={styles.title}>{tr('manage.title', 'Managing Your Privacy')}</h2>
-            <p className={styles.lead}>
+            <h2 className={styles.title}>
+              <Words text={tr('manage.title', 'Managing Your Privacy')} />
+            </h2>
+            <p className={styles.lead} data-p="r">
               {tr(
                 'manage.text',
                 'Need to exercise your data rights, request a Data Processing Addendum (DPA), or have questions about our sub-processors?'
               )}
             </p>
-            <div className={styles.actions}>
-              <a href={`mailto:${PRIVACY_EMAIL}`} className={styles.btnPrimary}>
+            <div className={styles.actions} data-p="r">
+              <a
+                href={`mailto:${PRIVACY_EMAIL}`}
+                className={styles.btnPrimary}
+                data-p="magnet"
+                data-hv="primary"
+              >
                 {tr('manage.contact', 'Contact Privacy Team')}
               </a>
-              <Link to={withLng('/legal/privacy-policy')} className={styles.btnDark}>
+              <Link
+                to={withLng('/legal/privacy-policy')}
+                className={styles.btnDark}
+                data-p="magnet"
+                data-hv="dark"
+              >
                 {tr('manage.policy', 'View Full Privacy Policy')}
               </Link>
             </div>
-          </Reveal>
+          </header>
         </div>
       </section>
     </div>

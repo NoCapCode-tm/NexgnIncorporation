@@ -1,10 +1,10 @@
-/* /trust/privacy — responsive from mobile (320px) to 4K (3840px+).
-   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+/* /trust/privacy — responsive from mobile (320px) to 4K (3840px+). */
 
 .page {
   --dark: #0d1017;
   --light: #f9fafa;
   --tint: #eef2f4;
+  --card: #eef2f4;
   --white: #ffffff;
   --ink: #0d1017;
   --ink-soft: #5b6270;
@@ -12,8 +12,7 @@
   --on-dark-soft: #9aa0a9;
   --line: #dfe4e8;
   --red: #ee0510;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
 
   /* fluid scale */
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
@@ -62,7 +61,7 @@
 
 .container {
   width: 100%;
-  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  max-width: 2400px;
   margin: 0 auto;
 }
 
@@ -166,7 +165,6 @@
   font-weight: 500;
   text-align: center;
   text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btnPrimary {
@@ -175,19 +173,9 @@
   border: 1px solid var(--red);
 }
 
-.btnPrimary:hover {
-  background: #d1040e;
-  border-color: #d1040e;
-}
-
 .btnOutline {
   color: var(--on-dark);
   border: 1px solid rgba(255, 255, 255, 0.28);
-}
-
-.btnOutline:hover {
-  border-color: var(--on-dark);
-  background: rgba(255, 255, 255, 0.06);
 }
 
 .btnDark {
@@ -196,16 +184,26 @@
   border: 1px solid var(--ink);
 }
 
-.btnDark:hover {
-  background: #232a36;
-  border-color: #232a36;
+/* ---------- Headline Words Mask ---------- */
+
+.wMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.08em 0.06em 0.16em;
+  margin: -0.08em -0.06em -0.16em;
 }
 
-/* ---------- 1. Hero: photo behind a frosted card; slides under the transparent Navbar_Alt ---------- */
+.wIn {
+  display: inline-block;
+}
+
+/* ---------- 1. Hero ---------- */
 
 .hero {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   margin-top: calc(var(--nav-h) * -1);
   padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
   background: #2a2420;
@@ -216,16 +214,15 @@
 
 .heroPhoto {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset: -10% 0;
+  z-index: -2;
   background-color: #3a2f27;
   background-image: var(--img, radial-gradient(60% 70% at 70% 45%, #c79a6d, #5a4636 55%, #2a2420));
   background-size: cover;
   background-position: center;
-  animation: heroZoom 1.8s var(--ease-out) both;
+  will-change: transform;
 }
 
-/* darkens the top so the transparent navbar stays readable on any photo */
 .heroPhoto::after {
   content: '';
   position: absolute;
@@ -234,15 +231,27 @@
 }
 
 .heroCard {
+  position: relative;
   max-width: min(100%, 78rem);
   margin: 0 auto;
   padding: clamp(2rem, 4vw, 8rem) clamp(1.25rem, 4vw, 8rem);
   background: rgba(14, 17, 23, 0.569);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: clamp(1.25rem, 2vw, 4rem);
   box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.cardLine {
+  position: absolute;
+  top: -1px;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
 }
 
 .heroTitle {
@@ -259,52 +268,6 @@
   color: rgb(160, 168, 181);
 }
 
-.btnGlass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
-  padding: 0 1.6em;
-  border-radius: 0.4em;
-  font-size: var(--fs-body);
-  font-weight: 500;
-  color: #fff;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out);
-}
-
-.btnGlass:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #fff;
-  transform: translateY(-2px);
-}
-
-.btnGlass:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
-}
-
-.rise {
-  animation: rise 0.9s var(--ease-out) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-}
-
-@keyframes heroZoom {
-  from {
-    transform: scale(1.06);
-    opacity: 0.6;
-  }
-}
-
 /* ---------- Cards & grids ---------- */
 
 .threeCol {
@@ -317,10 +280,28 @@
 }
 
 .card {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
   padding: clamp(1.25rem, 1.8vw, 3.5rem);
-  background: var(--tint);
+  background: var(--card);
   border-radius: var(--radius);
+  box-shadow: 0 0 0 0 rgba(13, 16, 23, 0);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--gl, 0);
+  background: radial-gradient(
+    circle clamp(14rem, 22vw, 60rem) at calc(var(--mx, 50) * 1%) calc(var(--my, 50) * 1%),
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0) 62%
+  );
 }
 
 .cardTitle {
@@ -360,7 +341,7 @@
   min-width: 0;
 }
 
-/* hover lift for cards */
+hover lift for cards
 .lift {
   transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
 }
@@ -523,23 +504,24 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .rise,
-  .heroPhoto {
-    animation: none;
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .btnPrimary:hover {
+    background: #d1040e;
+    border-color: #d1040e;
   }
 
-  .lift,
-  .lift:hover,
-  .btnGlass,
-  .btnGlass:hover {
+  .btnOutline:hover {
+    border-color: var(--on-dark);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .btnDark:hover {
+    background: #232a36;
+    border-color: #232a36;
+  }
+
+  .lift:hover {
     transform: none;
-    transition: none;
-  }
-
-  .btnPrimary,
-  .btnOutline,
-  .btnDark {
-    transition: none;
+    box-shadow: none;
   }
 }

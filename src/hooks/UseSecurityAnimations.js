@@ -36,7 +36,7 @@ const TA = 'play reverse play reverse';
 const U = () => gsap.utils.clamp(14, 90, window.innerWidth / 45);
 
 export default function useSecurityAnimations(rootRef, { lng } = {}) {
-  /* ---------- reveals + hovers ---------- */
+  // react hook: run once on mount, and clean up on unmount
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return undefined;
@@ -66,7 +66,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
         };
         const sel = (s, scope = root) => gsap.utils.toArray(scope.querySelectorAll(s));
 
-        /* ================= HERO ================= */
+        //Hero: photo settles in, frosted card rises, headline words slide up out of a mask, hairline draws across the card top, photo + card drift at different speeds on scroll
         const hero = root.querySelector('[data-s="hero"]');
         if (hero) {
           const photo = hero.querySelector('[data-s="photo"]');
@@ -97,7 +97,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
           gsap.to(card, { yPercent: -7, ease: 'none', scrollTrigger: drift });
         }
 
-        /* ================= SECTION HEADS ================= */
+        // SECTION HEADS: eyebrow, headline words (mask), lead
         sel('[data-s="head"]').forEach((head) => {
           const r = sel('[data-s~="r"]', head);
           const w = sel('[data-s="w"]', head);
@@ -127,7 +127,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
             });
           });
 
-        /* ================= GRID ITEMS (rows reveal as reached) ================= */
+        // GRID ITEMS / CARDS
         const items = sel('[data-s~="item"]');
         const lines = sel('[data-s~="line"]');
         const pops = sel('[data-s~="pop"]');
@@ -171,7 +171,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
           });
         }
 
-        /* ================= RULE ================= */
+        // RULES: hairlines that draw
         sel('[data-s="rule"]').forEach((rule) => {
           gsap.set(rule, { scaleX: 0, transformOrigin: '0% 50%' });
           gsap.to(rule, {
@@ -182,7 +182,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
           });
         });
 
-        /* ================= MEDIA SLOTS ================= */
+        // MEDIA SLOTS: scale-in + one light sweep (placeholders) / scroll parallax (real images)
         sel('[data-s="media"]').forEach((m) => {
           const img = m.querySelector('[data-s="mediaImg"]');
           const sheen = m.querySelector('[data-s="sheen"]');
@@ -209,7 +209,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
           }
         });
 
-        /* ================= QUOTE BAND (words light up with scroll) ================= */
+        // QUOTE BAND: words light up as you scroll (scrubbed)
         const quote = root.querySelector('[data-s="quote"]');
         if (quote) {
           const qw = sel('[data-s="qw"]', quote);
@@ -222,22 +222,8 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
           });
         }
 
-        /* ================= HOVERS (fine pointers) ================= */
+          // Hover effects (fine pointers only)
         if (fine) {
-          /* magnetic buttons */
-          sel('[data-s~="magnet"]').forEach((el) => {
-            const xTo = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3' });
-            const yTo = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3' });
-            on(el, 'pointermove', (e) => {
-              const r = el.getBoundingClientRect();
-              xTo((e.clientX - (r.left + r.width / 2)) * 0.28);
-              yTo((e.clientY - (r.top + r.height / 2)) * 0.28);
-            });
-            on(el, 'pointerleave', () => {
-              xTo(0);
-              yTo(0);
-            });
-          });
 
           /* button colours (no CSS transitions) */
           sel('[data-hv~="primary"]').forEach((el) => {
@@ -317,7 +303,7 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
     return () => mm.revert();
   }, [rootRef, lng]);
 
-  /* ---------- keep ScrollTrigger positions correct as layout settles ---------- */
+  //scrollTrigger refresh on window resize, font load, image load, and page load (to ensure all triggers are in the right place)
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return undefined;

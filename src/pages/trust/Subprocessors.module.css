@@ -1,5 +1,4 @@
-/* /trust/subprocessors — responsive from mobile (320px) to 4K (3840px+).
-   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+/* /trust/subprocessors — responsive from mobile (320px) to 4K (3840px+). */
 
 .page {
   --dark: #0d1017;
@@ -12,10 +11,8 @@
   --on-dark-soft: #9aa0a9;
   --line: #dfe4e8;
   --red: #ee0510;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
 
-  /* fluid scale */
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
   --section-y: clamp(3.5rem, 7vw, 14rem);
   --gap: clamp(1rem, 1.6vw, 3.5rem);
@@ -27,7 +24,6 @@
   --fs-h3: clamp(1.0625rem, 0.5vw + 0.95rem, 2.5rem);
   --fs-lead: clamp(0.9375rem, 0.35vw + 0.85rem, 2.1rem);
   --fs-body: clamp(0.8125rem, 0.25vw + 0.75rem, 1.65rem);
-  --fs-framework: clamp(2.25rem, 3vw + 0.75rem, 8rem);
 
   width: 100%;
   background: var(--light);
@@ -62,7 +58,7 @@
 
 .container {
   width: 100%;
-  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  max-width: 2400px;
   margin: 0 auto;
 }
 
@@ -83,6 +79,10 @@
   color: var(--on-dark-soft);
 }
 
+.eyebrowLeft {
+  text-align: left;
+}
+
 .head {
   max-width: 62rem;
   margin: 0 auto clamp(2rem, 4vw, 8rem);
@@ -98,6 +98,10 @@
   text-wrap: balance;
 }
 
+.titleLeft {
+  text-align: left;
+}
+
 .lead {
   margin: 0 auto;
   max-width: 44rem;
@@ -110,6 +114,11 @@
 
 .leadLight {
   color: var(--on-dark-soft);
+}
+
+.leadLeft {
+  margin: 0;
+  text-align: left;
 }
 
 .body {
@@ -140,13 +149,10 @@
   font-weight: 500;
   text-align: center;
   text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.btnPrimary {
   background: var(--red);
   color: #fff;
   border: 1px solid var(--red);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btnPrimary:hover {
@@ -154,11 +160,31 @@
   border-color: #d1040e;
 }
 
-/* ---------- 1. Hero: photo behind a frosted card; slides under the transparent Navbar_Alt ---------- */
+.btnPrimary:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---------- Headline Words Mask ---------- */
+
+.wMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.08em 0.06em 0.16em;
+  margin: -0.08em -0.06em -0.16em;
+}
+
+.wIn {
+  display: inline-block;
+}
+
+/* ---------- 1. Hero ---------- */
 
 .hero {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   margin-top: calc(var(--nav-h) * -1);
   padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
   background: #2a2420;
@@ -169,33 +195,45 @@
 
 .heroPhoto {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset: -10% 0;
+  z-index: -2;
   background-color: #3a2f27;
   background-image: var(--img, radial-gradient(60% 70% at 70% 45%, #c79a6d, #5a4636 55%, #2a2420));
   background-size: cover;
   background-position: center;
-  animation: heroZoom 1.8s var(--ease-out) both;
+  will-change: transform;
 }
 
-/* darkens the top so the transparent navbar stays readable on any photo */
-.heroPhoto::after {
-  content: '';
+.heroShade {
   position: absolute;
   inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background: linear-gradient(to bottom, rgba(13, 16, 23, 0.55), rgba(13, 16, 23, 0) 38%);
 }
 
 .heroCard {
-  max-width: min(100%, 78rem);
+  position: relative;
+  max-width: min(100%, max(76vw, 40rem));
   margin: 0 auto;
   padding: clamp(2rem, 4vw, 8rem) clamp(1.25rem, 4vw, 8rem);
   background: rgba(14, 17, 23, 0.569);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: clamp(1.25rem, 2vw, 4rem);
   box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.cardLine {
+  position: absolute;
+  top: -1px;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
 }
 
 .heroTitle {
@@ -208,171 +246,7 @@
   text-wrap: balance;
 }
 
-.muted {
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.btnGlass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
-  padding: 0 1.6em;
-  border-radius: 0.4em;
-  font-size: var(--fs-body);
-  font-weight: 500;
-  color: #fff;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out);
-}
-
-.btnGlass:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #fff;
-  transform: translateY(-2px);
-}
-
-.btnGlass:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
-}
-
-.rise {
-  animation: rise 0.9s var(--ease-out) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-}
-
-@keyframes heroZoom {
-  from {
-    transform: scale(1.06);
-    opacity: 0.6;
-  }
-}
-
-/* ---------- Cards & grids ---------- */
-
-.card {
-  min-width: 0;
-  padding: clamp(1.25rem, 1.8vw, 3.5rem);
-  background: var(--tint);
-  border-radius: var(--radius);
-}
-
-.cardTitle {
-  margin: clamp(1.5rem, 2.5vw, 5rem) 0 clamp(0.6rem, 0.9vw, 1.75rem);
-  font-size: var(--fs-h3);
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-
-.iconBox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
-  height: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
-  background: var(--white);
-  border-radius: clamp(0.5rem, 0.6vw, 1.25rem);
-  color: var(--ink-soft);
-  font-size: clamp(1.1rem, 0.6vw + 0.9rem, 2.5rem);
-}
-
-/* hover lift for cards */
-.lift {
-  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
-}
-
-.lift:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 60px -34px rgba(13, 16, 23, 0.35);
-}
-
-/* ---------- Media placeholders (artwork slots) ---------- */
-
-/* ---------- 4. Split section ---------- */
-
-/* ---------- 6. Frameworks ---------- */
-
-/* ---------- 4. Evidence table ---------- */
-
-.tableCard {
-  padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
-  background: var(--white);
-  color: var(--ink);
-  border-radius: var(--radius);
-  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.3);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-body);
-  line-height: 1.5;
-  text-align: left;
-}
-
-.table thead th {
-  padding: clamp(1rem, 1.6vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(0.9rem, 1.2vw, 2.25rem) 0;
-  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: var(--fs-eyebrow);
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.table tbody tr {
-  border-top: 1px solid var(--line);
-  transition: background 0.3s ease;
-}
-
-.table tbody tr:hover {
-  background: rgba(13, 16, 23, 0.025);
-}
-
-.table tbody th,
-.table tbody td {
-  padding: clamp(1rem, 1.5vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(1rem, 1.5vw, 3rem) 0;
-  vertical-align: top;
-}
-
-.rowLabel {
-  font-weight: 500;
-  color: var(--ink);
-}
-
-/* ---------- extra layout bits ---------- */
-
-.white {
-  background: #fff;
-}
-
-.headLeft {
-  max-width: 62rem;
-  margin: 0 0 clamp(1.5rem, 3vw, 6rem);
-}
-
-.eyebrowLeft,
-.titleLeft,
-.leadLeft {
-  text-align: left;
-}
-
-.leadLeft {
-  margin: 0;
-}
-
-/* ---------- shared split (heading left, text right) ---------- */
+/* ---------- 2. Split (Understanding, Subscribe) ---------- */
 
 .split {
   display: grid;
@@ -406,6 +280,10 @@
   letter-spacing: -0.02em;
 }
 
+.splitTitleLight {
+  margin-bottom: clamp(1rem, 1.6vw, 3rem);
+}
+
 .copy {
   margin: 0;
   font-size: var(--fs-lead);
@@ -414,14 +292,16 @@
   text-wrap: pretty;
 }
 
+.copyLight {
+  color: var(--on-dark-soft);
+}
+
 .copySmall {
   margin: 0;
   font-size: var(--fs-body);
   line-height: 1.7;
   color: var(--ink-soft);
 }
-
-/* ---------- 2. Guarantee card ---------- */
 
 .guarantee {
   display: flex;
@@ -473,14 +353,53 @@
   margin-bottom: clamp(1.25rem, 2.4vw, 5rem);
 }
 
-.table td {
-  vertical-align: top;
-  width: auto;
+.tableCard {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
+  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.2);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.table thead th {
+  padding: clamp(1rem, 1.6vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(0.9rem, 1.2vw, 2.25rem) 0;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
-.table tbody th {
+.table tbody tr {
+  border-top: 1px solid var(--line);
+  transition: background 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(13, 16, 23, 0.025);
+}
+
+.table tbody th,
+.table tbody td {
+  padding: clamp(1rem, 1.5vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(1rem, 1.5vw, 3rem) 0;
   vertical-align: top;
+  color: var(--ink-soft);
+}
+
+.rowLabel {
+  width: 24%;
+}
+
+.table td {
+  width: 38%;
 }
 
 .vendor {
@@ -512,7 +431,11 @@
   max-width: 62rem;
 }
 
-/* ---------- 5. Stay informed (dark) ---------- */
+.noteTitle {
+  margin-bottom: clamp(0.75rem, 1.2vw, 2.25rem);
+}
+
+/* ---------- 5. Form ---------- */
 
 .form {
   min-width: 0;
@@ -610,10 +533,6 @@
   line-height: 1.5;
 }
 
-/*
- * The viewport is sized to show approximately five entries at a time.
- * More history remains available through native vertical scrolling.
- */
 .logViewport {
   --log-row-unit: clamp(6.25rem, 6.8vw, 9rem);
   width: 100%;
@@ -627,6 +546,26 @@
   border-radius: 0.35rem;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #aeb5be transparent;
+}
+
+.logViewport::-webkit-scrollbar {
+  width: 0.55rem;
+}
+
+.logViewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logViewport::-webkit-scrollbar-thumb {
+  background: #aeb5be;
+  border: 2px solid var(--light);
+  border-radius: 999px;
+}
+
+.logViewport::-webkit-scrollbar-thumb:hover {
+  background: #7d8794;
 }
 
 .logViewport:focus-visible {
@@ -682,37 +621,6 @@
   margin: 0;
   color: var(--ink-soft);
   overflow-wrap: anywhere;
-}
-
-/* Consistent scrollbar treatment, with native scrolling retained. */
-.logViewport {
-  scrollbar-width: thin;
-  scrollbar-color: #aeb5be transparent;
-}
-
-.logViewport::-webkit-scrollbar {
-  width: 0.55rem;
-}
-
-.logViewport::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.logViewport::-webkit-scrollbar-thumb {
-  background: #aeb5be;
-  border: 2px solid var(--light);
-  border-radius: 999px;
-}
-
-.logViewport::-webkit-scrollbar-thumb:hover {
-  background: #7d8794;
-}
-
-/* ---------- Focus ---------- */
-
-.btnPrimary:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
 }
 
 /* ---------- Mobile: the table becomes stacked cards ---------- */
@@ -784,12 +692,16 @@
     text-transform: uppercase;
     color: var(--ink-soft);
   }
-
 }
 
 /* ---------- Breakpoints ---------- */
 
 @media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 5vw, 12rem);
+  }
+
   .logViewport {
     --log-row-unit: clamp(6.5rem, 6vw, 9rem);
     max-height: min(48rem, calc(5 * var(--log-row-unit)));
@@ -798,12 +710,6 @@
   .logItem {
     grid-template-columns: minmax(12rem, 0.72fr) minmax(0, 1.28fr);
   }
-
-  .split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: clamp(2rem, 5vw, 12rem);
-  }
-
 }
 
 /* Container caps: mirror Navbar + Footer */
@@ -832,63 +738,6 @@
   .logItem {
     gap: clamp(2rem, 3vw, 7rem);
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .logViewport {
-    scroll-behavior: auto;
-  }
-
-  .rise,
-  .heroPhoto {
-    animation: none;
-  }
-
-  .lift,
-  .lift:hover,
-  .btnGlass,
-  .btnGlass:hover,
-  .field,
-  .submit {
-    transition: none;
-  }
-
-  .lift:hover,
-  .btnGlass:hover {
-    transform: none;
-  }
-
-  .btnPrimary {
-    transition: none;
-  }
-}
-
-/* ---------- small helpers ---------- */
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.splitTitleLight {
-  margin-bottom: clamp(1rem, 1.6vw, 3rem);
-}
-
-.copyLight {
-  font-size: var(--fs-body);
-  color: var(--on-dark-soft);
-}
-
-.noteTitle {
-  margin-bottom: clamp(0.75rem, 1.2vw, 2.25rem);
-}
-
-.eyebrowLeft {
-  text-align: left;
 }
 
 @media (max-width: 479px) {

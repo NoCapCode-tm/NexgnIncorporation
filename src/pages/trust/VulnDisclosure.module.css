@@ -1,10 +1,10 @@
-/* /trust/vulnerability-disclosure — responsive from mobile (320px) to 4K (3840px+).
-   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+/* /trust/vulnerability-disclosure — responsive from mobile (320px) to 4K (3840px+). */
 
 .page {
   --dark: #0d1017;
   --light: #f9fafa;
   --tint: #eef2f4;
+  --card: #eef2f4;
   --white: #ffffff;
   --ink: #0d1017;
   --ink-soft: #5b6270;
@@ -12,13 +12,11 @@
   --on-dark-soft: #9aa0a9;
   --line: #dfe4e8;
   --red: #ee0510;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
 
-  /* fluid scale */
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
   --section-y: clamp(3.5rem, 7vw, 14rem);
-  --gap: clamp(1rem, 1.6vw, 3.5rem);
+  --gap: clamp(1.25rem, 2vw, 4rem);
   --radius: clamp(1rem, 1.4vw, 2.5rem);
 
   --fs-eyebrow: clamp(0.6875rem, 0.2vw + 0.62rem, 1.35rem);
@@ -27,7 +25,6 @@
   --fs-h3: clamp(1.0625rem, 0.5vw + 0.95rem, 2.5rem);
   --fs-lead: clamp(0.9375rem, 0.35vw + 0.85rem, 2.1rem);
   --fs-body: clamp(0.8125rem, 0.25vw + 0.75rem, 1.65rem);
-  --fs-framework: clamp(2.25rem, 3vw + 0.75rem, 8rem);
 
   width: 100%;
   background: var(--light);
@@ -56,20 +53,23 @@
   background: var(--tint);
 }
 
+.white {
+  background: var(--white);
+}
+
 .sectionLast {
   padding-bottom: calc(var(--section-y) * 1.1);
 }
 
 .container {
   width: 100%;
-  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  max-width: 2400px;
   margin: 0 auto;
 }
 
 /* ---------- Typography ---------- */
 
 .eyebrow {
-  text-align: center;
   margin: 0 0 clamp(1rem, 1.4vw, 2.5rem);
   font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: var(--fs-eyebrow);
@@ -77,16 +77,27 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  text-align: center;
 }
 
 .eyebrowLight {
   color: var(--on-dark-soft);
 }
 
+.eyebrowLeft {
+  text-align: left;
+}
+
 .head {
   max-width: 62rem;
   margin: 0 auto clamp(2rem, 4vw, 8rem);
   text-align: center;
+}
+
+.headLeft {
+  max-width: 62rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 6rem);
+  text-align: left;
 }
 
 .title {
@@ -98,6 +109,10 @@
   text-wrap: balance;
 }
 
+.titleLeft {
+  text-align: left;
+}
+
 .lead {
   margin: 0 auto;
   max-width: 44rem;
@@ -106,6 +121,11 @@
   color: var(--ink-soft);
   text-align: center;
   text-wrap: pretty;
+}
+
+.leadLeft {
+  margin: 0;
+  text-align: left;
 }
 
 .leadLight {
@@ -129,7 +149,8 @@
   margin-top: clamp(1.75rem, 2.5vw, 5rem);
 }
 
-.btnPrimary {
+.btnPrimary,
+.btnGlass {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -154,11 +175,37 @@
   border-color: #d1040e;
 }
 
-/* ---------- 1. Hero: photo behind a frosted card; slides under the transparent Navbar_Alt ---------- */
+.btnGlass {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+}
+
+.btnGlass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+}
+
+/* ---------- Headline Words Mask ---------- */
+
+.wMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.08em 0.06em 0.16em;
+  margin: -0.08em -0.06em -0.16em;
+}
+
+.wIn {
+  display: inline-block;
+}
+
+/* ---------- 1. Hero ---------- */
 
 .hero {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   margin-top: calc(var(--nav-h) * -1);
   padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
   background: #2a2420;
@@ -169,33 +216,45 @@
 
 .heroPhoto {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset: -10% 0;
+  z-index: -2;
   background-color: #3a2f27;
   background-image: var(--img, radial-gradient(60% 70% at 70% 45%, #c79a6d, #5a4636 55%, #2a2420));
   background-size: cover;
   background-position: center;
-  animation: heroZoom 1.8s var(--ease-out) both;
+  will-change: transform;
 }
 
-/* darkens the top so the transparent navbar stays readable on any photo */
-.heroPhoto::after {
-  content: '';
+.heroShade {
   position: absolute;
   inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background: linear-gradient(to bottom, rgba(13, 16, 23, 0.55), rgba(13, 16, 23, 0) 38%);
 }
 
 .heroCard {
+  position: relative;
   max-width: min(100%, 78rem);
   margin: 0 auto;
   padding: clamp(2rem, 4vw, 8rem) clamp(1.25rem, 4vw, 8rem);
   background: rgba(14, 17, 23, 0.569);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: clamp(1.25rem, 2vw, 4rem);
   box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.cardLine {
+  position: absolute;
+  top: -1px;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
 }
 
 .heroTitle {
@@ -210,85 +269,27 @@
 
 .muted {
   color: rgb(160, 168, 181);
-  
 }
 
-.btnGlass {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
-  padding: 0 1.6em;
-  border-radius: 0.4em;
-  font-size: var(--fs-body);
-  font-weight: 500;
-  color: #fff;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out);
-}
+/* ---------- Grids & Cards ---------- */
 
-.btnGlass:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #fff;
-  transform: translateY(-2px);
+.twoCol,
+.threeCol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
 }
-
-.btnGlass:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
-}
-
-.rise {
-  animation: rise 0.9s var(--ease-out) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-}
-
-@keyframes heroZoom {
-  from {
-    transform: scale(1.06);
-    opacity: 0.6;
-  }
-}
-
-/* ---------- Cards & grids ---------- */
 
 .card {
   min-width: 0;
   padding: clamp(1.25rem, 1.8vw, 3.5rem);
-  background: var(--tint);
+  background: var(--card);
   border-radius: var(--radius);
 }
 
-.cardTitle {
-  margin: clamp(1.5rem, 2.5vw, 5rem) 0 clamp(0.6rem, 0.9vw, 1.75rem);
-  font-size: var(--fs-h3);
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-
-.iconBox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
-  height: clamp(2.25rem, 1.4vw + 1.5rem, 5rem);
-  background: var(--white);
-  border-radius: clamp(0.5rem, 0.6vw, 1.25rem);
-  color: var(--ink-soft);
-  font-size: clamp(1.1rem, 0.6vw + 0.9rem, 2.5rem);
-}
-
-/* hover lift for cards */
 .lift {
   transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
 }
@@ -298,141 +299,15 @@
   box-shadow: 0 28px 60px -34px rgba(13, 16, 23, 0.35);
 }
 
-/* ---------- Media placeholders (artwork slots) ---------- */
-
-/* ---------- 4. Split section ---------- */
-
-/* ---------- 6. Frameworks ---------- */
-
-/* ---------- 4. Evidence table ---------- */
-
-.tableCard {
-  padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
-  background: var(--white);
-  color: var(--ink);
-  border-radius: var(--radius);
-  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.3);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-body);
-  line-height: 1.5;
-  text-align: left;
-}
-
-.table thead th {
-  padding: clamp(1rem, 1.6vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(0.9rem, 1.2vw, 2.25rem) 0;
-  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: var(--fs-eyebrow);
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.table tbody tr {
-  border-top: 1px solid var(--line);
-  transition: background 0.3s ease;
-}
-
-.table tbody tr:hover {
-  background: rgba(13, 16, 23, 0.025);
-}
-
-.table tbody th,
-.table tbody td {
-  padding: clamp(1rem, 1.5vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(1rem, 1.5vw, 3rem) 0;
-  vertical-align: top;
-}
-
-.rowLabel {
-  width: 28%;
-  font-weight: 500;
-  color: var(--ink);
-}
-
-.table td {
-  width: 20%;
-}
-
-.table td.cellDesc {
-  width: 52%;
-  color: var(--ink-soft);
-}
-
-.table td > span {
-  vertical-align: middle;
-}
-
-.paperText {
-  color: var(--ink-soft);
-}
-
-.mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5em;
-  height: 1.5em;
-  margin-right: 0.6em;
-  border-radius: 50%;
-  font-size: 1em;
-  vertical-align: middle;
-}
-
-.markNo {
-  color: #8a919b;
-}
-
-.markYes {
-  background: #1f9d55;
-  color: #fff;
-  font-size: 0.85em;
-}
-
-/* ---------- extra layout bits ---------- */
-
-.white {
-  background: #fff;
-}
-
-.headLeft {
-  max-width: 62rem;
-  margin: 0 0 clamp(1.5rem, 3vw, 6rem);
-}
-
-.eyebrowLeft,
-.titleLeft,
-.leadLeft {
-  text-align: left;
-}
-
-.leadLeft {
-  margin: 0;
-}
-
-.threeCol,
-.twoCol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--gap);
-}
+/* ---------- 2. Safe Harbor ---------- */
 
 .media {
   width: 100%;
-  background-color: var(--tint);
+  border-radius: var(--radius);
   background-image: var(--img);
   background-size: cover;
   background-position: center;
-  border-radius: var(--radius);
 }
-
-/* ---------- 2. Safe harbor ---------- */
 
 .mediaHarbor {
   aspect-ratio: 16 / 5;
@@ -448,7 +323,7 @@
   text-wrap: pretty;
 }
 
-/* ---------- 3. Do / Do not ---------- */
+/* ---------- 3. Do / Do Not ---------- */
 
 .ruleCard {
   min-width: 0;
@@ -501,12 +376,91 @@
   margin: 0.1em 0 0;
 }
 
-.ruleDont .markNo {
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.6em;
+  border-radius: 50%;
+  font-size: 1em;
+  vertical-align: middle;
+}
+
+.markNo {
   border: 1px solid #b4bbc3;
   color: #8a919b;
 }
 
-/* ---------- 4. Scope badges ---------- */
+.markYes {
+  background: #1f9d55;
+  color: #fff;
+  font-size: 0.85em;
+}
+
+/* ---------- 4. Scope Table ---------- */
+
+.tableCard {
+  padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.table thead th {
+  padding: clamp(1rem, 1.6vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(0.9rem, 1.2vw, 2.25rem) 0;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.table tbody tr {
+  border-top: 1px solid var(--line);
+  transition: background 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(13, 16, 23, 0.025);
+}
+
+.table tbody th,
+.table tbody td {
+  padding: clamp(1rem, 1.5vw, 3rem) clamp(0.5rem, 1vw, 2rem) clamp(1rem, 1.5vw, 3rem) 0;
+  vertical-align: top;
+}
+
+.rowLabel {
+  width: 28%;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.table td {
+  width: 20%;
+  vertical-align: middle;
+}
+
+.table td.cellDesc {
+  width: 52%;
+  color: var(--ink-soft);
+}
+
+.table tbody th {
+  vertical-align: middle;
+}
 
 .badge {
   display: inline-flex;
@@ -536,15 +490,7 @@
   color: #c8101a;
 }
 
-.table td {
-  vertical-align: middle;
-}
-
-.table tbody th {
-  vertical-align: middle;
-}
-
-/* ---------- 5. Timeline (dark) ---------- */
+/* ---------- 5. Reporting Timeline ---------- */
 
 .mailLink {
   color: #fff;
@@ -637,7 +583,7 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-/* ---------- 6. Hall of fame ---------- */
+/* ---------- 6. Hall of Fame ---------- */
 
 .mediaReward {
   aspect-ratio: 16 / 9;
@@ -652,15 +598,10 @@
   color: var(--ink);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .stepDotActive {
-    animation: none;
-  }
-}
-
 /* ---------- Focus ---------- */
 
-.btnPrimary:focus-visible {
+.btnPrimary:focus-visible,
+.btnGlass:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
 }
@@ -713,7 +654,6 @@
     text-transform: uppercase;
     color: var(--ink-soft);
   }
-
 }
 
 /* ---------- Breakpoints ---------- */
@@ -765,21 +705,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rise,
-  .heroPhoto {
+  .stepDotActive {
     animation: none;
   }
 
   .lift,
   .lift:hover,
   .btnGlass,
-  .btnGlass:hover,
-  .badge {
-    transition: none;
-  }
-
-  .lift:hover,
   .btnGlass:hover {
+    transition: none;
     transform: none;
   }
 
