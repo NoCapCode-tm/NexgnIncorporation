@@ -12,7 +12,6 @@
   --grey: #f2f4f6;
   --red: #ed040f;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
   --pad-x: min(11.9vw, max(1.25rem, 14.6vw - 2.3rem));
 
@@ -50,10 +49,6 @@
   .container {
     max-width: 3600px;
   }
-}
-
-.rise {
-  animation: fadeUp 0.9s var(--ease-out) var(--d, 0ms) backwards;
 }
 
 /* ---------- 1. HERO ---------- */
@@ -100,12 +95,6 @@
   background: #ffffff;
   border-radius: max(0.65rem, 0.75vw);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
-  transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
-}
-
-.searchWrapper:focus-within {
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
 }
 
 .searchIcon {
@@ -151,12 +140,6 @@
   background: var(--grey);
   color: var(--soft);
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.clearBtn:hover {
-  background: #e2e5e9;
-  color: var(--ink);
 }
 
 /* ---------- 2. CONTENT LAYOUT ---------- */
@@ -175,7 +158,8 @@
   .grid {
     grid-template-columns: minmax(0, 250fr) minmax(0, 535fr);
     gap: max(2.5rem, 4.5vw);
-    align-items: start;
+    /* no align-items: start here. The sidebar must stretch to the full row height,
+       otherwise it has no room to stick while you scroll. */
   }
 }
 
@@ -199,8 +183,26 @@
   flex-direction: column;
 }
 
+.navTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  max-width: 19vw;
+  margin-bottom: max(0.9rem, 1.25vw);
+}
+
+.counter {
+  margin: 0;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
 .navHeader {
-  margin: 0 0 max(0.9rem, 1.25vw);
+  margin: 0;
   font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: var(--fs-eyebrow);
   font-weight: 500;
@@ -232,10 +234,8 @@
   left: -0.5px;
   top: 0;
   width: 2px;
-  height: var(--h, 0);
+  height: 0; /* GSAP sets y + height (desktop) or x + width (mobile chips) */
   background: var(--ink);
-  transform: translateY(var(--y, 0));
-  transition: transform 0.45s var(--ease-out), height 0.45s var(--ease-out);
 }
 
 .navItem {
@@ -252,7 +252,6 @@
   line-height: 1.38;
   color: var(--soft);
   cursor: pointer;
-  transition: color 0.25s ease, transform 0.35s var(--ease-out);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -268,16 +267,9 @@
   flex: 1;
 }
 
-.navItem:hover {
-  color: var(--ink);
-  transform: translateX(3px);
-}
-
-.activeNav,
-.activeNav:hover {
+.activeNav {
   color: var(--ink);
   font-weight: 500;
-  transform: none;
 }
 
 .activeNav .navNumber {
@@ -327,13 +319,6 @@
   font-weight: 500;
   text-decoration: none;
   box-sizing: border-box;
-  transition: background 0.25s ease, transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
-}
-
-.supportBtn:hover {
-  background: #1c2230;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px -8px rgba(13, 16, 23, 0.45);
 }
 
 .supportBtnIcon {
@@ -348,11 +333,6 @@
   color: var(--soft);
   text-decoration: underline;
   text-underline-offset: 3px;
-  transition: color 0.2s ease;
-}
-
-.supportEmail:hover {
-  color: var(--ink);
 }
 
 .mobileSupportCard {
@@ -376,7 +356,8 @@
     gap: 0;
   }
 
-  .navHeader {
+  .navTop {
+    max-width: none;
     margin-bottom: 0.45rem;
   }
 
@@ -406,20 +387,14 @@
     top: auto;
     bottom: 0;
     left: 0;
-    width: var(--w, 0);
+    width: 0;
     height: 2px;
-    transform: translateX(var(--x, 0));
-    transition: transform 0.45s var(--ease-out), width 0.45s var(--ease-out);
   }
 
   .navItem {
     flex: none;
     padding: 0.5em 0.85em;
     white-space: nowrap;
-  }
-
-  .navItem:hover {
-    transform: none;
   }
 
   .desktopSupportCard {
@@ -529,28 +504,11 @@
   background: var(--grey);
   color: var(--ink);
   font-size: max(1rem, 1.1vw);
-  transition: transform 0.35s var(--ease-out), background 0.25s ease;
 }
 
-.categoryHeaderBtn:hover .chevronBadge {
-  background: #e5e8ec;
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
-/* Smooth CSS grid height collapse for category body */
+/* Accordion bodies: GSAP tweens height + opacity (reduced motion: see the bottom of this file) */
 .categoryBodyWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 0.45s var(--ease-out), opacity 0.35s ease;
-}
-
-.categoryBodyExpanded {
-  grid-template-rows: 1fr;
-  opacity: 1;
+  overflow: hidden;
 }
 
 .categoryBodyInner {
@@ -620,7 +578,6 @@
   font-size: calc(var(--fs-body) * 0.95);
   color: var(--soft);
   flex-shrink: 0;
-  transition: color 0.2s ease, transform 0.25s var(--ease-out);
 }
 
 .questionBtn:hover .qToggleIcon,
@@ -633,20 +590,10 @@
   font-weight: 500;
   line-height: 1.45;
   color: var(--ink);
-  transition: color 0.2s ease;
 }
 
-/* Smooth CSS grid height collapse for question answer */
 .answerWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 0.35s var(--ease-out), opacity 0.3s ease;
-}
-
-.answerExpanded {
-  grid-template-rows: 1fr;
-  opacity: 1;
+  overflow: hidden;
 }
 
 .answerInner {
@@ -695,31 +642,43 @@
   font-size: var(--fs-body);
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s ease;
 }
 
-.resetSearchBtn:hover {
-  background: #1c2230;
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-
+/* Reduced motion: GSAP is off. Panels open instantly from data-open, hovers are plain colour swaps. */
 @media (prefers-reduced-motion: reduce) {
-  .rise {
-    animation: none;
+  .categoryBodyWrapper[data-open='false'],
+  .answerWrapper[data-open='false'] {
+    display: none;
   }
 
-  .indicator,
-  .navItem,
-  .chevronBadge,
-  .categoryBodyWrapper,
-  .answerWrapper,
-  .supportBtn {
-    transition: none;
+  .chevronBadge[data-open='true'] {
+    transform: rotate(180deg);
+  }
+
+  .navItem:hover,
+  .supportEmail:hover {
+    color: var(--ink);
+  }
+
+  .clearBtn:hover {
+    background: #e2e5e9;
+    color: var(--ink);
+  }
+
+  .categoryHeaderBtn:hover .chevronBadge {
+    background: #e5e8ec;
+  }
+
+  .questionBtn:hover .qToggleIcon {
+    color: var(--ink);
+  }
+
+  .supportBtn:hover,
+  .resetSearchBtn:hover {
+    background: #1c2230;
+  }
+
+  .searchWrapper:focus-within {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.25);
   }
 }

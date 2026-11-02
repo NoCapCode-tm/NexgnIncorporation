@@ -1,13 +1,10 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiSearch, FiChevronDown, FiPlus, FiMinus, FiX } from 'react-icons/fi';
 import { HiOutlineSparkles } from 'react-icons/hi2';
 import { SEOHead } from '../../components/seo/SEOHead';
-import Reveal from '../../components/common/Reveal';
-// Uncomment below if Navbar and Footer are not already rendered globally in AppRouter.jsx:
-// import Navbar from '../../components/layout/Navbar';
-// import Footer from '../../components/layout/Footer';
+import useHelpCenterAnimations from '../../hooks/UseHelpCenterAnimations';
 import styles from './HelpCenter.module.css';
 
 const prefersReducedMotion = () =>
@@ -409,9 +406,8 @@ const HelpCenter = () => {
     [HELP_CATEGORIES[0].frequent[0].id]: true,
   }));
 
-  const [indicator, setIndicator] = useState({ top: 0, height: 0 });
+  const rootRef = useRef(null);
   const sectionRefs = useRef({});
-  const navRefs = useRef({});
   const navListRef = useRef(null);
   const isClickScrolling = useRef(false);
   const clickTimer = useRef(null);
@@ -476,30 +472,23 @@ const HelpCenter = () => {
     }
   }, []);
 
-  // Move sidebar / mobile-chip sliding indicator
-  const moveIndicator = useCallback(() => {
-    const item = navRefs.current[activeCategory];
+  // Mobile chip row: keep the active chip centred (the sliding indicator itself is GSAP, see the hook)
+  useLayoutEffect(() => {
     const list = navListRef.current;
-    if (!item || !list) return;
-    const horizontal = getComputedStyle(list).flexDirection === 'row';
-    setIndicator(
-      horizontal
-        ? { left: item.offsetLeft, width: item.offsetWidth }
-        : { top: item.offsetTop, height: item.offsetHeight }
-    );
-    if (horizontal) {
-      list.scrollTo({
-        left: item.offsetLeft - (list.clientWidth - item.offsetWidth) / 2,
-        behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      });
-    }
+    const item = list?.querySelector(`[data-cat="${activeCategory}"]`);
+    if (!list || !item || getComputedStyle(list).flexDirection !== 'row') return;
+    list.scrollTo({
+      left: item.offsetLeft - (list.clientWidth - item.offsetWidth) / 2,
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
   }, [activeCategory]);
 
-  useLayoutEffect(() => {
-    moveIndicator();
-    window.addEventListener('resize', moveIndicator);
-    return () => window.removeEventListener('resize', moveIndicator);
-  }, [moveIndicator, filteredCategories]);
+  // Every animation on this page (hero, reveals, focus-fade, indicator, accordions, hovers)
+  const catKey = filteredCategories.map((c) => c.id).join('|') || 'empty';
+  useHelpCenterAnimations(rootRef, { activeCategory, isSearching, catKey });
+
+  const activeIndex = Math.max(0, HELP_CATEGORIES.findIndex((c) => c.id === activeCategory));
+  const pad = (n) => String(n).padStart(2, '0');
 
   useEffect(() => () => clearTimeout(clickTimer.current), []);
 
@@ -565,24 +554,18 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={rootRef}>
       <SEOHead title={seoTitle} description={seoDescription} url="/help" schema={faqSchema} />
-
-      {/* Uncomment <Navbar /> if not rendered by AppRouter.jsx */}
-      {/* <Navbar /> */}
 
       {/* ---------- 1. HERO ---------- */}
       <section className={styles.hero}>
         <div className={styles.container}>
           <div className={styles.heroInner}>
-            <h1 className={`${styles.heroTitle} ${styles.rise}`}>
+            <h1 className={styles.heroTitle} data-h="rise">
               {tr('hero.title', 'Nexgn Help Center')}
             </h1>
 
-            <div
-              className={`${styles.searchWrapper} ${styles.rise}`}
-              style={{ '--d': '100ms' }}
-            >
+            <div className={styles.searchWrapper} data-h="rise search">
               <FiSearch className={styles.searchIcon} aria-hidden="true" />
               <input
                 type="search"
@@ -597,6 +580,7 @@ const HelpCenter = () => {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className={styles.clearBtn}
+                  data-hv="clear"
                   aria-label="Clear search"
                 >
                   <FiX aria-hidden="true" />
@@ -615,30 +599,27 @@ const HelpCenter = () => {
             <aside className={styles.sidebar}>
               <div className={styles.stickySidebar}>
                 <div className={styles.navBlock}>
-                  <p className={styles.navHeader}>{tr('nav.header', 'CATEGORIES')}</p>
+                  <div className={styles.navTop}>
+                    <p className={styles.navHeader}>{tr('nav.header', 'CATEGORIES')}</p>
+                    <p className={styles.counter} data-h="counter" aria-hidden="true">
+                      {pad(activeIndex + 1)} / {pad(HELP_CATEGORIES.length)}
+                    </p>
+                  </div>
 
                   <nav
                     className={styles.navList}
                     ref={navListRef}
                     aria-label={tr('nav.header', 'Categories')}
                   >
-                    <span
-                      className={styles.indicator}
-                      aria-hidden="true"
-                      style={
-                        indicator.width !== undefined
-                          ? { '--x': `${indicator.left}px`, '--w': `${indicator.width}px` }
-                          : { '--y': `${indicator.top}px`, '--h': `${indicator.height}px` }
-                      }
-                    />
+                    <span className={styles.indicator} data-h="indicator" aria-hidden="true" />
                     {HELP_CATEGORIES.map((cat) => {
                       const isActive = activeCategory === cat.id;
                       return (
                         <button
                           key={cat.id}
-                          ref={(el) => {
-                            navRefs.current[cat.id] = el;
-                          }}
+                          data-h="navitem"
+                          data-hv="navitem"
+                          data-cat={cat.id}
                           type="button"
                           onClick={() => handleCategoryNavClick(cat.id)}
                           className={`${styles.navItem} ${isActive ? styles.activeNav : ''}`}
@@ -665,11 +646,11 @@ const HelpCenter = () => {
                       "Can't find the answer you're looking for? Reach out to our support and engineering team, and we'll get back to you as soon as possible."
                     )}
                   </p>
-                  <Link to="/contact" className={styles.supportBtn}>
+                  <Link to="/contact" className={styles.supportBtn} data-hv="lift">
                     <span>{tr('support.button', 'Contact Support')}</span>
                     <HiOutlineSparkles className={styles.supportBtnIcon} aria-hidden="true" />
                   </Link>
-                  <a href="mailto:support@nexgn.cloud" className={styles.supportEmail}>
+                  <a href="mailto:support@nexgn.cloud" className={styles.supportEmail} data-hv="link">
                     support@nexgn.cloud
                   </a>
                 </div>
@@ -679,7 +660,7 @@ const HelpCenter = () => {
             {/* Right Main Column: Category Accordions */}
             <main className={styles.mainContent}>
               {filteredCategories.length === 0 ? (
-                <div className={styles.emptyState}>
+                <div className={styles.emptyState} data-h="article">
                   <h2 className={styles.emptyTitle}>
                     {tr('search.noResultsTitle', 'No matching articles found')}
                   </h2>
@@ -693,12 +674,13 @@ const HelpCenter = () => {
                     type="button"
                     onClick={() => setSearchQuery('')}
                     className={styles.resetSearchBtn}
+                    data-hv="dark"
                   >
                     {tr('search.reset', 'Clear Search')}
                   </button>
                 </div>
               ) : (
-                filteredCategories.map((cat, index) => {
+                filteredCategories.map((cat) => {
                   const isCatOpen = isSearching || !!openCategories[cat.id];
 
                   return (
@@ -709,14 +691,15 @@ const HelpCenter = () => {
                         sectionRefs.current[cat.id] = el;
                       }}
                       className={styles.categoryArticle}
+                      data-h="article"
                     >
-                      <Reveal delay={Math.min(index, 4) * 60}>
-                        <div className={styles.categoryBlock}>
+                      <div className={styles.categoryBlock} data-h="block" data-cat={cat.id}>
                           {/* Category Header Row */}
                           <button
                             type="button"
                             onClick={() => toggleCategory(cat.id)}
                             className={styles.categoryHeaderBtn}
+                            data-hv="catbtn"
                             aria-expanded={isCatOpen}
                           >
                             <span className={styles.categoryNum}>{cat.number}</span>
@@ -729,9 +712,9 @@ const HelpCenter = () => {
                               </p>
                             </div>
                             <span
-                              className={`${styles.chevronBadge} ${
-                                isCatOpen ? styles.chevronOpen : ''
-                              }`}
+                              className={styles.chevronBadge}
+                              data-h="chev"
+                              data-open={isCatOpen}
                               aria-hidden="true"
                             >
                               <FiChevronDown />
@@ -740,9 +723,9 @@ const HelpCenter = () => {
 
                           {/* Expandable Category Body */}
                           <div
-                            className={`${styles.categoryBodyWrapper} ${
-                              isCatOpen ? styles.categoryBodyExpanded : ''
-                            }`}
+                            className={styles.categoryBodyWrapper}
+                            data-h="collapse"
+                            data-open={isCatOpen}
                           >
                             <div className={styles.categoryBodyInner}>
                               {/* Subgroup 1: TOP FREQUENT QUESTIONS */}
@@ -766,10 +749,12 @@ const HelpCenter = () => {
                                             type="button"
                                             onClick={() => toggleQuestion(item.id)}
                                             className={styles.questionBtn}
+                                            data-hv="qbtn"
                                             aria-expanded={isQOpen}
                                           >
                                             <span
                                               className={styles.qToggleIcon}
+                                              data-h="qicon"
                                               aria-hidden="true"
                                             >
                                               {isQOpen ? <FiMinus /> : <FiPlus />}
@@ -780,9 +765,9 @@ const HelpCenter = () => {
                                           </button>
 
                                           <div
-                                            className={`${styles.answerWrapper} ${
-                                              isQOpen ? styles.answerExpanded : ''
-                                            }`}
+                                            className={styles.answerWrapper}
+                                            data-h="collapse"
+                                            data-open={isQOpen}
                                           >
                                             <div className={styles.answerInner}>
                                               <p className={styles.answerText}>
@@ -821,10 +806,12 @@ const HelpCenter = () => {
                                             type="button"
                                             onClick={() => toggleQuestion(item.id)}
                                             className={styles.questionBtn}
+                                            data-hv="qbtn"
                                             aria-expanded={isQOpen}
                                           >
                                             <span
                                               className={styles.qToggleIcon}
+                                              data-h="qicon"
                                               aria-hidden="true"
                                             >
                                               {isQOpen ? <FiMinus /> : <FiPlus />}
@@ -835,9 +822,9 @@ const HelpCenter = () => {
                                           </button>
 
                                           <div
-                                            className={`${styles.answerWrapper} ${
-                                              isQOpen ? styles.answerExpanded : ''
-                                            }`}
+                                            className={styles.answerWrapper}
+                                            data-h="collapse"
+                                            data-open={isQOpen}
                                           >
                                             <div className={styles.answerInner}>
                                               <p className={styles.answerText}>
@@ -854,14 +841,13 @@ const HelpCenter = () => {
                             </div>
                           </div>
                         </div>
-                      </Reveal>
                     </article>
                   );
                 })
               )}
 
               {/* Mobile-only Support Card shown cleanly below categories */}
-              <div className={`${styles.supportCard} ${styles.mobileSupportCard}`}>
+              <div className={`${styles.supportCard} ${styles.mobileSupportCard}`} data-h="article">
                 <h2 className={styles.supportTitle}>
                   {tr('support.title', 'Still Need Help?')}
                 </h2>
@@ -871,11 +857,11 @@ const HelpCenter = () => {
                     "Can't find the answer you're looking for? Reach out to our support and engineering team, and we'll get back to you as soon as possible."
                   )}
                 </p>
-                <Link to="/contact" className={styles.supportBtn}>
+                <Link to="/contact" className={styles.supportBtn} data-hv="lift">
                   <span>{tr('support.button', 'Contact Support')}</span>
                   <HiOutlineSparkles className={styles.supportBtnIcon} aria-hidden="true" />
                 </Link>
-                <a href="mailto:support@nexgn.cloud" className={styles.supportEmail}>
+                <a href="mailto:support@nexgn.cloud" className={styles.supportEmail} data-hv="link">
                   support@nexgn.cloud
                 </a>
               </div>
@@ -884,8 +870,6 @@ const HelpCenter = () => {
         </div>
       </section>
 
-      {/* Uncomment <Footer /> if not rendered by AppRouter.jsx */}
-      {/* <Footer /> */}
     </div>
   );
 };

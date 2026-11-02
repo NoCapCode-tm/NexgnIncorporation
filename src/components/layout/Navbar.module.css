@@ -5,7 +5,7 @@
 /* Navbar — frosted-glass, responsive from mobile (320px) up to 4K (3840px+).
    Dark glass on the homepage, light glass everywhere else (data-theme).
 
-   IMPORTANT: the glass (backdrop-filter) lives on .header::before, NOT on .header.
+   IMPORTANT: the glass (backdrop-filter) lives on .glass (a real element), NOT on .header.
    backdrop-filter on an ancestor would trap the position:fixed mobile drawer inside the
    header's box. Likewise the dropdown animates .panelInner (which owns its own
    backdrop-filter), so the blur never flickers while it fades. */
@@ -13,7 +13,7 @@
 .header {
   /* sizing (fluid) */
   --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
-  --bar-h: var(--nav-h);
+  --bar-h: calc(var(--nav-h) * var(--bar-k, 1));
   --fs: clamp(0.875rem, 0.3vw + 0.8rem, 2rem);
   --fs-group: clamp(0.75rem, 0.25vw + 0.7rem, 1.6rem);
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
@@ -23,9 +23,8 @@
   --red: #ed040f;
   --red-hover: #d1030d;
 
-  /* motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* GSAP animates these two on scroll (see useNavbarAnimations) */
+  --bar-k: 1;
   --blur: 16px;
 
   position: sticky;
@@ -36,13 +35,6 @@
   background: transparent;
   color: var(--text);
   font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  transition: color 0.3s ease;
-}
-
-/* Scrolled: bar tightens a little and the glass gets stronger */
-.header[data-scrolled='true'] {
-  --bar-h: calc(var(--nav-h) * 0.88);
-  --blur: 24px;
 }
 
 /* ---------- Themes ---------- */
@@ -74,8 +66,7 @@
 
 /* ---------- Glass layer (bar background) ---------- */
 
-.header::before {
-  content: '';
+.glass {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -84,15 +75,26 @@
   backdrop-filter: blur(var(--blur)) saturate(180%);
   border-bottom: 1px solid var(--line);
   box-shadow: var(--bar-shadow);
-  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease,
-    backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease;
-  animation: glassIn 0.8s var(--ease-out) backwards;
+  pointer-events: none;
 }
 
-.header[data-scrolled='true']::before,
-.header[data-mobile-open='true']::before {
-  background: var(--glass-scrolled);
-  box-shadow: var(--bar-shadow-scrolled);
+/* reading-progress hairline (scaleX is driven by ScrollTrigger) */
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* page dim behind an open desktop menu (shown only >=1024px) */
+.scrim {
+  display: none;
+  pointer-events: none;
 }
 
 /* ---------- Bar ---------- */
@@ -108,7 +110,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  transition: height 0.4s var(--ease-out);
 }
 
 /* ---------- Logo ---------- */
@@ -120,14 +121,12 @@
   color: var(--red);
   text-decoration: none;
   font-size: clamp(1.25rem, 0.6vw + 1rem, 3rem);
-  animation: fadeUp 0.8s var(--ease-out) 0.1s backwards;
 }
 
 .logoMark {
   width: 1.35em;
   height: 1.35em;
   flex: none;
-  transition: transform 0.6s var(--ease-spring);
 }
 
 .logoText {
@@ -155,18 +154,7 @@
   backdrop-filter: blur(28px) saturate(180%);
   overflow-y: auto;
   overscroll-behavior: contain;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(-0.75rem);
-  transition: opacity 0.35s var(--ease-out), transform 0.45s var(--ease-out),
-    visibility 0s linear 0.35s;
-}
-
-.nav[data-open='true'] {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  transition-delay: 0s;
+  visibility: hidden; /* GSAP reveals it (or the reduced-motion rule at the bottom) */
 }
 
 .menu {
@@ -177,18 +165,8 @@
   flex-direction: column;
 }
 
-/* drawer items rise in one after another */
 .item {
   border-bottom: 1px solid var(--line);
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.45s var(--ease-out), transform 0.55s var(--ease-out);
-}
-
-.nav[data-open='true'] .item {
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(var(--i, 0) * 45ms + 90ms);
 }
 
 .trigger {
@@ -219,29 +197,22 @@
 
 .chevron {
   flex: none;
-  transition: transform 0.4s var(--ease-spring);
 }
 
-.trigger[aria-expanded='true'] .chevron {
-  transform: rotate(180deg);
+/* hover highlight behind the label (desktop only; GSAP drives opacity and scale) */
+.pill {
+  display: none;
+  pointer-events: none;
 }
 
 .active {
   color: var(--red);
 }
 
-/* Panel — mobile: smooth accordion inside the drawer (grid-rows 0fr -> 1fr) */
+/* Panel — mobile: accordion inside the drawer (GSAP tweens .panelClip height) */
 .panel {
-  display: grid;
-  grid-template-rows: 0fr;
+  display: block;
   visibility: hidden;
-  transition: grid-template-rows 0.45s var(--ease-out), visibility 0s linear 0.45s;
-}
-
-.panel[data-open='true'] {
-  grid-template-rows: 1fr;
-  visibility: visible;
-  transition-delay: 0s;
 }
 
 .panelClip {
@@ -256,19 +227,8 @@
   padding: 0.25rem 0 1.25rem;
 }
 
-/* groups fade up in sequence when a panel opens */
 .group {
   min-width: 0;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.panel[data-open='true'] .group {
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
-  transition-delay: calc(var(--gi, 0) * 55ms + 110ms);
 }
 
 .groupTitle {
@@ -296,13 +256,10 @@
   font-size: var(--fs);
   line-height: 1.35;
   text-decoration: none;
-  transition: color 0.2s ease, transform 0.35s var(--ease-out);
 }
 
-.panelLink:hover,
 .panelLink:focus-visible {
   color: var(--text);
-  transform: translateX(4px);
 }
 
 /* Drawer buttons (shown <1024px) */
@@ -334,13 +291,12 @@
 /* underline that draws in from the left */
 .loginLabel {
   padding-bottom: 2px;
-  background: linear-gradient(currentColor, currentColor) left bottom / 0% 1.5px no-repeat;
-  transition: background-size 0.45s var(--ease-out);
+  --u: 0%; /* GSAP animates this on hover */
+  background: linear-gradient(currentColor, currentColor) left bottom / var(--u) 1.5px no-repeat;
 }
 
-.login:hover .loginLabel,
 .login:focus-visible .loginLabel {
-  background-size: 100% 1.5px;
+  --u: 100%;
 }
 
 .cta {
@@ -360,13 +316,10 @@
   text-decoration: none;
   white-space: nowrap;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(237, 4, 15, 0);
-  transition: transform 0.35s var(--ease-out), box-shadow 0.4s var(--ease-out),
-    background 0.2s ease;
 }
 
-/* soft light sweep across the button on hover */
-.cta::before {
-  content: '';
+/* soft light sweep across the button on hover (GSAP moves it) */
+.sheen {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -377,24 +330,11 @@
     transparent 70%
   );
   transform: translateX(-120%);
-  transition: transform 0.8s var(--ease-out);
+  pointer-events: none;
 }
 
-.cta:hover,
 .cta:focus-visible {
   background: var(--red-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 28px -8px rgba(237, 4, 15, 0.6), 0 0 0 0 rgba(237, 4, 15, 0);
-}
-
-.cta:hover::before,
-.cta:focus-visible::before {
-  transform: translateX(120%);
-}
-
-.cta:active {
-  transform: translateY(0) scale(0.98);
-  transition-duration: 0.1s;
 }
 
 /* ---------- Burger (animated hamburger -> X) ---------- */
@@ -410,13 +350,7 @@
   border-radius: 0.6rem;
   color: var(--text);
   cursor: pointer;
-  transition: background 0.2s ease;
   -webkit-tap-highlight-color: transparent;
-  animation: fadeUp 0.8s var(--ease-out) 0.2s backwards;
-}
-
-.burger:hover {
-  background: var(--hover-bg);
 }
 
 .burgerBox {
@@ -433,7 +367,6 @@
   height: 2px;
   border-radius: 2px;
   background: currentColor;
-  transition: transform 0.45s var(--ease-out), opacity 0.2s ease, top 0.45s var(--ease-out);
 }
 
 .burgerLine:nth-child(1) {
@@ -446,21 +379,6 @@
 
 .burgerLine:nth-child(3) {
   top: calc(100% - 2px);
-}
-
-.burger[aria-expanded='true'] .burgerLine:nth-child(1) {
-  top: calc(50% - 1px);
-  transform: rotate(45deg);
-}
-
-.burger[aria-expanded='true'] .burgerLine:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.burger[aria-expanded='true'] .burgerLine:nth-child(3) {
-  top: calc(50% - 1px);
-  transform: rotate(-45deg);
 }
 
 /* ---------- Focus ---------- */
@@ -500,9 +418,6 @@
     backdrop-filter: none;
     overflow: visible;
     visibility: visible;
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 
   .menu {
@@ -513,9 +428,6 @@
 
   .item {
     border: 0;
-    opacity: 1;
-    transform: none;
-    transition: none;
     /* NOT position: relative — the panel anchors to the sticky header instead */
   }
 
@@ -525,12 +437,11 @@
     padding: 0 0.8em;
     gap: 0.4em;
     font-size: var(--fs);
-    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 150ms) backwards;
   }
 
-  /* hover pill: fades + scales in behind the label */
-  .trigger::before {
-    content: '';
+  /* hover pill: GSAP fades + scales it in behind the label */
+  .pill {
+    display: block;
     position: absolute;
     inset: 22% 0;
     z-index: -1;
@@ -538,14 +449,6 @@
     background: var(--hover-bg);
     opacity: 0;
     transform: scale(0.9);
-    transition: opacity 0.25s ease, transform 0.35s var(--ease-out);
-  }
-
-  .trigger:hover::before,
-  .trigger:focus-visible::before,
-  .trigger[aria-expanded='true']::before {
-    opacity: 1;
-    transform: scale(1);
   }
 
   /* current-section marker: small red dot under the label */
@@ -577,33 +480,22 @@
     font-size: var(--fs);
   }
 
-  .login {
-    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 150ms) backwards;
-  }
-
   .cta {
     min-height: clamp(2.5rem, 1.2vw + 1.8rem, 4.5rem);
-    animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 230ms) backwards;
   }
 
-  /* soft page dim behind an open menu */
-  .header::after {
-    content: '';
+  /* soft page dim behind an open menu (GSAP tweens its opacity) */
+  .scrim {
+    display: block;
     position: fixed;
     inset: 0;
     z-index: -2;
     background: var(--scrim);
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
   }
 
-  .header[data-menu-open='true']::after {
-    opacity: 1;
-  }
-
-  /* Mega-menu panel wrapper: positioning + show/hide only (no opacity here, so the
-     inner glass can blur the page behind it) */
+  /* Mega-menu panel wrapper: positioning only. GSAP toggles its visibility and animates
+     .panelInner (which owns the backdrop blur, so the blur never flickers). */
   .panel {
     --panel-pad: clamp(1.25rem, 1.8vw, 3.5rem);
     display: block;
@@ -619,13 +511,6 @@
     margin-top: clamp(0.35rem, 0.5vw, 1rem);
     visibility: hidden;
     pointer-events: none;
-    transition: visibility 0s linear 0.22s;
-  }
-
-  .panel[data-open='true'] {
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
   }
 
   /* invisible bridge so the pointer can travel from the trigger to the panel */
@@ -654,15 +539,6 @@
     border-radius: clamp(1rem, 1.4vw, 2.5rem);
     box-shadow: var(--panel-shadow);
     transform-origin: 50% 0;
-    opacity: 0;
-    transform: translateY(-10px) scale(0.985);
-    transition: opacity 0.18s ease, transform 0.22s ease;
-  }
-
-  .panel[data-open='true'] .panelInner {
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.35s var(--ease-out), transform 0.55s var(--ease-out);
   }
 
   .groupTitle {
@@ -714,21 +590,6 @@
   }
 }
 
-/* ---------- Keyframes ---------- */
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-}
-
-@keyframes glassIn {
-  from {
-    opacity: 0;
-  }
-}
-
 /* ---------- Fallbacks & accessibility ---------- */
 
 /* Browsers without backdrop-filter, or users who asked for less transparency: near-solid bars */
@@ -763,7 +624,7 @@
     --drawer-bg: #fafafa;
   }
 
-  .header::before,
+  .glass,
   .panelInner,
   .nav {
     -webkit-backdrop-filter: none;
@@ -771,14 +632,71 @@
   }
 }
 
-/* Respect "reduce motion": no entrance, no sweeps, no slides */
+/* Reduced motion: GSAP is switched off, so every state change is instant and driven by
+   plain attributes (data-open, aria-expanded, :hover). Nothing slides, fades or sweeps. */
 @media (prefers-reduced-motion: reduce) {
-  .header,
-  .header *,
-  .header::before,
-  .header::after {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0s !important;
+  .nav[data-open='true'] {
+    visibility: visible;
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .panel[data-open='true'] {
+    display: block;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .trigger[aria-expanded='true'] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .panelLink:hover {
+    color: var(--text);
+  }
+
+  .login:hover .loginLabel {
+    --u: 100%;
+  }
+
+  .cta:hover {
+    background: var(--red-hover);
+  }
+
+  .burger:hover {
+    background: var(--hover-bg);
+  }
+
+  .burger[aria-expanded='true'] .burgerLine:nth-child(1) {
+    top: calc(50% - 1px);
+    transform: rotate(45deg);
+  }
+
+  .burger[aria-expanded='true'] .burgerLine:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger[aria-expanded='true'] .burgerLine:nth-child(3) {
+    top: calc(50% - 1px);
+    transform: rotate(-45deg);
+  }
+
+  .header[data-mobile-open='true'] .glass {
+    background: var(--glass-scrolled);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+  .trigger:hover .pill,
+  .trigger:focus-visible .pill,
+  .trigger[aria-expanded='true'] .pill {
+    opacity: 1;
+    transform: none;
+  }
+
+  .header[data-menu-open='true'] .scrim {
+    opacity: 1;
   }
 }
