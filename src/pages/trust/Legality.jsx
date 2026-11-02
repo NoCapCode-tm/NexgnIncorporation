@@ -55,8 +55,8 @@ const REGIONS = [
   {
     key: 'us',
     label: 'United States',
-    x: 21,
-    y: 33,
+    x: 21.5, 
+    y: 36,
     laws: 'ESIGN Act (Electronic Signatures in Global and National Commerce Act) & UETA (Uniform Electronic Transactions Act).',
     stance:
       'Nexgn fully complies with the ESIGN Act and UETA. Signatures collected via Nexgn carry the same legal weight as traditional paper signatures in all 50 states for broad commercial, B2B, and B2C transactions.',
@@ -64,8 +64,8 @@ const REGIONS = [
   {
     key: 'eu',
     label: 'EU & UK',
-    x: 48,
-    y: 25,
+    x: 50.5, 
+    y: 28,
     laws: 'eIDAS Regulation (EU No. 910/2014) and the UK Electronic Communications Act 2000 / UK eIDAS.',
     stance:
       'Nexgn supports Simple and Advanced Electronic Signatures, backed by a full audit trail, which are admissible as evidence and cannot be denied legal effect solely because they are electronic.',
@@ -73,7 +73,7 @@ const REGIONS = [
   {
     key: 'in',
     label: 'India',
-    x: 69,
+    x: 77, 
     y: 45,
     laws: 'Information Technology Act, 2000 (including Sections 3A and 10A) and the Indian Evidence Act framework.',
     stance:
@@ -82,8 +82,8 @@ const REGIONS = [
   {
     key: 'row',
     label: 'Rest of the World',
-    x: 84,
-    y: 72,
+    x: 84.5, 
+    y: 70,
     laws: 'UNCITRAL Model Law on Electronic Commerce and Electronic Signatures, and national laws based on it.',
     stance:
       'Most jurisdictions recognize electronic signatures under laws modelled on UNCITRAL. Because rules vary by country and document type, we recommend confirming requirements with local counsel.',
