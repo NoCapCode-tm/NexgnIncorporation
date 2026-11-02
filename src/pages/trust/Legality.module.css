@@ -1,10 +1,10 @@
-/* /trust/legality — responsive from mobile (320px) to 4K (3840px+).
-   Navbar + Footer come from LanguageWrapper in AppRouter; this file is page content only. */
+/* /trust/legality — responsive from mobile (320px) to 4K (3840px+). */
 
 .page {
   --dark: #0d1017;
   --light: #f9fafa;
   --tint: #eef2f4;
+  --card: #eef2f4;
   --white: #ffffff;
   --ink: #0d1017;
   --ink-soft: #5b6270;
@@ -12,22 +12,20 @@
   --on-dark-soft: #9aa0a9;
   --line: #dfe4e8;
   --red: #ee0510;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem); /* same as Navbar_Alt */
+  --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
 
   /* fluid scale */
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
   --section-y: clamp(3.5rem, 7vw, 14rem);
-  --gap: clamp(1rem, 1.6vw, 3.5rem);
+  --gap: clamp(1.25rem, 2vw, 4rem);
   --radius: clamp(1rem, 1.4vw, 2.5rem);
 
   --fs-eyebrow: clamp(0.6875rem, 0.2vw + 0.62rem, 1.35rem);
-  --fs-h1: clamp(2.5rem, 4.2vw + 0.75rem, 10rem);
+  --fs-h1: clamp(2.25rem, 4vw + 0.75rem, 10rem);
   --fs-h2: clamp(1.75rem, 2.6vw + 0.75rem, 6.5rem);
   --fs-h3: clamp(1.0625rem, 0.5vw + 0.95rem, 2.5rem);
   --fs-lead: clamp(0.9375rem, 0.35vw + 0.85rem, 2.1rem);
   --fs-body: clamp(0.8125rem, 0.25vw + 0.75rem, 1.65rem);
-  --fs-framework: clamp(2.25rem, 3vw + 0.75rem, 8rem);
 
   width: 100%;
   background: var(--light);
@@ -35,8 +33,6 @@
   font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   overflow-x: clip;
 }
-
-/* ---------- Layout primitives ---------- */
 
 .section {
   padding: var(--section-y) var(--pad-x);
@@ -62,14 +58,11 @@
 
 .container {
   width: 100%;
-  max-width: 2400px; /* same cap as Navbar + Footer so edges line up */
+  max-width: 2400px;
   margin: 0 auto;
 }
 
-/* ---------- Typography ---------- */
-
 .eyebrow {
-  text-align: center;
   margin: 0 0 clamp(1rem, 1.4vw, 2.5rem);
   font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: var(--fs-eyebrow);
@@ -77,6 +70,7 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  text-align: center;
 }
 
 .eyebrowLight {
@@ -119,46 +113,12 @@
   color: var(--ink-soft);
 }
 
-/* ---------- Buttons ---------- */
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(0.75rem, 1vw, 2rem);
-  margin-top: clamp(1.75rem, 2.5vw, 5rem);
-}
-
-.btnPrimary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(2.75rem, 1.2vw + 2rem, 5.5rem);
-  padding: 0 1.6em;
-  border-radius: 0.4em;
-  font-size: var(--fs-body);
-  font-weight: 500;
-  text-align: center;
-  text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.btnPrimary {
-  background: var(--red);
-  color: #fff;
-  border: 1px solid var(--red);
-}
-
-.btnPrimary:hover {
-  background: #d1040e;
-  border-color: #d1040e;
-}
-
-/* ---------- 1. Hero: photo behind a frosted card; slides under the transparent Navbar_Alt ---------- */
+/* ---------- 1. Hero ---------- */
 
 .hero {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   margin-top: calc(var(--nav-h) * -1);
   padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
   background: #2a2420;
@@ -169,33 +129,45 @@
 
 .heroPhoto {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset: -10% 0;
+  z-index: -2;
   background-color: #3a2f27;
   background-image: var(--img, radial-gradient(60% 70% at 70% 45%, #c79a6d, #5a4636 55%, #2a2420));
   background-size: cover;
   background-position: center;
-  animation: heroZoom 1.8s var(--ease-out) both;
+  will-change: transform;
 }
 
-/* darkens the top so the transparent navbar stays readable on any photo */
-.heroPhoto::after {
-  content: '';
+.heroShade {
   position: absolute;
   inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background: linear-gradient(to bottom, rgba(13, 16, 23, 0.55), rgba(13, 16, 23, 0) 38%);
 }
 
 .heroCard {
-  max-width: min(100%, 78rem);
+  position: relative;
+  max-width: min(100%, max(76vw, 40rem));
   margin: 0 auto;
   padding: clamp(2rem, 4vw, 8rem) clamp(1.25rem, 4vw, 8rem);
   background: rgba(14, 17, 23, 0.569);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: clamp(1.25rem, 2vw, 4rem);
   box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.cardLine {
+  position: absolute;
+  top: -1px;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
 }
 
 .heroTitle {
@@ -212,6 +184,15 @@
   color: rgb(160, 168, 181);
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 1vw, 2rem);
+  margin-top: clamp(1.75rem, 2.5vw, 5rem);
+}
+
+.btnPrimary,
 .btnGlass {
   display: inline-flex;
   align-items: center;
@@ -221,50 +202,62 @@
   border-radius: 0.4em;
   font-size: var(--fs-body);
   font-weight: 500;
-  color: #fff;
+  text-align: center;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.btnPrimary {
+  background: var(--red);
+  color: #fff;
+  border: 1px solid var(--red);
+}
+
+.btnGlass {
+  color: #fff;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.32);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out);
 }
 
-.btnGlass:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #fff;
-  transform: translateY(-2px);
+/* ---------- Headline Words Mask ---------- */
+
+.wMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.08em 0.06em 0.16em;
+  margin: -0.08em -0.06em -0.16em;
 }
 
-.btnGlass:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
+.wIn {
+  display: inline-block;
 }
 
-.rise {
-  animation: rise 0.9s var(--ease-out) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-}
-
-@keyframes heroZoom {
-  from {
-    transform: scale(1.06);
-    opacity: 0.6;
-  }
-}
-
-/* ---------- Cards & grids ---------- */
+/* ---------- Cards & Grids ---------- */
 
 .card {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
   padding: clamp(1.25rem, 1.8vw, 3.5rem);
-  background: var(--tint);
+  background: var(--card);
   border-radius: var(--radius);
+  box-shadow: 0 0 0 0 rgba(13, 16, 23, 0);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--gl, 0);
+  background: radial-gradient(
+    circle clamp(14rem, 22vw, 60rem) at calc(var(--mx, 50) * 1%) calc(var(--my, 50) * 1%),
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0) 62%
+  );
 }
 
 .cardTitle {
@@ -287,24 +280,6 @@
   font-size: clamp(1.1rem, 0.6vw + 0.9rem, 2.5rem);
 }
 
-/* hover lift for cards */
-.lift {
-  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
-}
-
-.lift:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 60px -34px rgba(13, 16, 23, 0.35);
-}
-
-/* ---------- Media placeholders (artwork slots) ---------- */
-
-/* ---------- 4. Split section ---------- */
-
-/* ---------- 6. Frameworks ---------- */
-
-/* ---------- 2. Four pillars ---------- */
-
 .fourCol {
   list-style: none;
   margin: 0;
@@ -314,7 +289,7 @@
   gap: var(--gap);
 }
 
-/* ---------- 3. Jurisdiction map ---------- */
+/* ---------- Jurisdiction Map ---------- */
 
 .mapCard {
   display: grid;
@@ -340,8 +315,8 @@
 
 .mapDots {
   fill: none;
-  stroke: #bcc5cd;
-  stroke-width: 5.6;
+  stroke: #c8d0d8;
+  stroke-width: 3.8;
   stroke-linecap: round;
 }
 
@@ -356,71 +331,57 @@
   align-items: center;
   gap: 0.5em;
   transform: translate(-50%, -50%);
-  padding: 0.45em 0.9em 0.45em 0.6em;
-  background: rgba(255, 255, 255, 0.92);
+  padding: 0.5em 1em 0.5em 0.7em;
+  background: rgba(255, 255, 255, 0.95);
   color: var(--ink-soft);
   border: 1px solid var(--line);
   border-radius: 999px;
   font-family: inherit;
-  font-size: clamp(0.6rem, 0.9vw, 1.5rem);
+  font-size: clamp(0.7rem, 0.95vw, 1.4rem);
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 6px 18px -8px rgba(13, 16, 23, 0.3);
-  transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out), transform 0.4s var(--ease-out),
-    box-shadow 0.3s var(--ease-out);
+  box-shadow: 0 8px 22px -6px rgba(13, 16, 23, 0.18);
+  transition: all 0.3s var(--ease-out);
 }
 
 .pin:hover {
-  transform: translate(-50%, -50%) scale(1.06);
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 12px 28px -6px rgba(13, 16, 23, 0.28);
 }
 
 .pinDot {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1em;
+  height: 1em;
   border-radius: 50%;
-  background: #aeb5bd;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  background: #9aa2b0;
+  transition: background 0.3s ease;
 }
 
 .pinActive {
   background: var(--ink);
   color: #fff;
   border-color: var(--ink);
-  box-shadow: 0 12px 28px -10px rgba(13, 16, 23, 0.6);
+  box-shadow: 0 12px 30px -8px rgba(13, 16, 23, 0.5);
 }
 
 .pinActive .pinDot {
   background: #fff;
-  box-shadow: 0 0 0 0.3em rgba(255, 255, 255, 0.22);
-}
-
-.pin:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
+  box-shadow: 0 0 0 0.25em rgba(255, 255, 255, 0.25);
 }
 
 .regionPanel {
   min-width: 0;
   align-self: center;
-  animation: panelIn 0.55s var(--ease-out) both;
-}
-
-@keyframes panelIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 }
 
 .regionName {
   margin: 0 0 clamp(1rem, 1.6vw, 3rem);
   padding-bottom: clamp(0.9rem, 1.3vw, 2.5rem);
   border-bottom: 1px solid var(--line);
-  font-size: calc(var(--fs-h3) * 1.2);
+  font-size: calc(var(--fs-h3) * 1.25);
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: -0.02em;
 }
 
 .regionBlock {
@@ -449,13 +410,14 @@
   color: var(--ink);
 }
 
-/* ---------- 4. Evidence table ---------- */
+/* ---------- Evidence Table ---------- */
 
 .tableCard {
   padding: clamp(0.5rem, 1.2vw, 2.5rem) clamp(1rem, 2.4vw, 5rem);
   background: var(--white);
   color: var(--ink);
   border-radius: var(--radius);
+  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.3);
 }
 
 .table {
@@ -501,10 +463,6 @@
   width: 38%;
 }
 
-.table td > span {
-  vertical-align: middle;
-}
-
 .paperText {
   color: var(--ink-soft);
 }
@@ -517,7 +475,6 @@
   height: 1.5em;
   margin-right: 0.6em;
   border-radius: 50%;
-  font-size: 1em;
   vertical-align: middle;
 }
 
@@ -531,14 +488,17 @@
   font-size: 0.85em;
 }
 
-/* ---------- 5. Disclaimer ---------- */
+/* ---------- Disclaimer ---------- */
 
 .disclaimer {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(0.75rem, 1.4vw, 3rem);
-  padding-top: clamp(1.5rem, 2.4vw, 5rem);
+  padding: clamp(2rem, 3vw, 5rem);
+  background: var(--white);
+  border-radius: var(--radius);
   border-top: 1px solid var(--line);
+  box-shadow: 0 30px 80px -50px rgba(13, 16, 23, 0.35);
 }
 
 .disclaimerTitle {
@@ -556,14 +516,13 @@
   color: var(--ink-soft);
 }
 
-/* ---------- Focus ---------- */
+/* ---------- Focus & Breakpoints ---------- */
 
-.btnPrimary:focus-visible {
+.btnPrimary:focus-visible,
+.btnGlass:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
 }
-
-/* ---------- Mobile: the table becomes stacked cards ---------- */
 
 @media (max-width: 767px) {
   .table thead {
@@ -612,7 +571,6 @@
     color: var(--ink-soft);
   }
 
-  /* pin labels shrink to dots on small screens; the active one keeps its label */
   .pin:not(.pinActive) {
     padding: 0.35em;
   }
@@ -626,8 +584,6 @@
   }
 }
 
-/* ---------- Breakpoints ---------- */
-
 @media (min-width: 640px) {
   .fourCol {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -636,7 +592,7 @@
 
 @media (min-width: 900px) {
   .mapCard {
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   }
 
   .disclaimer {
@@ -651,7 +607,6 @@
   }
 }
 
-/* Container caps: mirror Navbar + Footer */
 @media (min-width: 1920px) {
   .container {
     max-width: 1920px;
@@ -670,28 +625,14 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .rise,
-  .heroPhoto,
-  .regionPanel {
-    animation: none;
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .btnPrimary:hover {
+    background: #d1040e;
+    border-color: #d1040e;
   }
 
-  .lift,
-  .lift:hover,
-  .btnGlass,
-  .btnGlass:hover,
-  .pin,
-  .pin:hover {
-    transition: none;
-  }
-
-  .lift:hover,
   .btnGlass:hover {
-    transform: none;
-  }
-
-  .btnPrimary {
-    transition: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
   }
 }

@@ -1,22 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiCheck, FiCheckSquare, FiEdit3, FiLock, FiUser, FiX } from 'react-icons/fi';
+import DottedMap from 'dotted-map';
 import { SEOHead } from '../../components/seo/SEOHead';
-import Reveal from '../../components/common/Reveal';
+import useLegalityAnimations from '../../hooks/useLegalityAnimations';
 import styles from './Legality.module.css';
 
-// TODO: confirm before launch (put the PDF in public/)
 const WHITEPAPER_URL = '/nexgn-legality-whitepaper.pdf';
-
 const LANGS = ['en', 'es', 'hi'];
 
-/* =====================================================================
-   IMAGES
-   Drop the hero photo into  src/assets/trust/  as  legality-hero.(png|jpg|webp...)
-   (same folder as the Privacy page). Picked up by NAME; a missing file never breaks the build,
-   a dark gradient shows instead. Restart the dev server after adding it.
-   ===================================================================== */
 const imageContext = require.context('../../assets/trust', false, /\.(png|jpe?g|webp|avif|svg)$/i);
 
 const findImage = (name) => {
@@ -29,8 +22,6 @@ const findImage = (name) => {
 };
 
 const HERO_IMAGE = findImage('legality-hero');
-
-// ---------- Content (every string has an i18n key + English default) ----------
 
 const PILLARS = [
   {
@@ -59,14 +50,13 @@ const PILLARS = [
   },
 ];
 
-/* x / y are the pin positions in % of the map (lon -170..180, lat 80..-58).
-   TODO: have legal counsel confirm the wording of every region before launch. */
+/* Percentages mapped exactly to the high-res dotted-map grid (US, EU, IN, AUS) */
 const REGIONS = [
   {
     key: 'us',
     label: 'United States',
-    x: 20,
-    y: 38,
+    x: 21,
+    y: 33,
     laws: 'ESIGN Act (Electronic Signatures in Global and National Commerce Act) & UETA (Uniform Electronic Transactions Act).',
     stance:
       'Nexgn fully complies with the ESIGN Act and UETA. Signatures collected via Nexgn carry the same legal weight as traditional paper signatures in all 50 states for broad commercial, B2B, and B2C transactions.',
@@ -74,8 +64,8 @@ const REGIONS = [
   {
     key: 'eu',
     label: 'EU & UK',
-    x: 51,
-    y: 31,
+    x: 48,
+    y: 25,
     laws: 'eIDAS Regulation (EU No. 910/2014) and the UK Electronic Communications Act 2000 / UK eIDAS.',
     stance:
       'Nexgn supports Simple and Advanced Electronic Signatures, backed by a full audit trail, which are admissible as evidence and cannot be denied legal effect solely because they are electronic.',
@@ -83,8 +73,8 @@ const REGIONS = [
   {
     key: 'in',
     label: 'India',
-    x: 72,
-    y: 52,
+    x: 69,
+    y: 45,
     laws: 'Information Technology Act, 2000 (including Sections 3A and 10A) and the Indian Evidence Act framework.',
     stance:
       'Contracts concluded through electronic means are valid and enforceable in India. Nexgn’s signer identity, timestamp and integrity evidence is designed to support admissibility of electronic records.',
@@ -92,8 +82,8 @@ const REGIONS = [
   {
     key: 'row',
     label: 'Rest of the World',
-    x: 78,
-    y: 79,
+    x: 84,
+    y: 72,
     laws: 'UNCITRAL Model Law on Electronic Commerce and Electronic Signatures, and national laws based on it.',
     stance:
       'Most jurisdictions recognize electronic signatures under laws modelled on UNCITRAL. Because rules vary by country and document type, we recommend confirming requirements with local counsel.',
@@ -128,61 +118,27 @@ const EVIDENCE_ROWS = [
 ];
 
 /* ---------------------------------------------------------------------
-   Dotted world map, generated once from rough continent outlines
-   ([lon, lat] pairs). Land dots are laid on a regular grid and drawn as ONE path.
+   Dotted Map Setup
+   Generates a high-density grid map SVG via the dotted-map package.
    --------------------------------------------------------------------- */
-const LAND = [
-  // North America
-  [[-168, 66], [-160, 71], [-140, 70], [-125, 70], [-95, 72], [-82, 68], [-62, 60], [-55, 52], [-66, 45], [-70, 42], [-76, 35], [-81, 31], [-80, 25], [-83, 29], [-90, 29], [-97, 26], [-97, 20], [-87, 21], [-83, 15], [-78, 9], [-84, 10], [-92, 15], [-105, 20], [-110, 24], [-113, 31], [-118, 34], [-124, 40], [-125, 48], [-135, 58], [-150, 60], [-165, 60]],
-  // Greenland
-  [[-55, 60], [-45, 60], [-20, 70], [-20, 82], [-45, 83], [-65, 80], [-70, 76]],
-  // South America
-  [[-78, 9], [-72, 12], [-62, 10], [-52, 5], [-50, 0], [-35, -6], [-39, -15], [-48, -26], [-58, -35], [-65, -42], [-68, -52], [-72, -52], [-74, -42], [-71, -30], [-70, -18], [-76, -14], [-81, -5], [-80, 0]],
-  // Eurasia
-  [[-9, 43], [-2, 47], [2, 51], [8, 56], [5, 60], [5, 62], [15, 69], [30, 71], [40, 67], [60, 68], [70, 73], [100, 77], [115, 73], [140, 72], [170, 70], [180, 66], [178, 62], [163, 60], [157, 52], [142, 53], [140, 48], [131, 43], [129, 36], [126, 35], [125, 39], [121, 40], [122, 31], [119, 25], [110, 20], [108, 16], [106, 10], [103, 2], [100, 7], [98, 14], [94, 18], [92, 22], [88, 21], [80, 15], [77, 8], [73, 18], [68, 23], [61, 25], [57, 26], [52, 28], [48, 30], [50, 26], [56, 25], [59, 22], [52, 16], [44, 12], [39, 21], [35, 28], [34, 31], [36, 36], [30, 36], [27, 37], [26, 40], [23, 40], [22, 37], [20, 40], [19, 42], [14, 45], [12, 45], [16, 40], [16, 38], [12, 42], [8, 44], [3, 43], [0, 39], [-5, 36], [-9, 37]],
-  // Africa
-  [[-17, 21], [-10, 30], [-6, 36], [10, 37], [11, 33], [20, 31], [32, 31], [34, 28], [43, 12], [51, 12], [49, 5], [40, -3], [40, -15], [35, -25], [32, -29], [27, -34], [20, -35], [18, -32], [12, -17], [13, -6], [9, 4], [-8, 4], [-17, 14]],
-  // Australia
-  [[114, -22], [122, -18], [130, -12], [137, -12], [142, -11], [146, -19], [153, -26], [150, -37], [141, -38], [135, -34], [130, -32], [115, -34]],
-  // UK, Japan, Sumatra, Borneo, Madagascar, New Zealand
-  [[-5, 50], [1, 51], [2, 53], [-2, 57], [-5, 58], [-6, 55], [-3, 54]],
-  [[130, 31], [135, 34], [140, 36], [142, 40], [141, 45], [140, 41], [135, 36]],
-  [[95, 5], [106, -6], [104, -6], [95, 3]],
-  [[109, 1], [117, 7], [119, 1], [116, -4], [110, -3]],
-  [[44, -25], [50, -15], [49, -12], [44, -17]],
-  [[172, -34], [178, -38], [174, -41], [168, -46], [171, -42]],
-];
+const map = new DottedMap({ height: 100, grid: 'diagonal' });
+const points = map.getPoints();
 
-const MAP = { lon0: -170, lon1: 180, lat0: 80, lat1: -58, step: 2.6 };
+// Compute precise map boundaries to perfectly bind the HTML pins to the SVG viewBox
+const maxX = Math.max(...points.map((p) => p.x)) + 1;
+const maxY = Math.max(...points.map((p) => p.y)) + 1;
 
-const inPolygon = (lon, lat, poly) => {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [xi, yi] = poly[i];
-    const [xj, yj] = poly[j];
-    if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
-};
-
-const buildDots = () => {
-  const w = MAP.lon1 - MAP.lon0;
-  const h = MAP.lat0 - MAP.lat1;
-  const scale = 4; // 1 degree = 4 units, so the viewBox is 1400 x 552
-  let d = '';
-  let row = 0;
-  for (let lat = MAP.lat0; lat >= MAP.lat1; lat -= MAP.step, row++) {
-    const offset = row % 2 ? MAP.step / 2 : 0; // staggered rows look more like a halftone map
-    for (let lon = MAP.lon0 + offset; lon <= MAP.lon1; lon += MAP.step) {
-      if (LAND.some((poly) => inPolygon(lon, lat, poly))) {
-        d += `M${((lon - MAP.lon0) * scale).toFixed(1)} ${((MAP.lat0 - lat) * scale).toFixed(1)}h0`;
-      }
-    }
-  }
-  return { d, width: w * scale, height: h * scale };
-};
-
-// ---------- Page ----------
+const Words = ({ text }) =>
+  text.split(' ').map((w, i, all) => (
+    <React.Fragment key={`${w}-${i}`}>
+      <span className={styles.wMask}>
+        <span className={styles.wIn} data-l="w">
+          {w}
+        </span>
+      </span>
+      {i < all.length - 1 ? ' ' : null}
+    </React.Fragment>
+  ));
 
 const Legality = () => {
   const { t } = useTranslation();
@@ -193,7 +149,9 @@ const Legality = () => {
 
   const [activeRegion, setActiveRegion] = useState(REGIONS[0].key);
   const region = REGIONS.find((r) => r.key === activeRegion) || REGIONS[0];
-  const dots = useMemo(buildDots, []);
+
+  const rootRef = useRef(null);
+  useLegalityAnimations(rootRef, { lng: currentLng });
 
   const seoTitle = tr('seo.title', 'eSignature Legality');
   const seoDescription = tr(
@@ -226,36 +184,52 @@ const Legality = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={rootRef}>
       <SEOHead title={seoTitle} description={seoDescription} url="/trust/legality" schema={schema} />
 
-      {/* ============ 1. HERO (photo + frosted card) ============ */}
-      <section className={styles.hero}>
+      {/* ============ 1. HERO ============ */}
+      <section className={styles.hero} data-l="hero">
         <div
           className={styles.heroPhoto}
           style={HERO_IMAGE ? { '--img': `url("${HERO_IMAGE}")` } : undefined}
+          data-l="photo"
           aria-hidden="true"
         />
+        <div className={styles.heroShade} aria-hidden="true" />
         <div className={styles.container}>
-          <div className={styles.heroCard}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowLight} ${styles.rise}`}>
+          <div className={styles.heroCard} data-l="card">
+            <span className={styles.cardLine} data-l="cardline" aria-hidden="true" />
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight}`} data-l="hr">
               {tr('hero.eyebrow', 'Legal & Compliance')}
             </p>
-            <h1 className={`${styles.heroTitle} ${styles.rise}`} style={{ '--d': '100ms' }}>
-              {tr('hero.title1', 'Valid, binding, & court-admissible')}{' '}
-              <span className={styles.muted}>{tr('hero.title2', 'worldwide.')}</span>
+            <h1 className={styles.heroTitle}>
+              <Words text={tr('hero.title1', 'Valid, binding, & court-admissible')} />{' '}
+              <span className={styles.muted}>
+                <Words text={tr('hero.title2', 'worldwide.')} />
+              </span>
             </h1>
-            <p className={`${styles.lead} ${styles.leadLight} ${styles.rise}`} style={{ '--d': '200ms' }}>
+            <p className={`${styles.lead} ${styles.leadLight}`} data-l="hr">
               {tr(
                 'hero.text',
                 'Nexgn is designed to meet and exceed the stringent requirements of global electronic signature laws. With cryptographic integrity and comprehensive audit trails, a Nexgn agreement provides stronger legal evidence than a traditional wet-ink signature.'
               )}
             </p>
-            <div className={`${styles.actions} ${styles.rise}`} style={{ '--d': '300ms' }}>
-              <a href={WHITEPAPER_URL} className={styles.btnPrimary} download>
+            <div className={styles.actions} data-l="hr">
+              <a
+                href={WHITEPAPER_URL}
+                className={styles.btnPrimary}
+                download
+                data-l="magnet"
+                data-hv="primary"
+              >
                 {tr('hero.whitepaper', 'Download Legality Whitepaper (PDF)')}
               </a>
-              <Link to={withLng('/products/audit-trail')} className={styles.btnGlass}>
+              <Link
+                to={withLng('/products/audit-trail')}
+                className={styles.btnGlass}
+                data-l="magnet"
+                data-hv="outline"
+              >
                 {tr('hero.audit', 'View Audit Trail Features')}
               </Link>
             </div>
@@ -263,51 +237,73 @@ const Legality = () => {
         </div>
       </section>
 
-      {/* ============ 2. FOUR PILLARS (light) ============ */}
+      {/* ============ 2. FOUR PILLARS ============ */}
       <section className={`${styles.section} ${styles.light}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={styles.eyebrow}>{tr('pillars.eyebrow', 'The Core Elements of a Legal eSignature')}</p>
-            <h2 className={styles.title}>{tr('pillars.title', 'How Nexgn Ensures Legal Enforceability')}</h2>
-            <p className={styles.lead}>
+          <header className={styles.head} data-l="head">
+            <p className={styles.eyebrow} data-l="r">
+              {tr('pillars.eyebrow', 'The Core Elements of a Legal eSignature')}
+            </p>
+            <h2 className={styles.title}>
+              <Words text={tr('pillars.title', 'How Nexgn Ensures Legal Enforceability')} />
+            </h2>
+            <p className={styles.lead} data-l="r">
               {tr(
                 'pillars.text',
                 'To be legally binding, an electronic signature must satisfy four core legal pillars. Nexgn’s architecture automates compliance for all of them:'
               )}
             </p>
-          </Reveal>
+          </header>
 
           <ul className={styles.fourCol}>
-            {PILLARS.map(({ key, Icon, title, text }, i) => (
-              <Reveal as="li" key={key} delay={i * 100} className={`${styles.card} ${styles.lift}`}>
+            {PILLARS.map(({ key, Icon, title, text }) => (
+              <li key={key} className={`${styles.card} ${styles.lift}`} data-l="item spot" data-hv="spot">
                 <span className={styles.iconBox} aria-hidden="true">
                   <Icon />
                 </span>
                 <h3 className={styles.cardTitle}>{tr(`pillars.${key}.title`, title)}</h3>
                 <p className={styles.body}>{tr(`pillars.${key}.text`, text)}</p>
-              </Reveal>
+              </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ============ 3. JURISDICTIONS (tint) ============ */}
+      {/* ============ 3. JURISDICTIONS ============ */}
       <section className={`${styles.section} ${styles.tint}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={styles.eyebrow}>{tr('map.eyebrow', 'Global Compliance Directory')}</p>
-            <h2 className={styles.title}>{tr('map.title', 'Electronic Signature Laws by Jurisdiction')}</h2>
-          </Reveal>
+          <header className={styles.head} data-l="head">
+            <p className={styles.eyebrow} data-l="r">
+              {tr('map.eyebrow', 'Global Compliance Directory')}
+            </p>
+            <h2 className={styles.title}>
+              <Words text={tr('map.title', 'Electronic Signature Laws by Jurisdiction')} />
+            </h2>
+          </header>
 
-          <Reveal delay={100} className={styles.mapCard}>
-            <div className={styles.mapBox}>
+          <div className={styles.mapCard} data-l="item">
+            {/* 
+              By setting the container aspect ratio to match the precise SVG output, 
+              we ensure absolute pin coordinates (like left: 21%) perfectly align 
+              with the SVG dots underneath them on every screen size.
+            */}
+            <div className={styles.mapBox} style={{ aspectRatio: `${maxX} / ${maxY}` }}>
               <svg
                 className={styles.mapSvg}
-                viewBox={`0 0 ${dots.width} ${dots.height}`}
+                style={{ width: '100%', height: '100%' }}
+                viewBox={`-0.5 -0.5 ${maxX} ${maxY}`}
                 preserveAspectRatio="xMidYMid meet"
                 aria-hidden="true"
               >
-                <path d={dots.d} className={styles.mapDots} />
+                {points.map((p, i) => (
+                  <circle 
+                    key={i} 
+                    cx={p.x} 
+                    cy={p.y} 
+                    r={0.35} 
+                    fill="#bcc5cd" 
+                  />
+                ))}
               </svg>
 
               <div className={styles.pins} role="tablist" aria-label={tr('map.eyebrow', 'Global Compliance Directory')}>
@@ -330,7 +326,6 @@ const Legality = () => {
               </div>
             </div>
 
-            {/* key= remounts the panel so it fades in on every region change */}
             <div className={styles.regionPanel} key={region.key} role="tabpanel" aria-live="polite">
               <h3 className={styles.regionName}>{tr(`map.${region.key}.label`, region.label)}</h3>
               <div className={styles.regionBlock}>
@@ -342,25 +337,29 @@ const Legality = () => {
                 <p className={styles.body}>{tr(`map.${region.key}.stance`, region.stance)}</p>
               </div>
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
-      {/* ============ 4. EVIDENCE TABLE (dark) ============ */}
+      {/* ============ 4. EVIDENCE TABLE ============ */}
       <section className={`${styles.section} ${styles.dark}`}>
         <div className={styles.container}>
-          <Reveal as="header" className={styles.head}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>{tr('evidence.eyebrow', 'The Evidence')}</p>
-            <h2 className={styles.title}>{tr('evidence.title', 'Why Digital is More Secure Than Paper')}</h2>
-            <p className={`${styles.lead} ${styles.leadLight}`}>
+          <header className={styles.head} data-l="head">
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight}`} data-l="r">
+              {tr('evidence.eyebrow', 'The Evidence')}
+            </p>
+            <h2 className={styles.title}>
+              <Words text={tr('evidence.title', 'Why Digital is More Secure Than Paper')} />
+            </h2>
+            <p className={`${styles.lead} ${styles.leadLight}`} data-l="r">
               {tr(
                 'evidence.text',
                 'A traditional “wet” signature on paper is highly susceptible to forgery and provides almost zero contextual evidence. Here is why courts increasingly prefer digital audit trails.'
               )}
             </p>
-          </Reveal>
+          </header>
 
-          <Reveal delay={100} className={styles.tableCard}>
+          <div className={styles.tableCard} data-l="item">
             <table className={styles.table}>
               <thead>
                 <tr>
@@ -391,14 +390,14 @@ const Legality = () => {
                 ))}
               </tbody>
             </table>
-          </Reveal>
+          </div>
         </div>
       </section>
 
       {/* ============ 5. LEGAL DISCLAIMER ============ */}
       <section className={`${styles.section} ${styles.light} ${styles.sectionLast}`}>
         <div className={styles.container}>
-          <Reveal className={styles.disclaimer}>
+          <div className={styles.disclaimer} data-l="item">
             <h2 className={styles.disclaimerTitle}>{tr('disclaimer.title', 'Legal Disclaimer')}</h2>
             <p className={styles.disclaimerText}>
               {tr(
@@ -406,7 +405,7 @@ const Legality = () => {
                 'The information provided on this page is for general informational and educational purposes only and does not constitute legal advice. Laws regarding electronic signatures vary significantly by jurisdiction and by the specific type of document being signed (e.g., wills, property transfers, and family law documents often require specialized handling or physical notarization). We strongly recommend consulting with qualified legal counsel in your jurisdiction to ensure your specific use of electronic signatures complies with all applicable local, state, and national laws.'
               )}
             </p>
-          </Reveal>
+          </div>
         </div>
       </section>
     </div>
