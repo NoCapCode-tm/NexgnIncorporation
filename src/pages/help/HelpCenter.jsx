@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FiSearch, FiChevronDown, FiPlus, FiMinus, FiX } from 'react-icons/fi';
 import { HiOutlineSparkles } from 'react-icons/hi2';
 import { SEOHead } from '../../components/seo/SEOHead';
-import useHelpCenterAnimations from '../../hooks/UseHelpCenterAnimations';
+import useHelpCenterAnimations from '../../hooks/useHelpCenterAnimations';
 import styles from './HelpCenter.module.css';
 
 const prefersReducedMotion = () =>
