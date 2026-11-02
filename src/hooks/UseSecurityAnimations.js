@@ -326,3 +326,4 @@ export default function useSecurityAnimations(rootRef, { lng } = {}) {
     };
   }, [rootRef, lng]);
 }
+
