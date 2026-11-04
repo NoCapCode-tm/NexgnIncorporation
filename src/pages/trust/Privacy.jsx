@@ -85,18 +85,21 @@ const FRAMEWORKS = [
   {
     key: 'gdpr',
     region: 'Europe',
+    flagCode: 'eu',
     name: 'GDPR',
     text: 'Nexgn is designed to support General Data Protection Regulation compliance. We facilitate Data Subject Access Requests (DSARs), support the “Right to be Forgotten,” and provide a standard Data Processing Addendum (DPA) for our EU customers.',
   },
   {
     key: 'dpdp',
     region: 'India',
+    flagCode: 'in',
     name: 'DPDP Act',
     text: 'We are aligning our infrastructure with the phased rollout of India’s Digital Personal Data Protection Rules 2025. We prioritize explicit consent mechanisms (like our Signer Consent Overlays) and strict purpose limitation for all collected telemetry.',
   },
   {
     key: 'ccpa',
     region: 'California',
+    flagCode: 'us',
     name: 'CCPA',
     text: 'We comply with the California Consumer Privacy Act. Nexgn does not sell personal information. California residents can easily exercise their data rights by contacting our privacy team.',
   },
@@ -350,10 +353,12 @@ const Privacy = () => {
           </header>
 
           <ul className={styles.threeCol}>
-            {FRAMEWORKS.map(({ key, region, name, text }) => (
+            {FRAMEWORKS.map(({ key, region, flagCode, name, text }) => (
               <li key={key} className={`${styles.card} ${styles.framework} ${styles.lift}`} data-p="item spot" data-hv="spot">
                 <span className={styles.tag}>
-                  <FiGlobe aria-hidden="true" />
+                  <span className={styles.flagIcon} aria-hidden="true">
+                    <img src={`https://flagcdn.com/${flagCode}.svg`} alt="" />
+                  </span>
                   <span>{tr(`frameworks.${key}.region`, region)}</span>
                 </span>
                 <p className={styles.frameworkName}>{name}</p>
