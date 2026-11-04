@@ -68,7 +68,7 @@ const PILLARS = [
   {
     key: 'encryption',
     title: 'Encryption In Transit & At Rest',
-    text: 'All communications between the Nexgn platform, signers, and your storage providers are encrypted in transit using industry-standard TLS 1.2. Sensitive application data, widget configurations, and user metadata are encrypted at rest using AES-256 encryption protocols within our cloud databases.',
+    text: 'All communications between the Nexgn platform, signers, and your storage providers are encrypted in transit using industry standard TLS 1.2. Sensitive application data, widget configurations, and user metadata are encrypted at rest using AES-256 encryption protocols within our cloud databases.',
   },
   {
     key: 'zeroTrust',
@@ -78,7 +78,7 @@ const PILLARS = [
   {
     key: 'permissions',
     title: 'Granular Team Permissions',
-    text: 'Prevent unauthorized internal access with strict Role-Based Access Control. Administrators can invite Sub-Admins and definitively restrict their permissions—ensuring only authorized personnel can view documents, delete templates, or alter billing settings.',
+    text: 'Prevent unauthorized internal access with strict Role-Based Access Control. Administrators can invite Sub-Admins and definitively restrict their permissions ensuring only authorized personnel can view documents, delete templates, or alter billing settings.',
   },
   {
     key: 'hashing',
