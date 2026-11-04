@@ -1,18 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaLinkedinIn } from 'react-icons/fa';
+import { FaLinkedinIn, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { FaInstagram } from 'react-icons/fa';
-import { FiGlobe } from 'react-icons/fi';
+import { FiGlobe, FiChevronUp, FiCheck } from 'react-icons/fi';
 import useFooterAnimations from '../../hooks/useFooterAnimations';
 import styles from './Footer.module.css';
 
-/**
- * Paths below are relative to the language prefix.
- * AppRouter mounts everything under /:lng/*, so "/products/esignature"
- * becomes "/en/products/esignature" at render time.
- */
 const COLUMNS = [
   {
     key: 'product',
@@ -68,7 +62,7 @@ const COLUMNS = [
       { key: 'contact', label: 'Contact', to: '/contact' },
       { key: 'help', label: 'Help Center', to: '/help' },
       { key: 'partners', label: 'Partners', to: '/partners' },
-      { key: 'blog', label: 'Blog', to: '/blog' }, // Added Blog Route Here
+      { key: 'blog', label: 'Blog', to: '/blog' },
     ],
   },
   {
@@ -107,8 +101,11 @@ const WORDMARK = [
 
 const Footer = () => {
   const footerRef = useRef(null);
+  const langRef = useRef(null);
+  const [langOpen, setLangOpen] = useState(false);
+
   const { t } = useTranslation();
-  const { lng } = useParams(); 
+  const { lng } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -120,11 +117,29 @@ const Footer = () => {
 
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
 
-  const handleLanguageChange = (e) => {
-    const next = e.target.value;
-    const nextPath = location.pathname.replace(/^\/[^/]+/, `/${next}`);
+  const handleLanguageSelect = (nextCode) => {
+    setLangOpen(false);
+    if (nextCode === currentLng) return;
+    const nextPath = location.pathname.replace(/^\/[^/]+/, `/${nextCode}`);
     navigate(`${nextPath}${location.search}${location.hash}`);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setLangOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   return (
     <footer ref={footerRef} className={styles.footer} aria-label={t('footer.label', 'Site footer')}>
@@ -181,22 +196,48 @@ const Footer = () => {
           </p>
 
           <div className={styles.meta} data-f="bottom">
-            <label className={styles.lang} data-f="lang">
-              <FiGlobe aria-hidden="true" />
-              <span>{currentLabel}</span>
-              <select
-                className={styles.langSelect}
-                value={currentLng}
-                onChange={handleLanguageChange}
+            <div className={styles.langWrap} ref={langRef}>
+              <button
+                type="button"
+                className={`${styles.langBtn} ${langOpen ? styles.langBtnActive : ''}`}
+                data-f="lang"
+                onClick={() => setLangOpen((prev) => !prev)}
+                aria-expanded={langOpen}
+                aria-haspopup="listbox"
                 aria-label={t('footer.language', 'Select language')}
               >
-                {LANGUAGES.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <FiGlobe className={styles.langGlobe} aria-hidden="true" />
+                <span>{currentLabel}</span>
+                <FiChevronUp
+                  className={`${styles.langChevron} ${langOpen ? styles.langChevronOpen : ''}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              {langOpen && (
+                <ul
+                  className={styles.langMenu}
+                  role="listbox"
+                  aria-label={t('footer.language', 'Select language')}
+                >
+                  {LANGUAGES.map((l) => {
+                    const active = l.code === currentLng;
+                    return (
+                      <li key={l.code} role="option" aria-selected={active}>
+                        <button
+                          type="button"
+                          className={`${styles.langOption} ${active ? styles.langOptionActive : ''}`}
+                          onClick={() => handleLanguageSelect(l.code)}
+                        >
+                          <span>{l.label}</span>
+                          {active && <FiCheck className={styles.langCheck} aria-hidden="true" />}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
 
             <ul className={styles.socials}>
               {SOCIALS.map(({ key, label, href, Icon }) => (
