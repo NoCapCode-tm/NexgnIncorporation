@@ -1,0 +1,69 @@
+{
+  "_how_to_use": "Copy each language's \"errorBoundary\" block into public/locales/<lang>/translation.json at the top level. English is optional because ErrorBoundary.jsx already has these as defaults.",
+  "en": {
+    "errorBoundary": {
+      "update": {
+        "eyebrow": "Update available",
+        "title": "A new version of Nexgn is available",
+        "body": "We’ve released an update since you opened this page. Reload to continue with the latest version.",
+        "primary": "Reload page"
+      },
+      "error": {
+        "eyebrow": "Unexpected error",
+        "title": "We couldn’t load this page",
+        "body": "Something went wrong while displaying this content. Please try again. If the issue continues, quote the reference below when you contact our support team.",
+        "primary": "Try again"
+      },
+      "home": "Go to homepage",
+      "support": "Need assistance?",
+      "contact": "Contact support",
+      "helpCenter": "Visit the Help Center",
+      "reference": "Reference ID",
+      "details": "Technical details"
+    }
+  },
+  "es": {
+    "errorBoundary": {
+      "update": {
+        "eyebrow": "Actualización disponible",
+        "title": "Hay una nueva versión de Nexgn disponible",
+        "body": "Hemos publicado una actualización desde que abrió esta página. Recargue para continuar con la versión más reciente.",
+        "primary": "Recargar página"
+      },
+      "error": {
+        "eyebrow": "Error inesperado",
+        "title": "No pudimos cargar esta página",
+        "body": "Se produjo un problema al mostrar este contenido. Inténtelo de nuevo. Si el problema persiste, indique la referencia siguiente al contactar con nuestro equipo de soporte.",
+        "primary": "Reintentar"
+      },
+      "home": "Ir a la página de inicio",
+      "support": "¿Necesita ayuda?",
+      "contact": "Contactar con soporte",
+      "helpCenter": "Visitar el Centro de ayuda",
+      "reference": "ID de referencia",
+      "details": "Detalles técnicos"
+    }
+  },
+  "hi": {
+    "errorBoundary": {
+      "update": {
+        "eyebrow": "अपडेट उपलब्ध",
+        "title": "Nexgn का नया संस्करण उपलब्ध है",
+        "body": "इस पेज को खोलने के बाद हमने एक अपडेट जारी किया है। नवीनतम संस्करण के साथ जारी रखने के लिए पेज रीलोड करें।",
+        "primary": "पेज रीलोड करें"
+      },
+      "error": {
+        "eyebrow": "अप्रत्याशित त्रुटि",
+        "title": "हम यह पेज लोड नहीं कर सके",
+        "body": "यह सामग्री दिखाते समय कोई समस्या हुई। कृपया पुनः प्रयास करें। यदि समस्या बनी रहती है, तो हमारी सपोर्ट टीम से संपर्क करते समय नीचे दिया गया संदर्भ आईडी बताएँ।",
+        "primary": "पुनः प्रयास करें"
+      },
+      "home": "होमपेज पर जाएँ",
+      "support": "सहायता चाहिए?",
+      "contact": "सपोर्ट से संपर्क करें",
+      "helpCenter": "हेल्प सेंटर देखें",
+      "reference": "संदर्भ आईडी",
+      "details": "तकनीकी विवरण"
+    }
+  }
+}

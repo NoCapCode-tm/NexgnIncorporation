@@ -8,6 +8,7 @@ import Navbar from '../components/layout/Navbar'; // homepage: dark glass
 import NavbarAlt from '../components/layout/Navbar_Alt'; // all other pages: transparent + frosted
 import Footer from '../components/layout/Footer';
 import { ScrollToTop } from '../components/layout/ScrollToTop';
+import { ErrorBoundary } from '../components/layout/ErrorBoundary';
 
 // ==========================================
 // ASYNC ROUTE SPLITTING (LAZY LOADING)
@@ -121,85 +122,90 @@ const LanguageWrapper = () => {
 
       {/* flex: 1 pushes the Footer to the bottom on short pages */}
       <main style={{ flex: 1 }}>
-        {/* PageLoader shows the Nexgn loader after 150ms if a page is still downloading */}
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            {/* Core Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/changelog" element={<Changelog />} />
-            <Route path="/roadmap" element={<Roadmap />} />
-            <Route path="/labs" element={<Labs />} />
+        {/* key={location.pathname}: React remounts the boundary on every URL change, which clears
+            a previous error. Without it the error screen stays up after the user navigates
+            elsewhere (the boundary keeps hasError=true) until a manual refresh. */}
+        <ErrorBoundary key={location.pathname}>
+          {/* PageLoader shows the Nexgn loader after 150ms if a page is still downloading */}
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Core Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/changelog" element={<Changelog />} />
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/labs" element={<Labs />} />
 
-            {/* Product Routes */}
-            <Route path="/products" element={<ProductOverview />} />
-            <Route path="/products/esignature" element={<ESignature />} />
-            <Route path="/products/document-editor" element={<DocEditor />} />
-            <Route path="/products/templates" element={<Templates />} />
-            <Route path="/products/automation" element={<Automation />} />
-            <Route path="/products/ai-summary" element={<AISummary />} />
-            <Route path="/products/ai-builder" element={<AIBuilder />} />
-            <Route path="/products/ai-clause-assistant" element={<AIClause />} />
-            <Route path="/products/identity-assurance" element={<Identity />} />
-            <Route path="/products/audit-trail" element={<AuditTrail />} />
-            <Route path="/products/agreement-verification" element={<Verification />} />
-            <Route path="/products/workspace" element={<Workspace />} />
-            <Route path="/products/roles-permissions" element={<Rbac />} />
-            <Route path="/products/cloud-storage" element={<Storage />} />
-            <Route path="/products/activity-logs" element={<ActivityLogs />} />
-            {/* Old navbar URLs that never had a page. Redirect so existing links keep working. */}
-            <Route path="/products/workflows" element={<Navigate to={`/${lng}/products/automation`} replace />} />
-            <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
+              {/* Product Routes */}
+              <Route path="/products" element={<ProductOverview />} />
+              <Route path="/products/esignature" element={<ESignature />} />
+              <Route path="/products/document-editor" element={<DocEditor />} />
+              <Route path="/products/templates" element={<Templates />} />
+              <Route path="/products/automation" element={<Automation />} />
+              <Route path="/products/ai-summary" element={<AISummary />} />
+              <Route path="/products/ai-builder" element={<AIBuilder />} />
+              <Route path="/products/ai-clause-assistant" element={<AIClause />} />
+              <Route path="/products/identity-assurance" element={<Identity />} />
+              <Route path="/products/audit-trail" element={<AuditTrail />} />
+              <Route path="/products/agreement-verification" element={<Verification />} />
+              <Route path="/products/workspace" element={<Workspace />} />
+              <Route path="/products/roles-permissions" element={<Rbac />} />
+              <Route path="/products/cloud-storage" element={<Storage />} />
+              <Route path="/products/activity-logs" element={<ActivityLogs />} />
+              {/* Old navbar URLs that never had a page. Redirect so existing links keep working. */}
+              <Route path="/products/workflows" element={<Navigate to={`/${lng}/products/automation`} replace />} />
+              <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
 
-            {/* Solutions Routes (Dynamic Template Engine) */}
-            <Route path="/solutions/:industry" element={<SolutionTemplate />} />
-            <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
+              {/* Solutions Routes (Dynamic Template Engine) */}
+              <Route path="/solutions/:industry" element={<SolutionTemplate />} />
+              <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 
-            {/* Developer Routes */}
-            <Route path="/developers" element={<DevPortal />} />
-            <Route path="/developers/api-reference" element={<ApiRef />} />
-            <Route path="/developers/embedded" element={<Embedded />} />
-            <Route path="/developers/webhooks" element={<Webhooks />} />
-            <Route path="/developers/sdks" element={<SDKs />} />
-            <Route path="/developers/sandbox" element={<Sandbox />} />
-            <Route path="/developers/community" element={<Community />} />
+              {/* Developer Routes */}
+              <Route path="/developers" element={<DevPortal />} />
+              <Route path="/developers/api-reference" element={<ApiRef />} />
+              <Route path="/developers/embedded" element={<Embedded />} />
+              <Route path="/developers/webhooks" element={<Webhooks />} />
+              <Route path="/developers/sdks" element={<SDKs />} />
+              <Route path="/developers/sandbox" element={<Sandbox />} />
+              <Route path="/developers/community" element={<Community />} />
 
-            {/* Trust Center Routes */}
-            <Route path="/trust" element={<TrustCenter />} />
-            <Route path="/trust/security" element={<Security />} />
-            <Route path="/trust/legality" element={<Legality />} />
-            <Route path="/trust/privacy" element={<Privacy />} />
-            <Route path="/trust/subprocessors" element={<Subprocessors />} />
-            <Route path="/trust/vulnerability-disclosure" element={<VulnDisclosure />} />
-            <Route path="/trust/ai-ethics" element={<AiEthics />} />
+              {/* Trust Center Routes */}
+              <Route path="/trust" element={<TrustCenter />} />
+              <Route path="/trust/security" element={<Security />} />
+              <Route path="/trust/legality" element={<Legality />} />
+              <Route path="/trust/privacy" element={<Privacy />} />
+              <Route path="/trust/subprocessors" element={<Subprocessors />} />
+              <Route path="/trust/vulnerability-disclosure" element={<VulnDisclosure />} />
+              <Route path="/trust/ai-ethics" element={<AiEthics />} />
 
-            {/* Sustainability Route */}
-            <Route path="/sustainability" element={<Sustainability />} />
+              {/* Sustainability Route */}
+              <Route path="/sustainability" element={<Sustainability />} />
 
-            {/* Legal Routes */}
-            <Route path="/legal/terms" element={<Terms />} />
-            <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
-            <Route path="/legal/acceptable-use" element={<AUP />} />
-            <Route path="/legal/dpa" element={<DPA />} />
-            <Route path="/legal/refunds" element={<Refunds />} />
+              {/* Legal Routes */}
+              <Route path="/legal/terms" element={<Terms />} />
+              <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/legal/acceptable-use" element={<AUP />} />
+              <Route path="/legal/dpa" element={<DPA />} />
+              <Route path="/legal/refunds" element={<Refunds />} />
 
-            {/* Company & Support Routes */}
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/press" element={<Press />} />
-            <Route path="/partners" element={<Partners />} />
-            <Route path="/help" element={<HelpCenter />} />
+              {/* Company & Support Routes */}
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/partners" element={<Partners />} />
+              <Route path="/help" element={<HelpCenter />} />
             
-            {/* Blog Routes */}
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<Blog />} /> 
+              {/* Blog Routes */}
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<Blog />} /> 
 
-            {/* Global 404 Catch-All */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+              {/* Global 404 Catch-All */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       <Footer />
