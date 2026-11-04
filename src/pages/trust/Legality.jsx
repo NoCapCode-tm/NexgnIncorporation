@@ -55,38 +55,38 @@ const REGIONS = [
   {
     key: 'us',
     label: 'United States',
+    flagCode: 'us',
     x: 21.5, 
     y: 36,
     laws: 'ESIGN Act (Electronic Signatures in Global and National Commerce Act) & UETA (Uniform Electronic Transactions Act).',
-    stance:
-      'Nexgn fully complies with the ESIGN Act and UETA. Signatures collected via Nexgn carry the same legal weight as traditional paper signatures in all 50 states for broad commercial, B2B, and B2C transactions.',
+    stance: 'Nexgn fully complies with the ESIGN Act and UETA. Signatures collected via Nexgn carry the same legal weight as traditional paper signatures in all 50 states for broad commercial, B2B, and B2C transactions.',
   },
   {
     key: 'eu',
     label: 'EU & UK',
+    flagCode: 'gb', // Changed from 'eu' to 'gb' to show the Union Jack
     x: 50.5, 
     y: 28,
     laws: 'eIDAS Regulation (EU No. 910/2014) and the UK Electronic Communications Act 2000 / UK eIDAS.',
-    stance:
-      'Nexgn supports Simple and Advanced Electronic Signatures, backed by a full audit trail, which are admissible as evidence and cannot be denied legal effect solely because they are electronic.',
+    stance: 'Nexgn supports Simple and Advanced Electronic Signatures, backed by a full audit trail, which are admissible as evidence and cannot be denied legal effect solely because they are electronic.',
   },
   {
     key: 'in',
     label: 'India',
+    flagCode: 'in',
     x: 77, 
     y: 45,
     laws: 'Information Technology Act, 2000 (including Sections 3A and 10A) and the Indian Evidence Act framework.',
-    stance:
-      'Contracts concluded through electronic means are valid and enforceable in India. Nexgn’s signer identity, timestamp and integrity evidence is designed to support admissibility of electronic records.',
+    stance: 'Contracts concluded through electronic means are valid and enforceable in India. Nexgn’s signer identity, timestamp and integrity evidence is designed to support admissibility of electronic records.',
   },
   {
     key: 'row',
     label: 'Rest of the World',
+    flagCode: 'globe',
     x: 84.5, 
     y: 70,
     laws: 'UNCITRAL Model Law on Electronic Commerce and Electronic Signatures, and national laws based on it.',
-    stance:
-      'Most jurisdictions recognize electronic signatures under laws modelled on UNCITRAL. Because rules vary by country and document type, we recommend confirming requirements with local counsel.',
+    stance: 'Most jurisdictions recognize electronic signatures under laws modelled on UNCITRAL. Because rules vary by country and document type, we recommend confirming requirements with local counsel.',
   },
 ];
 
@@ -319,7 +319,16 @@ const Legality = () => {
                     onMouseEnter={() => setActiveRegion(r.key)}
                     onFocus={() => setActiveRegion(r.key)}
                   >
-                    <span className={styles.pinDot} aria-hidden="true" />
+                    <span className={styles.pinFlag} aria-hidden="true">
+                      {r.flagCode === 'globe' ? (
+                        '🌐'
+                      ) : (
+                      <img 
+                        src={`https://flagcdn.com/${r.flagCode}.svg`} 
+                        alt="" 
+                      />
+                      )}
+                    </span>
                     <span className={styles.pinLabel}>{tr(`map.${r.key}.label`, r.label)}</span>
                   </button>
                 ))}
