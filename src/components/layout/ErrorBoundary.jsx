@@ -38,7 +38,7 @@ const isStaleBuildError = (error) => {
 };
 
 const makeReference = () =>
-  `NX-${(Date.now().toString(36) + Math.random().toString(36).slice(2, 5)).slice(-6).toUpperCase()}`;
+  `NGX-${(Date.now().toString(36) + Math.random().toString(36).slice(2, 5)).slice(-6).toUpperCase()}`;
 
 const formatUtc = (iso) => iso.slice(0, 16).replace('T', ' ');
 
