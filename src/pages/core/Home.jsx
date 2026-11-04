@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiShield, FiStar, FiX } from 'react-icons/fi';
+import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiStar, FiX } from 'react-icons/fi';
+import { PiHandFist } from 'react-icons/pi';
 import { SEOHead } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
 import ImpactStats from '../../components/common/ImpactStats';
@@ -154,7 +155,7 @@ const FLOW = [
   {
     key: 'prove',
     label: 'Prove',
-    icon: FiShield,
+    icon: PiHandFist,
     img: null,
     title: 'Keep the evidence with the agreement.',
     text: 'Generate a completion certificate and maintain an activity record for the actions captured by the platform.',
