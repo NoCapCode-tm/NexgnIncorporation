@@ -499,6 +499,94 @@
   transform: rotate(-45deg);
 }
 
+/* ---------- Spec additions: footer strip, landing row, external links, help ---------- */
+
+/* full-width row at the bottom of a mega menu (Product > Explore strip, landing link) */
+.strip,
+.landing {
+  grid-column: 1 / -1;
+  padding-top: 1rem;
+  border-top: 1px solid var(--panel-border);
+}
+
+.strip .groupList {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.75rem;
+}
+
+.landingLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--text);
+  font-size: var(--fs);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.landingLink:hover {
+  color: var(--red);
+}
+
+/* arrow after links that open another site */
+.external {
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.3em;
+  vertical-align: -0.12em;
+  opacity: 0.7;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* help icon (desktop bar) */
+.help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: calc(var(--fs) * 1.35);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+/* help row at the end of the mobile drawer */
+.drawerHelp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 3rem;
+  color: var(--muted);
+  font-size: calc(var(--fs) * 1.05);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.drawerHelp:hover {
+  color: var(--text);
+}
+
+.help:hover {
+  color: var(--text);
+  background: var(--hover-bg);
+}
+
 /* ---------- Focus ---------- */
 
 .logo:focus-visible,
@@ -506,7 +594,10 @@
 .panelLink:focus-visible,
 .login:focus-visible,
 .cta:focus-visible,
-.burger:focus-visible {
+.burger:focus-visible,
+.help:focus-visible,
+.drawerHelp:focus-visible,
+.landingLink:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
   border-radius: 6px;
@@ -613,6 +704,7 @@
     font-size: var(--fs);
   }
 
+  .help,
   .login {
     animation: fadeUp 0.8s var(--ease-out) calc(var(--i, 0) * 70ms + 150ms) backwards;
   }

@@ -1,156 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, NavLink, useLocation, useParams } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiArrowRight, FiArrowUpRight, FiChevronDown, FiHelpCircle } from 'react-icons/fi';
 import useNavbarAnimations from '../../hooks/useNavbarAnimations';
+import { MENUS, LANGS, LOGIN_URL, SIGNUP_URL, HELP_PATH } from './navConfig';
 import styles from './Navbar.module.css';
 
-const LOGIN_URL = 'https://sign.nexgn.cloud/login';
-const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
-
-const LANGS = ['en', 'es', 'hi'];
-
-/**
- * Paths are relative to the language prefix (AppRouter mounts under /:lng/*).
- * Each menu has `groups`, and each group has `links`. The Product menu mirrors the Figma overlay.
- *
- * TODO route not in AppRouter yet: /labs (Nexgn Labs)
- */
-const MENUS = [
-  {
-    key: 'product',
-    label: 'Product',
-    groups: [
-      {
-        key: 'core',
-        title: 'Core Agreement Products',
-        links: [
-          { key: 'esignature', label: 'eSignature', to: '/products/esignature' },
-          { key: 'docEditor', label: 'Document Editor', to: '/products/document-editor' },
-          { key: 'templates', label: 'Templates', to: '/products/templates' },
-          { key: 'workflows', label: 'Agreement Workflow & Scheduler', to: '/products/workflows' },
-        ],
-      },
-      {
-        key: 'intelligence',
-        title: 'Intelligence (Nexgn AI)',
-        links: [
-          { key: 'aiSummary', label: 'AI Agreement Summary', to: '/products/ai-summary' },
-          { key: 'aiBuilder', label: 'AI Template Builder', to: '/products/ai-builder' },
-        ],
-      },
-      {
-        key: 'trust',
-        title: 'Trust & Evidence',
-        links: [
-          { key: 'identity', label: 'Identity Assurance', to: '/products/identity-assurance' },
-          { key: 'audit', label: 'Audit Trails', to: '/products/audit-trail' },
-          { key: 'verification', label: 'Agreement Verification', to: '/products/agreement-verification' },
-        ],
-      },
-      {
-        key: 'workspace',
-        title: 'Workspace & Management',
-        links: [
-          { key: 'workspace', label: 'Team Workspace & RBAC', to: '/products/workspace' },
-          { key: 'storage', label: 'Google Drive & Storage', to: '/products/storage' },
-        ],
-      },
-      {
-        key: 'explore',
-        title: 'Explore',
-        links: [
-          { key: 'whatsNew', label: 'What’s New', to: '/changelog' },
-          { key: 'labs', label: 'Nexgn Labs', to: '/labs' },
-          { key: 'roadmap', label: 'Product Roadmap', to: '/roadmap' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'solutions',
-    label: 'Solutions',
-    groups: [
-      {
-        key: 'teams',
-        title: 'By Team',
-        links: [
-          { key: 'hr', label: 'HR', to: '/solutions/hr' },
-          { key: 'sales', label: 'Sales', to: '/solutions/sales' },
-          { key: 'legal', label: 'Legal', to: '/solutions/legal' },
-          { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
-        ],
-      },
-      {
-        key: 'company',
-        title: 'By Company Size',
-        links: [
-          { key: 'startups', label: 'Startups', to: '/solutions/startups' },
-          { key: 'smb', label: 'Small & Medium Business', to: '/solutions/smb' },
-          { key: 'enterprise', label: 'Enterprise', to: '/solutions/enterprise' },
-        ],
-      },
-      {
-        key: 'more',
-        title: 'More',
-        links: [
-          { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
-          { key: 'individuals', label: 'Individuals', to: '/solutions/individuals' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'developers',
-    label: 'Developers',
-    groups: [
-      {
-        key: 'build',
-        title: 'Build',
-        links: [
-          { key: 'portal', label: 'Developer Portal', to: '/developers' },
-          { key: 'api', label: 'API Reference', to: '/developers/api-reference' },
-          { key: 'embedded', label: 'Embedded Signing', to: '/developers/embedded' },
-        ],
-      },
-      {
-        key: 'integrate',
-        title: 'Integrate',
-        links: [
-          { key: 'webhooks', label: 'Webhooks', to: '/developers/webhooks' },
-          { key: 'sdks', label: 'SDKs', to: '/developers/sdks' },
-          { key: 'sandbox', label: 'Sandbox', to: '/developers/sandbox' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'trust',
-    label: 'Trust Centre',
-    groups: [
-      {
-        key: 'trust',
-        title: 'Trust',
-        links: [
-          { key: 'center', label: 'Trust Centre', to: '/trust' },
-          { key: 'security', label: 'Security Architecture', to: '/trust/security' },
-          { key: 'legality', label: 'eSignature Legality', to: '/trust/legality' },
-          { key: 'privacy', label: 'Privacy Centre', to: '/trust/privacy' },
-        ],
-      },
-      {
-        key: 'compliance',
-        title: 'Compliance',
-        links: [
-          { key: 'subprocessors', label: 'Subprocessors', to: '/trust/subprocessors' },
-          { key: 'vuln', label: 'Vulnerability Disclosure', to: '/trust/vulnerability-disclosure' },
-          { key: 'sustainability', label: 'Sustainability Pledge', to: '/sustainability' },
-        ],
-      },
-    ],
-  },
-  { key: 'pricing', label: 'Pricing', to: '/pricing' },
-];
+// Menu structure, labels and routes live in ./navConfig.js (shared by Navbar and Navbar_Alt).
 
 const LogoMark = () => (
   <svg
@@ -175,6 +31,7 @@ const Navbar = () => {
   const { t } = useTranslation();
   const { lng } = useParams(); // Navbar renders inside /:lng/*
   const location = useLocation();
+  const navigate = useNavigate();
 
   const currentLng = LANGS.includes(lng) ? lng : 'en';
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
@@ -217,7 +74,14 @@ const Navbar = () => {
   };
 
   // Click / keyboard toggle (touch, tablet, keyboard users)
-  const handleToggle = (key) => setOpenKey((cur) => (cur === key ? null : key));
+  // On desktop (hover menus) a click goes to the menu's main landing page when it has one.
+  const handleToggle = (item) => {
+    if (item.to && isDesktopHover()) {
+      navigate(withLng(item.to));
+      return;
+    }
+    setOpenKey((cur) => (cur === item.key ? null : item.key));
+  };
 
   // Highlight the trigger whose menu contains the current page
   const isActivePath = (path) => {
@@ -225,7 +89,8 @@ const Navbar = () => {
     return location.pathname === full || location.pathname.startsWith(`${full}/`);
   };
   const menuIsActive = (item) =>
-    item.groups.some((group) => group.links.some((link) => isActivePath(link.to)));
+    (item.to ? isActivePath(item.to) : false) ||
+    item.groups.some((group) => group.links.some((link) => link.to && isActivePath(link.to)));
 
   // Close on route change
   useEffect(() => {
@@ -306,7 +171,7 @@ const Navbar = () => {
                     data-n="trigger"
                     aria-expanded={openKey === item.key}
                     aria-controls={`panel-${item.key}`}
-                    onClick={() => handleToggle(item.key)}
+                    onClick={() => handleToggle(item)}
                     onFocus={() => handleEnter(item.key)}
                   >
                     <span className={styles.pill} data-n="pill" aria-hidden="true" />
@@ -322,26 +187,54 @@ const Navbar = () => {
                     data-n="panel"
                     data-k={item.key}
                     data-open={openKey === item.key}
-                    style={{ '--cols': item.groups.length }}
+                    style={{ '--cols': item.groups.filter((g) => !g.strip).length }}
                   >
                     <div className={styles.panelClip} data-n="clip">
                       <div className={styles.panelInner} data-n="inner">
                         {item.groups.map((group) => (
-                          <div key={group.key} className={styles.group} data-n="group">
+                          <div
+                            key={group.key}
+                            className={`${styles.group} ${group.strip ? styles.strip : ''}`}
+                            data-n="group"
+                          >
                             <h3 className={styles.groupTitle}>
                               {t(`nav.${item.key}.${group.key}.title`, group.title)}
                             </h3>
                             <ul className={styles.groupList}>
-                              {group.links.map((link) => (
-                                <li key={link.key}>
-                                  <Link to={withLng(link.to)} className={styles.panelLink} data-n="plink">
-                                    {t(`nav.${item.key}.${group.key}.${link.key}`, link.label)}
-                                  </Link>
-                                </li>
-                              ))}
+                              {group.links.map((link) => {
+                                const label = t(`nav.${item.key}.${group.key}.${link.key}`, link.label);
+                                return (
+                                  <li key={link.key}>
+                                    {link.href ? (
+                                      <a
+                                        href={link.href}
+                                        className={styles.panelLink} data-n="plink"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        {label}
+                                        <FiArrowUpRight className={styles.external} aria-hidden="true" />
+                                        <span className={styles.srOnly}> {t('nav.newTab', '(opens in a new tab)')}</span>
+                                      </a>
+                                    ) : (
+                                      <Link to={withLng(link.to)} className={styles.panelLink} data-n="plink">
+                                        {label}
+                                      </Link>
+                                    )}
+                                  </li>
+                                );
+                              })}
                             </ul>
                           </div>
                         ))}
+                        {item.to && (
+                          <div className={`${styles.group} ${styles.landing}`} data-n="group">
+                            <Link to={withLng(item.to)} className={styles.landingLink}>
+                              {t(`nav.${item.key}.overview`, item.landingLabel || item.label)}
+                              <FiArrowRight aria-hidden="true" />
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -372,10 +265,22 @@ const Navbar = () => {
               <span className={styles.sheen} data-n="sheen" aria-hidden="true" />
               {t('nav.cta', 'Start for free')}
             </a>
+            <Link to={withLng(HELP_PATH)} className={styles.drawerHelp}>
+              <FiHelpCircle aria-hidden="true" />
+              {t('nav.helpLabel', 'Help Center')}
+            </Link>
           </div>
         </nav>
 
         <div className={styles.actions} data-n="actions">
+          <Link
+            to={withLng(HELP_PATH)}
+            className={styles.help}
+            data-n="help"
+            aria-label={t('nav.help', 'Help Center')}
+          >
+            <FiHelpCircle aria-hidden="true" />
+          </Link>
           <a href={LOGIN_URL} className={styles.login} data-n="login">
             <span className={styles.loginLabel}>{t('nav.login', 'Log in')}</span>
           </a>

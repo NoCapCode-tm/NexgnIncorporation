@@ -147,6 +147,9 @@ const LanguageWrapper = () => {
             <Route path="/products/roles-permissions" element={<Rbac />} />
             <Route path="/products/cloud-storage" element={<Storage />} />
             <Route path="/products/activity-logs" element={<ActivityLogs />} />
+            {/* Old navbar URLs that never had a page. Redirect so existing links keep working. */}
+            <Route path="/products/workflows" element={<Navigate to={`/${lng}/products/automation`} replace />} />
+            <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
 
             {/* Solutions Routes (Dynamic Template Engine) */}
             <Route path="/solutions/:industry" element={<SolutionTemplate />} />

@@ -14,7 +14,7 @@ const SCROLL_AT = 8;
  *   logo mark                     logo link and its svg
  *   nav item trigger pill chevron menu pieces (pill = hover highlight inside a trigger)
  *   panel[data-k] clip inner group plink     dropdown (desktop) / accordion (mobile)
- *   login cta sheen actions drawerActions    buttons
+ *   login cta sheen help actions drawerActions   buttons
  *   burger burgerBox line         hamburger
  *
  * React keeps owning the STATE (which menu is open, is the drawer open); this hook just
@@ -114,7 +114,7 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
         const entrance = [logo];
         if (desk) {
           entrance.push(...q('trigger'));
-          entrance.push(...root.querySelectorAll('[data-n="actions"] [data-n="login"], [data-n="actions"] [data-n="cta"]'));
+          entrance.push(...root.querySelectorAll('[data-n="actions"] [data-n="help"], [data-n="actions"] [data-n="login"], [data-n="actions"] [data-n="cta"]'));
         } else {
           entrance.push(one('burger'));
         }
@@ -423,6 +423,21 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
                 ease: 'power3.out',
                 overwrite: 'auto',
                 onComplete: () => gsap.set(el, { clearProps: 'backgroundColor,boxShadow,y' }),
+              }),
+            );
+          });
+
+          q('help').forEach((el) => {
+            on(el, 'pointerenter', () =>
+              gsap.to(el, { color: C.text, backgroundColor: 'rgba(255,255,255,0.09)', duration: 0.25, overwrite: 'auto' }),
+            );
+            on(el, 'pointerleave', () =>
+              gsap.to(el, {
+                color: C.muted,
+                backgroundColor: 'rgba(255,255,255,0)',
+                duration: 0.3,
+                overwrite: 'auto',
+                onComplete: () => gsap.set(el, { clearProps: 'color,backgroundColor' }),
               }),
             );
           });
