@@ -492,10 +492,10 @@ const HelpCenter = () => {
 
   useEffect(() => () => clearTimeout(clickTimer.current), []);
 
-  const handleCategoryNavClick = (id) => {
+    const handleCategoryNavClick = (id) => {
     isClickScrolling.current = true;
     setActiveCategory(id);
-    setOpenCategories((prev) => ({ ...prev, [id]: true }));
+    setOpenCategories({ [id]: true });
     window.history.replaceState(null, '', `#${id}`);
 
     requestAnimationFrame(() => {
@@ -519,7 +519,6 @@ const HelpCenter = () => {
 
   const toggleCategory = (id) => {
     setOpenCategories((prev) => ({
-      ...prev,
       [id]: !prev[id],
     }));
     setActiveCategory(id);
@@ -527,10 +526,9 @@ const HelpCenter = () => {
 
   const toggleQuestion = (qId) => {
     setOpenQuestions((prev) => ({
-      ...prev,
       [qId]: !prev[qId],
     }));
-  };
+  };;
 
   const seoTitle = tr('seo.title', 'Nexgn Help Center | Support, Documentation & FAQs');
   const seoDescription = tr(
