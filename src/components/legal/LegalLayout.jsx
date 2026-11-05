@@ -100,7 +100,7 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0.1 }
+      { rootMargin: '-10% 0px -40% 0px', threshold: 0.05 }
     );
     Object.values(sectionRefs.current).forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();

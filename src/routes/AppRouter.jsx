@@ -185,6 +185,7 @@ const LanguageWrapper = () => {
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/legal/cookies" element={<Navigate to={`/${lng}/legal/cookie-policy`} replace />} />
               <Route path="/legal/acceptable-use" element={<AUP />} />
               <Route path="/legal/dpa" element={<DPA />} />
               <Route path="/legal/refunds" element={<Refunds />} />
