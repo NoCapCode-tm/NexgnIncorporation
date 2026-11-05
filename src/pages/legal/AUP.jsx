@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { FiShieldOff, FiCode, FiAlertTriangle } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
 import LegalLayout, { LegalText, LegalBullets } from '../../components/legal/LegalLayout';
 
@@ -28,9 +29,18 @@ const AUP = () => {
           </LegalText>
           <LegalBullets
             items={[
-              tr('policy.prohibited.b1', 'Facilitate illegal activities, fraud, or money laundering.'),
-              tr('policy.prohibited.b2', 'Contain malicious code, malware, or viruses disguised as PDFs.'),
-              tr('policy.prohibited.b3', 'Involve the sale of illegal goods, weapons, or controlled substances.'),
+              {
+                text: tr('policy.prohibited.b1', 'Facilitate illegal activities, fraud, or money laundering.'),
+                icon: <FiShieldOff />
+              },
+              {
+                text: tr('policy.prohibited.b2', 'Contain malicious code, malware, or viruses disguised as PDFs.'),
+                icon: <FiCode />
+              },
+              {
+                text: tr('policy.prohibited.b3', 'Involve the sale of illegal goods, weapons, or controlled substances.'),
+                icon: <FiAlertTriangle />
+              },
             ]}
           />
         </>

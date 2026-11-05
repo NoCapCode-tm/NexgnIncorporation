@@ -2,24 +2,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import Reveal from '../common/Reveal';
 import styles from './LegalLayout.module.css';
 
-/* =====================================================================
-   Shared layout for the Legal Hub pages (Terms, AUP, Refunds, ...).
-   Gives every page the same hero, sticky "On this page" sidebar, scroll-spy,
-   sliding indicator, focus-fade on the sections and responsive chip nav on mobile.
-
-   <LegalLayout
-     eyebrow="LEGAL HUB"
-     title={'Acceptable Use\nPolicy'}      // \n makes a line break
-     lead="optional line under the title"
-     align="left" | "center"              // hero alignment (default left)
-     navHeader="ON THIS PAGE"
-     sections={[{ id, navLabel, title, body: <>...</> }]}
-   />
-
-   Helpers for the section bodies: <LegalText>, <LegalBullets items={[]} />,
-   <LegalCallout eyebrow="..."> ... </LegalCallout>
-   ===================================================================== */
-
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -27,12 +9,20 @@ export const LegalText = ({ children }) => <p className={styles.policyText}>{chi
 
 export const LegalBullets = ({ items = [] }) => (
   <ul className={styles.bulletList}>
-    {items.map((item) => (
-      <li key={item} className={styles.bulletItem}>
-        <span className={styles.bulletSquare} aria-hidden="true" />
-        <span className={styles.bulletText}>{item}</span>
-      </li>
-    ))}
+    {items.map((item, index) => {
+      // Handle both string arrays (Privacy Policy) and object arrays (AUP with icons)
+      const text = typeof item === 'string' ? item : item.text;
+      const icon = typeof item === 'object' && item.icon ? item.icon : null;
+      
+      return (
+        <li key={index} className={styles.bulletItem}>
+          <span className={styles.bulletSquare} aria-hidden="true">
+            {icon}
+          </span>
+          <span className={styles.bulletText}>{text}</span>
+        </li>
+      );
+    })}
   </ul>
 );
 
@@ -43,7 +33,6 @@ export const LegalCallout = ({ eyebrow, children }) => (
   </div>
 );
 
-/* cards = [{ eyebrow, title, text }] */
 export const LegalCards = ({ cards = [] }) => (
   <div className={styles.cardGrid}>
     {cards.map((card) => (
@@ -90,7 +79,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
   const isClickScrolling = useRef(false);
   const clickTimer = useRef(null);
 
-  // Scroll spy: the section crossing the upper part of the viewport becomes active
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
     const observer = new IntersectionObserver(
@@ -106,7 +94,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
     return () => observer.disconnect();
   }, []);
 
-  // Deep link: /legal/terms#api opens on that section
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
     if (hash && sections.some((s) => s.id === hash)) {
@@ -116,7 +103,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Slide the sidebar indicator to the active item (and keep it visible in the mobile chip row)
   const moveIndicator = useCallback(() => {
     const item = navRefs.current[activeSection];
     const list = navListRef.current;
@@ -174,7 +160,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
       <section className={styles.contentSection}>
         <div className={styles.container}>
           <div className={styles.grid}>
-            {/* Sidebar (sticky on desktop, chip row on mobile) */}
             <aside className={styles.sidebar}>
               <div className={styles.stickyNav}>
                 <div className={styles.navTop}>
@@ -212,7 +197,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
               </div>
             </aside>
 
-            {/* Main content */}
             <main className={styles.mainContent}>
               {sections.map((section, i) => (
                 <article
@@ -223,7 +207,6 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
                   }}
                   className={styles.article}
                 >
-                  {/* Reveal = first-load fade-in, inner block = scroll-spy focus fade */}
                   <Reveal delay={Math.min(i, 3) * 80}>
                     <div
                       className={`${styles.policyBlock} ${
