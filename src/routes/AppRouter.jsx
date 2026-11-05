@@ -111,9 +111,12 @@ const LanguageWrapper = () => {
     document.documentElement.lang = lng;
   }, [lng, isSupported, i18n]);
 
-  // Unsupported language (e.g. /fr/pricing) -> redirect to English
+  // Unsupported or missing language prefix -> English, but keep the page the visitor asked for:
+  //   /fr/pricing -> /en/pricing      /legal/cookie-policy -> /en/legal/cookie-policy
+  // (the old redirect sent every one of these to the homepage). Unknown paths end up on the 404 page.
   if (!isSupported) {
-    return <Navigate to="/en" replace />;
+    const rest = /^[a-z]{2}$/i.test(lng) ? location.pathname.replace(/^\/[^/]+/, '') : location.pathname;
+    return <Navigate to={`/en${rest === '/' ? '' : rest}${location.search}${location.hash}`} replace />;
   }
 
   return (
@@ -155,6 +158,8 @@ const LanguageWrapper = () => {
               {/* Old navbar URLs that never had a page. Redirect so existing links keep working. */}
               <Route path="/products/workflows" element={<Navigate to={`/${lng}/products/automation`} replace />} />
               <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
+              {/* Footer "Smart Reminders" link: reminders live inside the Automation page */}
+              <Route path="/products/reminders" element={<Navigate to={`/${lng}/products/automation`} replace />} />
 
               {/* Solutions Routes (Dynamic Template Engine) */}
               <Route path="/solutions/:industry" element={<SolutionTemplate />} />

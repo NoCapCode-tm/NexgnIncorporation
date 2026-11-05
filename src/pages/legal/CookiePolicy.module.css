@@ -33,6 +33,11 @@
 
 .categoryIcon {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink, #0d1017);
+  font-size: max(1rem, 1.3vw);
   width: max(1.75rem, 2.2vw);
   height: max(1.75rem, 2.2vw);
   background: #ffffff;
@@ -107,6 +112,11 @@
 
 .darkPledgeIcon {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink, #0d1017);
+  font-size: max(1.2rem, 1.45vw);
   width: max(2rem, 2.4vw);
   height: max(2rem, 2.4vw);
   background: #ffffff;
@@ -173,6 +183,11 @@
 
 .featureSquare {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink, #0d1017);
+  font-size: max(0.85rem, 1.1vw);
   width: max(1.35rem, 1.75vw);
   height: max(1.35rem, 1.75vw);
   margin-top: 0.15em;

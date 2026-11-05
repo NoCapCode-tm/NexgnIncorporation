@@ -378,6 +378,24 @@
   box-shadow: 0 24px 50px -34px rgba(13, 16, 23, 0.4);
 }
 
+.calloutHead {
+  display: flex;
+  align-items: center;
+  gap: max(0.5rem, 0.7vw);
+  margin: 0 0 0.6em;
+}
+
+.calloutHead .calloutEyebrow {
+  margin: 0;
+}
+
+.calloutIcon {
+  flex: none;
+  display: inline-flex;
+  color: var(--ink);
+  font-size: calc(var(--fs-eyebrow) * 1.35);
+}
+
 .calloutEyebrow {
   margin: 0 0 0.6em;
   font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
@@ -459,7 +477,11 @@
 }
 
 .infoIcon {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-size: max(1rem, 1.3vw);
   width: max(1.75rem, 2.2vw);
   height: max(1.75rem, 2.2vw);
   margin-bottom: max(1rem, 1.4vw);
@@ -512,6 +534,11 @@
 
 .guaranteeIcon {
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-size: max(1.35rem, 1.7vw);
   width: max(2.5rem, 3vw);
   height: max(2.5rem, 3vw);
   background: #fff;
@@ -534,6 +561,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .callout,
   .infoCard,
   .infoCard:hover {
     transition: none;

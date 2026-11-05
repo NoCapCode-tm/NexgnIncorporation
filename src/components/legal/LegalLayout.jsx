@@ -26,9 +26,18 @@ export const LegalBullets = ({ items = [] }) => (
   </ul>
 );
 
-export const LegalCallout = ({ eyebrow, children }) => (
+export const LegalCallout = ({ eyebrow, icon, children }) => (
   <div className={styles.callout}>
-    {eyebrow && <p className={styles.calloutEyebrow}>{eyebrow}</p>}
+    {(eyebrow || icon) && (
+      <div className={styles.calloutHead}>
+        {icon && (
+          <span className={styles.calloutIcon} aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        {eyebrow && <p className={styles.calloutEyebrow}>{eyebrow}</p>}
+      </div>
+    )}
     <p className={styles.calloutText}>{children}</p>
   </div>
 );
@@ -37,7 +46,9 @@ export const LegalCards = ({ cards = [] }) => (
   <div className={styles.cardGrid}>
     {cards.map((card) => (
       <div key={card.title} className={styles.infoCard}>
-        <span className={styles.infoIcon} aria-hidden="true" />
+        <span className={styles.infoIcon} aria-hidden="true">
+          {card.icon}
+        </span>
         <p className={styles.infoEyebrow}>{card.eyebrow}</p>
         <h3 className={styles.infoTitle}>{card.title}</h3>
         <p className={styles.infoText}>{card.text}</p>
@@ -46,9 +57,11 @@ export const LegalCards = ({ cards = [] }) => (
   </div>
 );
 
-export const LegalGuarantee = ({ children }) => (
+export const LegalGuarantee = ({ icon, children }) => (
   <div className={styles.guarantee}>
-    <span className={styles.guaranteeIcon} aria-hidden="true" />
+    <span className={styles.guaranteeIcon} aria-hidden="true">
+      {icon}
+    </span>
     <p className={styles.guaranteeText}>{children}</p>
   </div>
 );
@@ -78,6 +91,7 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
   const navListRef = useRef(null);
   const isClickScrolling = useRef(false);
   const clickTimer = useRef(null);
+  const stopScrollWatch = useRef(null);
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
@@ -124,12 +138,25 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
   useLayoutEffect(() => {
     moveIndicator();
     window.addEventListener('resize', moveIndicator);
-    return () => window.removeEventListener('resize', moveIndicator);
+    // webfonts change the width/height of the nav items after first paint
+    let alive = true;
+    document.fonts?.ready?.then(() => alive && moveIndicator()).catch(() => {});
+    return () => {
+      alive = false;
+      window.removeEventListener('resize', moveIndicator);
+    };
   }, [moveIndicator]);
 
-  useEffect(() => () => clearTimeout(clickTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(clickTimer.current);
+      stopScrollWatch.current?.();
+    },
+    []
+  );
 
   const scrollToSection = (id) => {
+    stopScrollWatch.current?.();
     isClickScrolling.current = true;
     setActiveSection(id);
     window.history.replaceState(null, '', `#${id}`);
@@ -141,10 +168,22 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
       window.scrollTo({ top: y, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     }
 
-    clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(() => {
+    // Keep the scroll-spy paused until the smooth scroll has really stopped. A fixed timeout is too short
+    // on long pages: the observer would start flipping through every section on the way down.
+    const done = () => {
+      clearTimeout(clickTimer.current);
+      window.removeEventListener('scroll', onScroll);
+      stopScrollWatch.current = null;
       isClickScrolling.current = false;
-    }, 900);
+    };
+    const onScroll = () => {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = setTimeout(done, 160);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    stopScrollWatch.current = done;
+    clearTimeout(clickTimer.current);
+    clickTimer.current = setTimeout(done, 400); // no scroll event at all: already in place
   };
 
   const index = Math.max(
@@ -197,7 +236,8 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
               </div>
             </aside>
 
-            <main className={styles.mainContent}>
+            {/* a div, not <main>: AppRouter already wraps every page in <main> */}
+            <div className={styles.mainContent}>
               {sections.map((section, i) => (
                 <article
                   key={section.id}
@@ -219,7 +259,7 @@ const LegalLayout = ({ eyebrow, title, lead, align = 'left', navHeader = 'ON THI
                   </Reveal>
                 </article>
               ))}
-            </main>
+            </div>
           </div>
         </div>
       </section>

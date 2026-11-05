@@ -8,7 +8,7 @@ const AUP = () => {
   const { t } = useTranslation();
   const tr = (key, fallback) => t(`legal.aup.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Acceptable Use Policy | Nexgn Legal Hub');
+  const seoTitle = tr('seo.title', 'Acceptable Use Policy | Legal Hub');
   const seoDescription = tr(
     'seo.description',
     'Review the Nexgn Acceptable Use Policy outlining prohibited activities, anti-spam rules, and compliance standards.'
@@ -68,7 +68,7 @@ const AUP = () => {
         align="center"
         eyebrow={tr('hero.eyebrow', 'LEGAL HUB')}
         title={tr('hero.title', 'Acceptable Use\nPolicy')}
-        lead={tr('hero.lead', 'Our global support and engineering teams\nare ready to assist you.')}
+        lead={tr('hero.lead', 'The rules that keep Nexgn safe, reliable\nand trustworthy for everyone who signs on it.')}
         navHeader={tr('nav.header', 'ON THIS PAGE')}
         sections={sections}
       />

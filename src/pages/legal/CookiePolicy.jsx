@@ -1,5 +1,20 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import {
+  FiBarChart2,
+  FiCloud,
+  FiCpu,
+  FiCreditCard,
+  FiEyeOff,
+  FiGlobe,
+  FiLock,
+  FiShield,
+  FiSliders,
+  FiTarget,
+  FiToggleRight,
+  FiUserCheck,
+} from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
 import LegalLayout, {
   LegalText,
@@ -11,6 +26,7 @@ import styles from './CookiePolicy.module.css';
 const COOKIE_CATEGORIES = [
   {
     key: 'essential',
+    Icon: FiLock, // can't be switched off
     title: 'Strictly Necessary (Essential) Cookies',
     desc: 'These cookies are essential for the website and application to function and cannot be switched off.',
     blocks: [
@@ -28,6 +44,7 @@ const COOKIE_CATEGORIES = [
   },
   {
     key: 'functional',
+    Icon: FiSliders, // remembered preferences
     title: 'Functional & Preference Cookies',
     desc: 'These cookies allow our platform to remember choices you make to provide enhanced, personalized features.',
     blocks: [
@@ -40,6 +57,7 @@ const COOKIE_CATEGORIES = [
   },
   {
     key: 'analytics',
+    Icon: FiBarChart2, // measurement
     title: 'Analytical & Performance Cookies',
     desc: 'These help us understand how visitors interact with our website by collecting and reporting information anonymously.',
     blocks: [
@@ -52,6 +70,7 @@ const COOKIE_CATEGORIES = [
   },
   {
     key: 'marketing',
+    Icon: FiTarget, // targeting
     title: 'Marketing & Targeting Cookies',
     desc: 'Used on our public marketing pages to measure the effectiveness of our campaigns and deliver relevant product updates across platforms.',
     blocks: [],
@@ -61,11 +80,13 @@ const COOKIE_CATEGORIES = [
 const THIRD_PARTIES = [
   {
     key: 'cloudflare',
+    Icon: FiCloud,
     title: 'Cloudflare',
     text: 'Used for DDoS mitigation, bot protection, CDN routing, and edge security across all Nexgn domains to distinguish legitimate traffic from automated threats.',
   },
   {
     key: 'razorpay',
+    Icon: FiCreditCard,
     title: 'Razorpay',
     text: 'Loaded strictly on billing and checkout views to process subscription payments securely, prevent fraud, and maintain PCI-DSS compliance.',
   },
@@ -74,33 +95,43 @@ const THIRD_PARTIES = [
 const CHOICES = [
   {
     key: 'consent',
+    Icon: FiToggleRight,
     title: 'Consent Manager',
     text: 'When you first visit nexgn.cloud, our consent banner allows you to accept or customize non-essential cookie preferences. You can update these preferences at any time from the footer settings.',
   },
   {
     key: 'browser',
+    Icon: FiGlobe,
     title: 'Browser Settings',
     text: 'Most web browsers allow you to control cookies through their settings preferences. Please note that disabling Strictly Necessary cookies will prevent you from logging into your Nexgn workspace or executing agreements.',
   },
 ];
 
+const LANGS = ['en', 'es', 'hi'];
+
 const CookiePolicy = () => {
   const { t } = useTranslation();
+  const { lng } = useParams();
+  const currentLng = LANGS.includes(lng) ? lng : 'en';
   const tr = (key, fallback) => t(`legal.cookies.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Cookie Policy | Nexgn Legal Hub');
+  const seoTitle = tr('seo.title', 'Cookie Policy | Legal Hub');
   const seoDescription = tr(
     'seo.description',
     'Learn how Nexgn uses cookies and local storage for secure authentication, session continuity, signer verification, and privacy-first analytics.'
   );
 
+  // Same shape as the other pages: language-prefixed URL (the bare path redirects to the homepage)
+  const pageUrl = `https://nexgn.cloud/${currentLng}/legal/cookie-policy`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: seoTitle,
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: `${seoTitle} | Nexgn`,
     description: seoDescription,
-    url: 'https://nexgn.cloud/legal/cookie-policy',
-    isPartOf: { '@id': 'https://nexgn.cloud/#website' },
+    inLanguage: currentLng,
+    isPartOf: { '@type': 'WebSite', name: 'Nexgn', url: 'https://nexgn.cloud' },
   };
 
   const sections = [
@@ -119,6 +150,7 @@ const CookiePolicy = () => {
           <LegalCards
             cards={[
               {
+                icon: <FiUserCheck />, // the one who decides
                 eyebrow: tr('how.card1.eyebrow', 'THE USER (YOU)'),
                 title: tr('how.card1.title', 'Data Controller'),
                 text: tr(
@@ -127,6 +159,7 @@ const CookiePolicy = () => {
                 ),
               },
               {
+                icon: <FiCpu />, // the one who processes
                 eyebrow: tr('how.card2.eyebrow', 'NEXGN'),
                 title: tr('how.card2.title', 'Data Processor'),
                 text: tr(
@@ -156,7 +189,9 @@ const CookiePolicy = () => {
             {COOKIE_CATEGORIES.map((cat) => (
               <div key={cat.key} className={styles.categoryCard}>
                 <div className={styles.categoryHeader}>
-                  <span className={styles.categoryIcon} aria-hidden="true" />
+                  <span className={styles.categoryIcon} aria-hidden="true">
+                    <cat.Icon />
+                  </span>
                   <h3 className={styles.categoryTitle}>
                     {tr(`types.${cat.key}.title`, cat.title)}
                   </h3>
@@ -179,7 +214,9 @@ const CookiePolicy = () => {
             ))}
 
             <div className={styles.darkPledgeCard}>
-              <span className={styles.darkPledgeIcon} aria-hidden="true" />
+              <span className={styles.darkPledgeIcon} aria-hidden="true">
+                <FiEyeOff />
+              </span>
               <div className={styles.darkPledgeBody}>
                 <p className={styles.darkPledgeEyebrow}>
                   {tr('types.pledge.eyebrow', 'WORKSPACE ISOLATION')}
@@ -214,7 +251,7 @@ const CookiePolicy = () => {
               'If a Workspace Admin opts into Nexgn AI features (e.g., AI Agreement Summary), document text is securely transmitted to our AI sub-processors via zero-retention enterprise APIs.'
             )}
           </LegalText>
-          <LegalGuarantee>
+          <LegalGuarantee icon={<FiShield />}>
             {tr(
               'ai.guarantee',
               'Nexgn explicitly guarantees that customer documents, templates, and signatures are never used to train public or foundational AI models.'
@@ -238,7 +275,9 @@ const CookiePolicy = () => {
           <ul className={styles.featureList}>
             {THIRD_PARTIES.map((item) => (
               <li key={item.key} className={styles.featureItem}>
-                <span className={styles.featureSquare} aria-hidden="true" />
+                <span className={styles.featureSquare} aria-hidden="true">
+                  <item.Icon />
+                </span>
                 <div className={styles.featureContent}>
                   <h3 className={styles.featureTitle}>
                     {tr(`thirdParty.${item.key}.title`, item.title)}
@@ -268,7 +307,9 @@ const CookiePolicy = () => {
           <ul className={styles.featureList}>
             {CHOICES.map((item) => (
               <li key={item.key} className={styles.featureItem}>
-                <span className={styles.featureSquare} aria-hidden="true" />
+                <span className={styles.featureSquare} aria-hidden="true">
+                  <item.Icon />
+                </span>
                 <div className={styles.featureContent}>
                   <h3 className={styles.featureTitle}>
                     {tr(`choices.${item.key}.title`, item.title)}
