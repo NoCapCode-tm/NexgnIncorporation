@@ -139,12 +139,16 @@ const LanguageWrapper = () => {
               <Route path="/roadmap" element={<Roadmap />} />
               <Route path="/labs" element={<Labs />} />
 
-              {/* Product Routes */}
+              {/* Product Routes (Core Agreement Products Hub + Section Deep-Links) */}
               <Route path="/products" element={<ProductOverview />} />
-              <Route path="/products/esignature" element={<ESignature />} />
-              <Route path="/products/document-editor" element={<DocEditor />} />
-              <Route path="/products/templates" element={<Templates />} />
-              <Route path="/products/automation" element={<Automation />} />
+              <Route path="/products/esignature" element={<Navigate to={`/${lng}/products#esignature`} replace />} />
+              <Route path="/products/document-editor" element={<Navigate to={`/${lng}/products#document-editor`} replace />} />
+              <Route path="/products/templates" element={<Navigate to={`/${lng}/products#templates`} replace />} />
+              <Route path="/products/automation" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
+              <Route path="/products/workflows" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
+              <Route path="/products/reminders" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
+
+              {/* Other Product Routes */}
               <Route path="/products/ai-summary" element={<AISummary />} />
               <Route path="/products/ai-builder" element={<AIBuilder />} />
               <Route path="/products/ai-clause-assistant" element={<AIClause />} />
@@ -155,11 +159,7 @@ const LanguageWrapper = () => {
               <Route path="/products/roles-permissions" element={<Rbac />} />
               <Route path="/products/cloud-storage" element={<Storage />} />
               <Route path="/products/activity-logs" element={<ActivityLogs />} />
-              {/* Old navbar URLs that never had a page. Redirect so existing links keep working. */}
-              <Route path="/products/workflows" element={<Navigate to={`/${lng}/products/automation`} replace />} />
               <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
-              {/* Footer "Smart Reminders" link: reminders live inside the Automation page */}
-              <Route path="/products/reminders" element={<Navigate to={`/${lng}/products/automation`} replace />} />
 
               {/* Solutions Routes (Dynamic Template Engine) */}
               <Route path="/solutions/:industry" element={<SolutionTemplate />} />
@@ -202,10 +202,10 @@ const LanguageWrapper = () => {
               <Route path="/press" element={<Press />} />
               <Route path="/partners" element={<Partners />} />
               <Route path="/help" element={<HelpCenter />} />
-            
+
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<Blog />} /> 
+              <Route path="/blog/:slug" element={<Blog />} />
 
               {/* Global 404 Catch-All */}
               <Route path="*" element={<NotFound />} />
