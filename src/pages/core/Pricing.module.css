@@ -628,10 +628,7 @@
 
 /* Rich warm dark-wood grain texture matching Pricing_3.jpg */
 .roiBg {
-  position: absolute;
-  inset: -15% 0;
-  z-index: -2;
-  background:
+  --fallback:
     repeating-linear-gradient(
       115deg,
       rgba(0, 0, 0, 0.16) 0px,
@@ -640,6 +637,12 @@
       transparent 16px
     ),
     radial-gradient(65% 55% at 28% 22%, #7c240d 0%, #461205 55%, #1c0702 100%);
+  position: absolute;
+  inset: -15% 0;
+  z-index: -2;
+  background-image: var(--img, var(--fallback));
+  background-size: cover;
+  background-position: center;
   will-change: transform;
 }
 

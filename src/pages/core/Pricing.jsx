@@ -30,6 +30,7 @@ const findHomeImage = (name) => {
 const IMAGES = {
   hero: findHomeImage('pricing-hero') || findHomeImage('hero'),
   devBg: findHomeImage('workflow') || findHomeImage('storage'),
+  roi: findHomeImage('roi'), // <-- Picks up src/assets/home/roi.(png|jpg|webp|avif|svg)
   cta: findHomeImage('cta') || ctaCommonImg,
 };
 
@@ -484,7 +485,15 @@ const Pricing = () => {
       </section>
 
       {/* ============ 5. ROI CALCULATOR (Wood Texture + Live Slider) ============ */}
-      <section className={styles.roiSection} data-p="roi" aria-labelledby="roi-heading">
+      {/* ============ 5. ROI CALCULATOR (Wood Texture + Live Slider) ============ */}
+      <section
+        className={styles.roiSection}
+        style={bg(IMAGES.roi)}
+        data-p="roi"
+        aria-labelledby="roi-heading"
+      >
+        <div className={styles.roiBg} data-p="roi-bg" aria-hidden="true" />
+        <div className={styles.roiShade} aria-hidden="true" />
         <div className={styles.roiBg} data-p="roi-bg" aria-hidden="true" />
         <div className={styles.roiShade} aria-hidden="true" />
 
