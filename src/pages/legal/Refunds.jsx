@@ -23,7 +23,7 @@ const POLICIES = [
     navLabel: '3. Envelope Limits & Overage',
     title: '3. Plan Limits & Overage',
     content:
-      'If you are on the Free (19 envelopes) or Starter (49 envelopes) tier, you will be blocked from sending further requests once your limit is reached. Limits reset on the 1st day of your billing cycle. Unused envelopes do not roll over to the next month. To remove limits immediately, you must upgrade to the Business tier.',
+      'If you are on the Free (19 envelopes) or Starter (49 envelopes) tier, you will be blocked from sending further requests once your limit is reached. Limits reset on the 1st day of your billing cycle. Unused envelopes do not roll over to the next month. To remove limits immediately, you must upgrade to the Business/Enterprises tier.',
   },
 ];
 
