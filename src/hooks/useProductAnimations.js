@@ -317,6 +317,73 @@ export default function useProductAnimations(rootRef, deps = []) {
             },
           });
         });
+
+        /* =============================================================
+           8. FEATURE CARDS, NOTE BANNER, CHAT EXAMPLE
+           ============================================================= */
+        $$(root, '[data-pl="feat-grid"]').forEach((grid) => {
+          const cards = $$(grid, '[data-pl="feat-card"]');
+          if (!cards.length) return;
+          gsap.from(cards, {
+            y: 28,
+            scale: 0.95,
+            autoAlpha: 0,
+            duration: 0.8,
+            stagger: 0.09,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: grid, start: 'top 89%', toggleActions: TOGGLE },
+          });
+          if (fine) {
+            cards.forEach((card) => {
+              const y = gsap.quickTo(card, 'y', { duration: 0.4, ease: 'power3.out' });
+              const enter = () => y(-4);
+              const leave = () => y(0);
+              card.addEventListener('pointerenter', enter);
+              card.addEventListener('pointerleave', leave);
+              ctx.add(() => () => {
+                card.removeEventListener('pointerenter', enter);
+                card.removeEventListener('pointerleave', leave);
+              });
+            });
+          }
+        });
+
+        $$(root, '[data-pl="note"]').forEach((note) => {
+          const icon = note.querySelector('[data-pl="note-icon"]');
+          const tl = gsap.timeline({
+            scrollTrigger: { trigger: note, start: 'top 90%', toggleActions: TOGGLE },
+          });
+          tl.from(note, { y: 24, autoAlpha: 0, duration: 0.8, ease: 'expo.out' });
+          if (icon) tl.from(icon, { scale: 0.5, rotation: -10, duration: 0.65, ease: 'back.out(2)' }, 0.12);
+        });
+
+        $$(root, '[data-pl="chat-grid"]').forEach((grid) => {
+          const cards = $$(grid, '[data-pl="chat-card"]');
+          if (!cards.length) return;
+          gsap.from(cards, {
+            y: 26,
+            x: (i) => (i % 2 ? 18 : -18),
+            autoAlpha: 0,
+            duration: 0.85,
+            stagger: 0.18,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: grid, start: 'top 89%', toggleActions: TOGGLE },
+          });
+        });
+
+        $$(root, '[data-pl="flag-list"]').forEach((list) => {
+          const items = $$(list, '[data-pl="flag-item"]');
+          if (!items.length) return;
+          gsap.from(items, {
+            y: 18,
+            scale: 0.9,
+            autoAlpha: 0,
+            duration: 0.7,
+            stagger: 0.12,
+            ease: 'back.out(1.6)',
+            scrollTrigger: { trigger: list, start: 'top 90%', toggleActions: TOGGLE },
+          });
+        });
       },
       root
     );

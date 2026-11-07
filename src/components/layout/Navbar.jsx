@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, NavLink, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiArrowRight } from 'react-icons/fi';
 import useNavbarAnimations from '../../hooks/useNavbarAnimations';
 import styles from './Navbar.module.css';
+import { MENUS, LOGIN_URL, SIGNUP_URL, LANGS } from './navConfig';
 
 /* =====================================================================
    NEXGN NAVBAR — the one navbar for every page (replaces Navbar + Navbar_Alt)
@@ -19,149 +20,19 @@ import styles from './Navbar.module.css';
    All motion lives in hooks/useNavbarAnimations.js (GSAP). The CSS has no transitions.
    ===================================================================== */
 
-const LOGIN_URL = 'https://sign.nexgn.cloud/login';
-const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
-const LANGS = ['en', 'es', 'hi'];
+/* All menu data lives in ./navConfig.js (single source of truth). */
 
-/**
- * Paths are relative to the language prefix (AppRouter mounts under /:lng/*).
- * TODO route not in AppRouter yet: /labs (Nexgn Labs)
- */
-const MENUS = [
-  {
-    key: 'product',
-    label: 'Product',
-    groups: [
-      {
-        key: 'core',
-        title: 'Core Agreement Products',
-        links: [
-          { key: 'esignature', label: 'eSignature', to: '/products/esignature' },
-          { key: 'docEditor', label: 'Document Editor', to: '/products/document-editor' },
-          { key: 'templates', label: 'Templates', to: '/products/templates' },
-          { key: 'workflows', label: 'Agreement Workflow & Scheduler', to: '/products/workflows' },
-        ],
-      },
-      {
-        key: 'intelligence',
-        title: 'Intelligence (Nexgn AI)',
-        links: [
-          { key: 'aiSummary', label: 'AI Agreement Summary', to: '/products/ai-summary' },
-          { key: 'aiBuilder', label: 'AI Template Builder', to: '/products/ai-builder' },
-        ],
-      },
-      {
-        key: 'trust',
-        title: 'Trust & Evidence',
-        links: [
-          { key: 'identity', label: 'Identity Assurance', to: '/products/identity-assurance' },
-          { key: 'audit', label: 'Audit Trails', to: '/products/audit-trail' },
-          { key: 'verification', label: 'Agreement Verification', to: '/products/agreement-verification' },
-        ],
-      },
-      {
-        key: 'workspace',
-        title: 'Workspace & Management',
-        links: [
-          { key: 'workspace', label: 'Team Workspace & RBAC', to: '/products/workspace' },
-          { key: 'storage', label: 'Google Drive & Storage', to: '/products/storage' },
-        ],
-      },
-      {
-        key: 'explore',
-        title: 'Explore',
-        links: [
-          { key: 'whatsNew', label: 'What’s New', to: '/changelog' },
-          { key: 'labs', label: 'Nexgn Labs', to: '/labs' },
-          { key: 'roadmap', label: 'Product Roadmap', to: '/roadmap' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'solutions',
-    label: 'Solutions',
-    groups: [
-      {
-        key: 'teams',
-        title: 'By Team',
-        links: [
-          { key: 'hr', label: 'HR', to: '/solutions/hr' },
-          { key: 'sales', label: 'Sales', to: '/solutions/sales' },
-          { key: 'legal', label: 'Legal', to: '/solutions/legal' },
-          { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
-        ],
-      },
-      {
-        key: 'company',
-        title: 'By Company Size',
-        links: [
-          { key: 'startups', label: 'Startups', to: '/solutions/startups' },
-          { key: 'smb', label: 'Small & Medium Business', to: '/solutions/smb' },
-          { key: 'enterprise', label: 'Enterprise', to: '/solutions/enterprise' },
-        ],
-      },
-      {
-        key: 'more',
-        title: 'More',
-        links: [
-          { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
-          { key: 'individuals', label: 'Individuals', to: '/solutions/individuals' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'developers',
-    label: 'Developers',
-    groups: [
-      {
-        key: 'build',
-        title: 'Build',
-        links: [
-          { key: 'portal', label: 'Developer Portal', to: '/developers' },
-          { key: 'api', label: 'API Reference', to: '/developers/api-reference' },
-          { key: 'embedded', label: 'Embedded Signing', to: '/developers/embedded' },
-        ],
-      },
-      {
-        key: 'integrate',
-        title: 'Integrate',
-        links: [
-          { key: 'webhooks', label: 'Webhooks', to: '/developers/webhooks' },
-          { key: 'sdks', label: 'SDKs', to: '/developers/sdks' },
-          { key: 'sandbox', label: 'Sandbox', to: '/developers/sandbox' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'trust',
-    label: 'Trust Centre',
-    groups: [
-      {
-        key: 'trust',
-        title: 'Trust',
-        links: [
-          { key: 'center', label: 'Trust Centre', to: '/trust' },
-          { key: 'security', label: 'Security Architecture', to: '/trust/security' },
-          { key: 'legality', label: 'eSignature Legality', to: '/trust/legality' },
-          { key: 'privacy', label: 'Privacy Centre', to: '/trust/privacy' },
-        ],
-      },
-      {
-        key: 'compliance',
-        title: 'Compliance',
-        links: [
-          { key: 'subprocessors', label: 'Subprocessors', to: '/trust/subprocessors' },
-          { key: 'vuln', label: 'Vulnerability Disclosure', to: '/trust/vulnerability-disclosure' },
-          { key: 'sustainability', label: 'Sustainability Pledge', to: '/sustainability' },
-        ],
-      },
-    ],
-  },
-  { key: 'pricing', label: 'Pricing', to: '/pricing' },
-];
+/** Internal route -> <Link>, external URL -> <a> in a new tab. */
+const NavLinkItem = ({ link, to, className, dn, children }) =>
+  link.href ? (
+    <a href={link.href} target="_blank" rel="noopener noreferrer" className={className} data-n={dn}>
+      {children}
+    </a>
+  ) : (
+    <Link to={to} className={className} data-n={dn}>
+      {children}
+    </Link>
+  );
 
 const LogoMark = () => (
   <svg
@@ -234,7 +105,10 @@ const Navbar = () => {
     return location.pathname === full || location.pathname.startsWith(`${full}/`);
   };
   const menuIsActive = (item) =>
-    item.groups.some((group) => group.links.some((link) => isActivePath(link.to)));
+    (item.to && isActivePath(item.to)) ||
+    item.groups.some((group) => group.links.some((link) => link.to && isActivePath(link.to)));
+  const columnCount = (item) => item.groups.filter((g) => !g.strip).length || 1;
+  const landingText = (item) => t(`nav.${item.key}.landing`, item.landingLabel);
 
   // Close on route change
   useEffect(() => {
@@ -330,18 +204,35 @@ const Navbar = () => {
                       data-n="panel"
                       data-k={item.key}
                       data-open={openKey === item.key}
-                      style={{ '--cols': item.groups.length }}
+                      style={{ '--cols': columnCount(item) }}
                     >
                       <div className={styles.panelInner}>
+                        {item.to && item.landingLabel && (
+                          <div className={styles.landing} data-n="group">
+                            <Link to={withLng(item.to)} className={styles.landingLink} data-n="plink">
+                              <span>{landingText(item)}</span>
+                              <FiArrowRight aria-hidden="true" />
+                            </Link>
+                          </div>
+                        )}
                         {item.groups.map((group) => (
-                          <div key={group.key} className={styles.group} data-n="group">
+                          <div
+                            key={group.key}
+                            className={`${styles.group} ${group.strip ? styles.strip : ''}`}
+                            data-n="group"
+                          >
                             <h3 className={styles.groupTitle}>{groupTitle(item, group)}</h3>
                             <ul className={styles.groupList}>
                               {group.links.map((link) => (
                                 <li key={link.key}>
-                                  <Link to={withLng(link.to)} className={styles.panelLink} data-n="plink">
+                                  <NavLinkItem
+                                    link={link}
+                                    to={link.to && withLng(link.to)}
+                                    className={styles.panelLink}
+                                    dn="plink"
+                                  >
                                     {linkLabel(item, group, link)}
-                                  </Link>
+                                  </NavLinkItem>
                                 </li>
                               ))}
                             </ul>
@@ -424,15 +315,26 @@ const Navbar = () => {
                     data-open={openKey === item.key}
                   >
                     <div className={styles.mAccInner}>
+                      {item.to && item.landingLabel && (
+                        <Link to={withLng(item.to)} className={styles.mLanding} data-n="mlink">
+                          <span>{landingText(item)}</span>
+                          <FiArrowRight aria-hidden="true" />
+                        </Link>
+                      )}
                       {item.groups.map((group) => (
                         <div key={group.key} className={styles.mGroup}>
                           <h3 className={styles.mGroupTitle}>{groupTitle(item, group)}</h3>
                           <ul className={styles.mLinks}>
                             {group.links.map((link) => (
                               <li key={link.key}>
-                                <Link to={withLng(link.to)} className={styles.mLink} data-n="mlink">
+                                <NavLinkItem
+                                  link={link}
+                                  to={link.to && withLng(link.to)}
+                                  className={styles.mLink}
+                                  dn="mlink"
+                                >
                                   {linkLabel(item, group, link)}
-                                </Link>
+                                </NavLinkItem>
                               </li>
                             ))}
                           </ul>

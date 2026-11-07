@@ -374,14 +374,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
               gsap.to(c, { backgroundColor: '#ed040f', duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
             });
           });
-
-          /* logo mark: tiny tilt */
-          // const logo = one('logo');
-          // const mark = one('mark');
-          // if (logo && mark) {
-          //   on(logo, 'pointerenter', () => gsap.to(mark, { rotation: -8, scale: 1.1, duration: 0.5, ease: 'back.out(2.5)', overwrite: 'auto' }));
-          //   on(logo, 'pointerleave', () => gsap.to(mark, { rotation: 0, scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
-          // }
         }
 
         /* press feedback on touch devices */

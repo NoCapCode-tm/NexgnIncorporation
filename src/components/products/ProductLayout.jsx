@@ -92,6 +92,62 @@ export const WidgetPillsGrid = ({ widgets = [] }) => (
   </ul>
 );
 
+
+/* Icon cards (Before/After: Payment Terms, Termination Clauses, ...) */
+export const FeatureCardsGrid = ({ items = [], columns = 3 }) => (
+  <ul className={styles.featGrid} data-pl="feat-grid" data-cols={columns}>
+    {items.map((item) => (
+      <li key={item.label} className={styles.featCard} data-pl="feat-card">
+        <span className={styles.featIcon} aria-hidden="true">
+          {item.icon}
+        </span>
+        <span className={styles.featLabel}>{item.label}</span>
+      </li>
+    ))}
+  </ul>
+);
+
+/* Row of round flags + labels (Global Legality) */
+export const FlagList = ({ items = [] }) => (
+  <ul className={styles.flagList} data-pl="flag-list">
+    {items.map((item) => (
+      <li key={item.label} className={styles.flagItem} data-pl="flag-item">
+        <span className={styles.flag} aria-hidden="true">
+          {item.flag}
+        </span>
+        <span className={styles.flagLabel}>{item.label}</span>
+      </li>
+    ))}
+  </ul>
+);
+
+/* Light note / disclaimer banner */
+export const ProductNote = ({ icon, children }) => (
+  <div className={styles.note} data-pl="note">
+    <span className={styles.noteIcon} data-pl="note-icon" aria-hidden="true">
+      {icon}
+    </span>
+    <p className={styles.noteText}>{children}</p>
+  </div>
+);
+
+/* Chat example: alternating "USER" / "NEXGN AI" bubbles */
+export const ChatExampleGrid = ({ messages = [] }) => (
+  <div className={styles.chatGrid} data-pl="chat-grid">
+    {messages.map((m, i) => (
+      <div key={i} className={styles.chatCard} data-pl="chat-card">
+        <span className={styles.chatIcon} aria-hidden="true">
+          {m.icon}
+        </span>
+        <div className={styles.chatBody}>
+          <p className={styles.chatRole}>{m.role}</p>
+          <p className={styles.chatText}>{m.text}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export const ProductStepList = ({ steps = [] }) => (
   <ol className={styles.stepList} data-pl="step-list">
     {steps.map((s, idx) => (
@@ -100,7 +156,9 @@ export const ProductStepList = ({ steps = [] }) => (
           {s.icon}
         </span>
         <div className={styles.stepBody}>
-          <p className={styles.stepEyebrow}>{s.step || `STEP ${String(idx + 1).padStart(2, '0')}`}</p>
+          {s.step !== false && (
+            <p className={styles.stepEyebrow}>{s.step || `STEP ${String(idx + 1).padStart(2, '0')}`}</p>
+          )}
           <p className={styles.stepTitle}>{s.title}</p>
         </div>
       </li>

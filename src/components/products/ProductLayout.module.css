@@ -100,7 +100,7 @@
   background: var(--dark);
   color: #ffffff;
   margin-top: calc(var(--nav-h) * -1);
-  padding-top: calc(var(--nav-h) + max(2.75rem, 6.2vw));
+  padding-top: calc(var(--nav-h) + max(3.75rem, 6.2vw)); /* clears the floating mobile navbar */
   padding-bottom: max(2.75rem, 6.5vw);
 }
 
@@ -274,7 +274,7 @@
   }
 
   .stickyNav {
-    top: var(--nav-h);
+    top: calc(var(--nav-h) + 0.7rem); /* below the floating mobile navbar */
     margin: 0 calc(var(--pad-x) * -1);
     padding: 0.75rem var(--pad-x) 0.5rem;
     background: rgba(250, 250, 250, 0.97);
@@ -757,6 +757,176 @@
   font-size: var(--fs-body);
   font-weight: 500;
   color: var(--soft);
+}
+
+
+/* ---------- Feature icon cards (3-up) ---------- */
+.featGrid {
+  list-style: none;
+  margin: max(1.25rem, 1.8vw) 0 0;
+  padding: 0;
+  max-width: 54em;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: max(0.75rem, 1.15vw);
+}
+@media (min-width: 480px) {
+  .featGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 560px) {
+  .featGrid[data-cols='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 900px) {
+  .featGrid[data-cols='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.featCard {
+  display: flex;
+  flex-direction: column;
+  gap: max(1rem, 1.5vw);
+  padding: max(1.1rem, 1.5vw);
+  background: var(--grey);
+  border-radius: max(0.9rem, 1.4vw);
+  will-change: transform;
+}
+.featIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max(2.4rem, 2.9vw);
+  height: max(2.4rem, 2.9vw);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: max(1.1rem, 1.35vw);
+}
+.featLabel {
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---------- Flag list ---------- */
+.flagList {
+  list-style: none;
+  margin: max(1.25rem, 1.8vw) 0 0;
+  padding: 0;
+  max-width: 54em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: max(1rem, 1.4vw) max(1.75rem, 3.2vw);
+}
+.flagItem {
+  display: flex;
+  align-items: center;
+  gap: max(0.7rem, 0.9vw);
+}
+.flag {
+  flex: none;
+  display: inline-flex;
+  width: max(2.1rem, 2.5vw);
+  height: max(2.1rem, 2.5vw);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(13, 16, 23, 0.08);
+}
+.flag svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.flagLabel {
+  font-size: calc(var(--fs-body) * 1.05);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---------- Light note banner ---------- */
+.note {
+  display: flex;
+  align-items: center;
+  gap: max(1rem, 1.4vw);
+  margin-top: max(1.25rem, 1.8vw);
+  max-width: 54em;
+  padding: max(1.1rem, 1.75vw) max(1.25rem, 2vw);
+  background: var(--grey);
+  border-radius: max(0.9rem, 1.6vw);
+}
+.noteIcon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max(2.4rem, 2.9vw);
+  height: max(2.4rem, 2.9vw);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: max(1.1rem, 1.35vw);
+}
+.noteText {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* ---------- Chat example ---------- */
+.chatGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: max(0.75rem, 1.15vw);
+  margin-top: max(1.25rem, 1.8vw);
+  max-width: 54em;
+}
+@media (min-width: 640px) {
+  .chatGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.chatCard {
+  display: flex;
+  align-items: flex-start;
+  gap: max(0.9rem, 1.2vw);
+  padding: max(1.1rem, 1.5vw);
+  background: var(--grey);
+  border-radius: max(0.9rem, 1.4vw);
+  will-change: transform;
+}
+.chatIcon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max(2.4rem, 2.9vw);
+  height: max(2.4rem, 2.9vw);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: max(1.1rem, 1.35vw);
+}
+.chatBody {
+  min-width: 0;
+}
+.chatRole {
+  margin: 0 0 0.35em;
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: calc(var(--fs-eyebrow) * 0.88);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.chatText {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  color: var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
