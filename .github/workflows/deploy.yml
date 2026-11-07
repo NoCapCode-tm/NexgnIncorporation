@@ -2,7 +2,7 @@ name: Deploy Nexgn to GitHub Pages
 
 on:
   push:
-    branches: [main]         # Triggers on push to main
+    branches: [main]         # Triggers on push to main branch
   workflow_dispatch:         # Allows manual deployment from the Actions tab
 
 permissions:
@@ -39,13 +39,16 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      # This will automatically run your "prebuild" sitemap script first, 
-      # then build the Rsbuild bundle, then copy 404.html.
+      # Automatically runs prebuild sitemap script, builds Rsbuild bundle, and outputs to dist/
       - name: Build Application
         run: npm run build
 
+      # Configure GitHub Pages with your custom domain (nexgn.cloud from public/CNAME)
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enable_cnametrue: true
+          cname: nexgn.cloud
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
@@ -57,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://nexgn.cloud
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
