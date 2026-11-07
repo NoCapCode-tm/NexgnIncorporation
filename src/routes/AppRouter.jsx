@@ -22,21 +22,12 @@ const Labs = lazy(() => import('../pages/core/Labs'));
 const NotFound = lazy(() => import('../pages/core/NotFound'));
 
 // 2. Product Pages
-const ProductOverview = lazy(() => import('../pages/products/ProductOverview'));
-const ESignature = lazy(() => import('../pages/products/ESignature'));
-const DocEditor = lazy(() => import('../pages/products/DocEditor'));
-const Templates = lazy(() => import('../pages/products/Templates'));
-const Automation = lazy(() => import('../pages/products/Automation')); // Consolidates Workflows, Scheduler, Reminders
-const AISummary = lazy(() => import('../pages/products/AISummary'));
-const AIBuilder = lazy(() => import('../pages/products/AIBuilder'));
-const AIClause = lazy(() => import('../pages/products/AIClause'));
-const Identity = lazy(() => import('../pages/products/Identity'));
-const AuditTrail = lazy(() => import('../pages/products/AuditTrail'));
-const Verification = lazy(() => import('../pages/products/Verification'));
-const Workspace = lazy(() => import('../pages/products/Workspace'));
-const Rbac = lazy(() => import('../pages/products/Rbac'));
-const Storage = lazy(() => import('../pages/products/Storage'));
-const ActivityLogs = lazy(() => import('../pages/products/ActivityLogs'));
+// Each product hub is ONE page with scroll-spy sections (components/products/ProductLayout).
+// Several URLs share the same hub, and ProductLayout scrolls to the section named by the URL.
+const ProductOverview = lazy(() => import('../pages/products/ProductOverview')); // Core Agreement Products
+const IntelligenceOverview = lazy(() => import('../pages/products/IntelligenceOverview')); // Nexgn AI
+const TrustOverview = lazy(() => import('../pages/products/TrustOverview')); // Trust & Evidence
+const WorkspaceOverview = lazy(() => import('../pages/products/WorkspaceOverview')); // Workspace & Management
 
 // 3. Solutions Pages (Optimized to Single Master Template)
 const SolutionTemplate = lazy(() => import('../pages/solutions/SolutionTemplate'));
@@ -79,6 +70,53 @@ const Press = lazy(() => import('../pages/company/Press'));
 const Partners = lazy(() => import('../pages/company/Partners'));
 const Blog = lazy(() => import('../pages/company/Blog'));
 const HelpCenter = lazy(() => import('../pages/help/HelpCenter')); // Added Help Center
+
+// ==========================================
+// PRODUCT HUB ROUTES
+// ==========================================
+// Paths are relative to /:lng. Every path in a list renders the SAME lazy component, so moving between
+// two of them (e.g. from the Navbar) keeps the page mounted and just scrolls to the right section
+// instead of reloading the page. Add old URLs to a list to keep them working.
+const PRODUCT_HUBS = [
+  {
+    Page: ProductOverview,
+    paths: [
+      '/products',
+      '/products/esignature',
+      '/products/document-editor',
+      '/products/templates',
+      '/products/automation',
+      '/products/workflows',
+      '/products/reminders',
+      '/products/scheduler',
+    ],
+  },
+  {
+    Page: IntelligenceOverview,
+    paths: [
+      '/products/ai-summary',
+      '/products/ai-builder',
+      '/products/ai-clause-assistant', // retired page -> Nexgn AI hub
+    ],
+  },
+  {
+    Page: TrustOverview,
+    paths: [
+      '/products/audit-trail',
+      '/products/identity-assurance',
+      '/products/agreement-verification', // retired page -> Trust & Evidence hub
+    ],
+  },
+  {
+    Page: WorkspaceOverview,
+    paths: [
+      '/products/workspace',
+      '/products/cloud-storage',
+      '/products/roles-permissions', // retired page -> Workspace hub
+      '/products/activity-logs', // retired page -> Workspace hub
+    ],
+  },
+];
 
 // ==========================================
 // CONSTANTS
@@ -135,26 +173,10 @@ const LanguageWrapper = () => {
               <Route path="/roadmap" element={<Roadmap />} />
               <Route path="/labs" element={<Labs />} />
 
-              {/* Product Routes (Core Agreement Products Hub + Section Deep-Links) */}
-              <Route path="/products" element={<ProductOverview />} />
-              <Route path="/products/esignature" element={<Navigate to={`/${lng}/products#esignature`} replace />} />
-              <Route path="/products/document-editor" element={<Navigate to={`/${lng}/products#document-editor`} replace />} />
-              <Route path="/products/templates" element={<Navigate to={`/${lng}/products#templates`} replace />} />
-              <Route path="/products/automation" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
-              <Route path="/products/workflows" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
-              <Route path="/products/reminders" element={<Navigate to={`/${lng}/products#workflows`} replace />} />
-
-              {/* Other Product Routes */}
-              <Route path="/products/ai-summary" element={<AISummary />} />
-              <Route path="/products/ai-builder" element={<AIBuilder />} />
-              <Route path="/products/ai-clause-assistant" element={<AIClause />} />
-              <Route path="/products/identity-assurance" element={<Identity />} />
-              <Route path="/products/audit-trail" element={<AuditTrail />} />
-              <Route path="/products/agreement-verification" element={<Verification />} />
-              <Route path="/products/workspace" element={<Workspace />} />
-              <Route path="/products/roles-permissions" element={<Rbac />} />
-              <Route path="/products/cloud-storage" element={<Storage />} />
-              <Route path="/products/activity-logs" element={<ActivityLogs />} />
+              {/* Product Routes: 4 hubs, each serving several section URLs (see PRODUCT_HUBS above) */}
+              {PRODUCT_HUBS.flatMap(({ Page, paths }) =>
+                paths.map((path) => <Route key={path} path={path} element={<Page />} />)
+              )}
               <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
 
               {/* Solutions Routes (Dynamic Template Engine) */}
