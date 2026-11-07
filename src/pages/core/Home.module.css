@@ -333,7 +333,8 @@
     linear-gradient(160deg, #1b2431, #0d1017 70%);
   /* slide under the transparent navbar */
   margin-top: calc(var(--nav-h) * -1);
-  padding-top: calc(var(--nav-h) + max(2.5rem, 6.8vw));
+  /* 4.5rem minimum keeps the headline clear of the floating mobile bar */
+  padding-top: calc(var(--nav-h) + max(4.5rem, 6.8vw));
   padding-bottom: max(1.75rem, 3.6vw);
   color: var(--on-dark);
   text-align: center;

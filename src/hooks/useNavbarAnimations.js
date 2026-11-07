@@ -12,19 +12,19 @@ const SCROLL_AT = 24;
  * DESKTOP (>= 1024px)
  *   - top of page: full-width transparent bar, logo mark + wordmark
  *   - on scroll: the bar contracts into a floating glass pill (width, height, top gap, radius),
- *     the glass fades in, the wordmark folds away, a reading-progress line appears
+ *     the glass fades in, the wordmark folds away (no progress line: pages own that)
  *   - hover: a highlight pill glides between items; chevrons turn; links nudge
  *   - dropdown: frosted panel rises in, columns then links cascade; switching menus crossfades
  *   - CTA: magnetic pull, colour shift, light sweep; "Log in" underline draws
  * MOBILE (< 1024px)
- *   - the three dots wave while idle; on open they burst out and an X draws in
+ *   - plain three dots; on tap they burst out and an X draws in
  *   - the bar grows into the menu card (height tween), wordmark unfolds, items cascade
  *   - sections are accordions (height + fade, chevron turns, links cascade)
  *
  * React owns the STATE (`openKey`, `mobileOpen`); this hook reacts to it. Reduced-motion users
  * get the same end states applied instantly (no tweens, no idle loops).
  *
- * Markup contract (data-n): scrim bar glass progress row logo mark word menu hl trigger chev
+ * Markup contract (data-n): scrim bar glass row logo mark word menu hl trigger chev
  *   panel[data-k] group plink login loginLine cta sheen burger dot xl drawer mitem acc[data-k]
  *   mchev mlink mactions mcta
  */
@@ -87,7 +87,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
         const row = one('row');
         const word = one('word');
         const scrim = one('scrim');
-        const progress = one('progress');
 
         /* ---------------- wordmark fold / unfold ---------------- */
         let wordShown = null;
@@ -126,7 +125,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
               : { width: W, height: full, marginTop: 0, borderRadius: 0 };
             go(bar, { ...vars, duration: 0.8, ease: 'expo.out', overwrite: 'auto' }, instant);
             go(glass, { autoAlpha: s ? 1 : 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' }, instant);
-            go(progress, { autoAlpha: s ? 1 : 0, duration: 0.5, ease: 'power2.out', overwrite: 'auto' }, instant);
             setWord(!s, instant);
           };
           applyScroll(scrolled, true);
@@ -157,14 +155,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
           on(window, 'resize', onResize);
           off.push(() => clearTimeout(rt));
 
-          if (motion && progress) {
-            set(progress, { scaleX: 0 });
-            gsap.to(progress, {
-              scaleX: 1,
-              ease: 'none',
-              scrollTrigger: { start: 0, end: 'max', scrub: 0.3 },
-            });
-          }
         } else {
           /* mobile bar always shows its glass */
           set(glass, { autoAlpha: 1 });
@@ -217,27 +207,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
         const drawer = one('drawer');
         const burgerDots = q('dot');
         const burgerX = q('xl');
-        let idle = null;
-
-        const startIdle = () => {
-          if (!motion || idle) return;
-          idle = gsap.to(burgerDots, {
-            y: -2.5,
-            duration: 0.9,
-            ease: 'sine.inOut',
-            repeat: -1,
-            yoyo: true,
-            stagger: { each: 0.16, from: 'start' },
-          });
-        };
-        const stopIdle = () => {
-          if (idle) {
-            idle.kill();
-            idle = null;
-          }
-          gsap.to(burgerDots, { y: 0, duration: 0.2, overwrite: 'auto' });
-        };
-
         let drawerOpen = null;
         const setDrawer = (open, instant) => {
           if (drawerOpen === open) return;
@@ -252,7 +221,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
           setWord(open, instant);
 
           if (open) {
-            stopIdle();
             go(burgerDots, { scale: 0, autoAlpha: 0, duration: 0.3, ease: 'back.in(2)', stagger: 0.04, overwrite: 'auto' }, instant);
             go(burgerX, { scaleX: 1, duration: 0.5, ease: 'back.out(2)', stagger: 0.07, delay: first ? 0 : 0.18, overwrite: 'auto' }, instant);
             set(drawer, { overflowY: 'hidden', visibility: 'visible' });
@@ -273,8 +241,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
             go(burgerX, { scaleX: 0, duration: 0.25, ease: 'power2.in', stagger: 0.04, overwrite: 'auto' }, instant);
             go(burgerDots, { scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2.4)', stagger: 0.07, delay: first ? 0 : 0.15, overwrite: 'auto' }, instant);
             go(drawer, { height: 0, autoAlpha: 0, duration: 0.5, ease: 'power3.inOut', overwrite: 'auto' }, instant);
-            if (!instant && motion) gsap.delayedCall(0.2, startIdle);
-            else if (first) startIdle();
           }
         };
 
@@ -306,7 +272,7 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
 
         /* ---------------- initial states ---------------- */
         if (!desk) {
-          set(burgerX, { scaleX: 0 });
+          set(burgerX, { scaleX: 0, rotation: (i) => (i === 0 ? 45 : -45) });
           drawerOpen = null;
         }
 
@@ -338,7 +304,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
         };
         sync.current = syncAll;
         syncAll(true);
-        if (!desk && !live.current.mobileOpen) startIdle();
 
         /* =====================================================================
            HOVERS / PRESS
@@ -349,18 +314,22 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
           const hl = one('hl');
           if (menu && hl) {
             const xTo = gsap.quickTo(hl, 'x', { duration: 0.55, ease: 'power3' });
+            const yTo = gsap.quickTo(hl, 'y', { duration: 0.55, ease: 'power3' });
             const wTo = gsap.quickTo(hl, 'width', { duration: 0.55, ease: 'power3' });
+            const hTo = gsap.quickTo(hl, 'height', { duration: 0.55, ease: 'power3' });
             let shown = false;
             on(menu, 'pointerover', (e) => {
               const t = e.target.closest('[data-n="trigger"]');
               if (!t || !menu.contains(t)) return;
               if (!shown) {
                 shown = true;
-                set(hl, { x: t.offsetLeft, width: t.offsetWidth });
+                set(hl, { x: t.offsetLeft, y: t.offsetTop, width: t.offsetWidth, height: t.offsetHeight });
                 gsap.to(hl, { autoAlpha: 1, duration: 0.3, overwrite: 'auto' });
               } else {
                 xTo(t.offsetLeft);
+                yTo(t.offsetTop);
                 wTo(t.offsetWidth);
+                hTo(t.offsetHeight);
               }
             });
             on(menu, 'pointerleave', () => {
@@ -407,12 +376,12 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
           });
 
           /* logo mark: tiny tilt */
-          const logo = one('logo');
-          const mark = one('mark');
-          if (logo && mark) {
-            on(logo, 'pointerenter', () => gsap.to(mark, { rotation: -8, scale: 1.1, duration: 0.5, ease: 'back.out(2.5)', overwrite: 'auto' }));
-            on(logo, 'pointerleave', () => gsap.to(mark, { rotation: 0, scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
-          }
+          // const logo = one('logo');
+          // const mark = one('mark');
+          // if (logo && mark) {
+          //   on(logo, 'pointerenter', () => gsap.to(mark, { rotation: -8, scale: 1.1, duration: 0.5, ease: 'back.out(2.5)', overwrite: 'auto' }));
+          //   on(logo, 'pointerleave', () => gsap.to(mark, { rotation: 0, scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' }));
+          // }
         }
 
         /* press feedback on touch devices */
@@ -428,8 +397,6 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
 
         return () => {
           off.forEach((fn) => fn());
-          if (idle) idle.kill();
-          idle = null;
           sync.current = null;
         };
       }

@@ -279,15 +279,19 @@ const Navbar = () => {
       className={styles.header}
       data-mobile-open={mobileOpen}
       data-menu-open={openKey !== null}
-      onMouseLeave={handleLeave}
-      onMouseEnter={clearTimer}
     >
-      {/* dims the page behind an open dropdown / mobile menu */}
-      <div className={styles.scrim} data-n="scrim" onClick={closeAll} aria-hidden="true" />
+      {/* dims the page behind an open dropdown / mobile menu. It is a child of the header, so the
+          hover-leave handlers sit on the bar (not the header) and hovering the scrim closes the menu. */}
+      <div
+        className={styles.scrim}
+        data-n="scrim"
+        onClick={closeAll}
+        onMouseEnter={handleLeave}
+        aria-hidden="true"
+      />
 
-      <div className={styles.bar} data-n="bar">
+      <div className={styles.bar} data-n="bar" onMouseLeave={handleLeave} onMouseEnter={clearTimer}>
         <span className={styles.glass} data-n="glass" aria-hidden="true" />
-        <span className={styles.progress} data-n="progress" aria-hidden="true" />
 
         <div className={styles.row} data-n="row">
           <Link to={withLng('/')} className={styles.logo} data-n="logo" aria-label="Nexgn home">

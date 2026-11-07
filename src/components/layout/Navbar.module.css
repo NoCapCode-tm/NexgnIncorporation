@@ -13,7 +13,7 @@
   /* sizing (fluid) — --nav-h matches what the pages use to clear the bar */
   --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
   --bar-h: var(--nav-h);
-  --fs: clamp(0.9rem, 0.32vw + 0.8rem, 2.1rem);
+  --fs: clamp(0.85rem, 0.26vw + 0.77rem, 2.1rem);
   --fs-group: clamp(0.72rem, 0.22vw + 0.66rem, 1.5rem);
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
   --pill-pad: clamp(1rem, 1.4vw, 3rem);
@@ -83,22 +83,6 @@
   pointer-events: none;
 }
 
-/* reading progress along the bottom edge of the pill */
-.progress {
-  position: absolute;
-  left: 1.2em;
-  right: 1.2em;
-  bottom: 0;
-  z-index: 1;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--red);
-  transform-origin: 0 50%;
-  transform: scaleX(0);
-  opacity: 0;
-  pointer-events: none;
-}
-
 .row {
   position: relative;
   z-index: 2;
@@ -153,13 +137,14 @@
   min-width: 0;
 }
 .menu {
-  position: relative;
+  /* static on purpose: the dropdown panels and the highlight pill position against .row */
+  position: static;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   align-items: center;
-  gap: clamp(0.1rem, 0.4vw, 1rem);
+  gap: clamp(0, 0.3vw, 0.8rem);
 }
 .hlWrap {
   display: contents;
@@ -168,9 +153,9 @@
 .hl {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   width: 0;
+  height: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.11);
   opacity: 0;
@@ -184,7 +169,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  padding: 0.6em 1.05em;
+  padding: 0.6em 0.9em;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -360,34 +345,20 @@
 }
 .dots {
   position: relative;
-  width: 1.7rem;
+  width: 2.2rem;
   height: 1.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.28rem;
+  gap: 0.32rem;
 }
 .dot {
   display: block;
   flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: #fff;
-}
-.dot:nth-child(1) {
-  width: 0.34rem;
-  height: 0.34rem;
-  align-self: flex-start;
-  margin-top: 0.42rem;
-}
-.dot:nth-child(2) {
-  width: 0.46rem;
-  height: 0.46rem;
-  align-self: flex-end;
-  margin-bottom: 0.4rem;
-}
-.dot:nth-child(3) {
-  width: 0.56rem;
-  height: 0.56rem;
 }
 .xl {
   position: absolute;
@@ -398,10 +369,7 @@
   margin: -1px 0 0 -0.6rem;
   border-radius: 2px;
   background: #fff;
-  transform: rotate(45deg) scaleX(0);
-}
-.xl:nth-of-type(5) {
-  transform: rotate(-45deg) scaleX(0);
+  /* rotation + scale are set by GSAP (a CSS rotate here would be mis-decomposed) */
 }
 
 /* ---------- mobile menu card ---------- */
@@ -414,8 +382,8 @@
    ===================================================================== */
 @media (max-width: 1023.98px) {
   .header {
-    --m: clamp(0.75rem, 3.6vw, 1.25rem);
-    --bar-h: 4rem;
+    --m: clamp(0.5rem, 2.6vw, 0.9rem);
+    --bar-h: 3.5rem;
     padding: var(--m);
     box-sizing: border-box;
   }
@@ -426,17 +394,13 @@
     justify-content: flex-start;
     height: auto;
     min-height: var(--bar-h);
-    border-radius: 1.1rem;
+    border-radius: 14px;
     overflow: hidden;
   }
   .glass {
     opacity: 1;
     background: var(--glass);
   }
-  .progress {
-    display: none;
-  }
-
   .row {
     flex: none;
     width: 100%;

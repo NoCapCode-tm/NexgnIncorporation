@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import PageLoader from '../components/common/PageLoader'; // Nexgn wave loader for lazy-loaded pages
 
 // Global Layout Components
-import Navbar from '../components/layout/Navbar'; // homepage: dark glass
-import NavbarAlt from '../components/layout/Navbar_Alt'; // all other pages: transparent + frosted
+import Navbar from '../components/layout/Navbar'; // one navbar for every page
 import Footer from '../components/layout/Footer';
 import { ScrollToTop } from '../components/layout/ScrollToTop';
 import { ErrorBoundary } from '../components/layout/ErrorBoundary';
@@ -97,9 +96,6 @@ const LanguageWrapper = () => {
 
   const isSupported = SUPPORTED_LANGUAGES.includes(lng);
 
-  // /en or /en/ is the homepage; everything else gets the transparent navbar
-  const isHome = location.pathname.split('/').filter(Boolean).length <= 1;
-
   useEffect(() => {
     if (!isSupported) return;
 
@@ -121,7 +117,7 @@ const LanguageWrapper = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {isHome ? <Navbar /> : <NavbarAlt />}
+      <Navbar />
 
       {/* flex: 1 pushes the Footer to the bottom on short pages */}
       <main style={{ flex: 1 }}>
