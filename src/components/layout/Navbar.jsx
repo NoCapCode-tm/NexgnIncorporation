@@ -1,12 +1,167 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiArrowRight, FiArrowUpRight, FiChevronDown, FiHelpCircle } from 'react-icons/fi';
+import { FiChevronDown } from 'react-icons/fi';
 import useNavbarAnimations from '../../hooks/useNavbarAnimations';
-import { MENUS, LANGS, LOGIN_URL, SIGNUP_URL, HELP_PATH } from './navConfig';
 import styles from './Navbar.module.css';
 
-// Menu structure, labels and routes live in ./navConfig.js (shared by Navbar and Navbar_Alt).
+/* =====================================================================
+   NEXGN NAVBAR — the one navbar for every page (replaces Navbar + Navbar_Alt)
+
+   Desktop (>= 1024px)
+     • at the top of a page: full-width, transparent, logo mark + wordmark
+     • after scrolling: it contracts into a floating glass pill, wordmark folds away
+     • hover / click opens a frosted dropdown with staggered columns
+   Mobile / tablet (< 1024px)
+     • rounded glass bar: logo mark + three dots
+     • the dots morph into an X and the bar grows into the menu card (accordion sections)
+
+   All motion lives in hooks/useNavbarAnimations.js (GSAP). The CSS has no transitions.
+   ===================================================================== */
+
+const LOGIN_URL = 'https://sign.nexgn.cloud/login';
+const SIGNUP_URL = 'https://sign.nexgn.cloud/signup';
+const LANGS = ['en', 'es', 'hi'];
+
+/**
+ * Paths are relative to the language prefix (AppRouter mounts under /:lng/*).
+ * TODO route not in AppRouter yet: /labs (Nexgn Labs)
+ */
+const MENUS = [
+  {
+    key: 'product',
+    label: 'Product',
+    groups: [
+      {
+        key: 'core',
+        title: 'Core Agreement Products',
+        links: [
+          { key: 'esignature', label: 'eSignature', to: '/products/esignature' },
+          { key: 'docEditor', label: 'Document Editor', to: '/products/document-editor' },
+          { key: 'templates', label: 'Templates', to: '/products/templates' },
+          { key: 'workflows', label: 'Agreement Workflow & Scheduler', to: '/products/workflows' },
+        ],
+      },
+      {
+        key: 'intelligence',
+        title: 'Intelligence (Nexgn AI)',
+        links: [
+          { key: 'aiSummary', label: 'AI Agreement Summary', to: '/products/ai-summary' },
+          { key: 'aiBuilder', label: 'AI Template Builder', to: '/products/ai-builder' },
+        ],
+      },
+      {
+        key: 'trust',
+        title: 'Trust & Evidence',
+        links: [
+          { key: 'identity', label: 'Identity Assurance', to: '/products/identity-assurance' },
+          { key: 'audit', label: 'Audit Trails', to: '/products/audit-trail' },
+          { key: 'verification', label: 'Agreement Verification', to: '/products/agreement-verification' },
+        ],
+      },
+      {
+        key: 'workspace',
+        title: 'Workspace & Management',
+        links: [
+          { key: 'workspace', label: 'Team Workspace & RBAC', to: '/products/workspace' },
+          { key: 'storage', label: 'Google Drive & Storage', to: '/products/storage' },
+        ],
+      },
+      {
+        key: 'explore',
+        title: 'Explore',
+        links: [
+          { key: 'whatsNew', label: 'What’s New', to: '/changelog' },
+          { key: 'labs', label: 'Nexgn Labs', to: '/labs' },
+          { key: 'roadmap', label: 'Product Roadmap', to: '/roadmap' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'solutions',
+    label: 'Solutions',
+    groups: [
+      {
+        key: 'teams',
+        title: 'By Team',
+        links: [
+          { key: 'hr', label: 'HR', to: '/solutions/hr' },
+          { key: 'sales', label: 'Sales', to: '/solutions/sales' },
+          { key: 'legal', label: 'Legal', to: '/solutions/legal' },
+          { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
+        ],
+      },
+      {
+        key: 'company',
+        title: 'By Company Size',
+        links: [
+          { key: 'startups', label: 'Startups', to: '/solutions/startups' },
+          { key: 'smb', label: 'Small & Medium Business', to: '/solutions/smb' },
+          { key: 'enterprise', label: 'Enterprise', to: '/solutions/enterprise' },
+        ],
+      },
+      {
+        key: 'more',
+        title: 'More',
+        links: [
+          { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
+          { key: 'individuals', label: 'Individuals', to: '/solutions/individuals' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'developers',
+    label: 'Developers',
+    groups: [
+      {
+        key: 'build',
+        title: 'Build',
+        links: [
+          { key: 'portal', label: 'Developer Portal', to: '/developers' },
+          { key: 'api', label: 'API Reference', to: '/developers/api-reference' },
+          { key: 'embedded', label: 'Embedded Signing', to: '/developers/embedded' },
+        ],
+      },
+      {
+        key: 'integrate',
+        title: 'Integrate',
+        links: [
+          { key: 'webhooks', label: 'Webhooks', to: '/developers/webhooks' },
+          { key: 'sdks', label: 'SDKs', to: '/developers/sdks' },
+          { key: 'sandbox', label: 'Sandbox', to: '/developers/sandbox' },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'trust',
+    label: 'Trust Centre',
+    groups: [
+      {
+        key: 'trust',
+        title: 'Trust',
+        links: [
+          { key: 'center', label: 'Trust Centre', to: '/trust' },
+          { key: 'security', label: 'Security Architecture', to: '/trust/security' },
+          { key: 'legality', label: 'eSignature Legality', to: '/trust/legality' },
+          { key: 'privacy', label: 'Privacy Centre', to: '/trust/privacy' },
+        ],
+      },
+      {
+        key: 'compliance',
+        title: 'Compliance',
+        links: [
+          { key: 'subprocessors', label: 'Subprocessors', to: '/trust/subprocessors' },
+          { key: 'vuln', label: 'Vulnerability Disclosure', to: '/trust/vulnerability-disclosure' },
+          { key: 'sustainability', label: 'Sustainability Pledge', to: '/sustainability' },
+        ],
+      },
+    ],
+  },
+  { key: 'pricing', label: 'Pricing', to: '/pricing' },
+];
 
 const LogoMark = () => (
   <svg
@@ -25,25 +180,23 @@ const LogoMark = () => (
   </svg>
 );
 
-const DESKTOP_QUERY = '(min-width: 1024px) and (hover: hover)';
+const DESKTOP_QUERY = '(min-width: 1024px)';
+const HOVER_QUERY = '(hover: hover) and (pointer: fine)';
 
 const Navbar = () => {
   const { t } = useTranslation();
   const { lng } = useParams(); // Navbar renders inside /:lng/*
   const location = useLocation();
-  const navigate = useNavigate();
 
   const currentLng = LANGS.includes(lng) ? lng : 'en';
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
 
-  // Homepage (/en, /en/) gets the dark glass; every other page gets the light glass.
-  const isHome = location.pathname.split('/').filter(Boolean).length <= 1;
-  const theme = isHome ? 'dark' : 'light';
-
-  const [openKey, setOpenKey] = useState(null); // open dropdown (desktop) / accordion (mobile)
+  const [openKey, setOpenKey] = useState(null); // open dropdown (desktop) / accordion section (mobile)
   const [mobileOpen, setMobileOpen] = useState(false);
   const headerRef = useRef(null);
   const closeTimer = useRef(null);
+
+  useNavbarAnimations(headerRef, { openKey, mobileOpen });
 
   const clearTimer = () => {
     if (closeTimer.current) {
@@ -58,66 +211,57 @@ const Navbar = () => {
     setMobileOpen(false);
   }, []);
 
-  const isDesktopHover = () =>
-    typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches;
+  const canHoverOpen = () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia(DESKTOP_QUERY).matches &&
+    window.matchMedia(HOVER_QUERY).matches;
 
-  // Hover opens menus on desktop; small delay on leave stops flicker
+  // Hover opens menus on desktop; a short delay on leave stops flicker
   const handleEnter = (key) => {
-    if (!isDesktopHover()) return;
+    if (!canHoverOpen()) return;
     clearTimer();
     setOpenKey(key);
   };
   const handleLeave = () => {
-    if (!isDesktopHover()) return;
+    if (!canHoverOpen()) return;
     clearTimer();
-    closeTimer.current = setTimeout(() => setOpenKey(null), 160);
+    closeTimer.current = setTimeout(() => setOpenKey(null), 180);
   };
+  const handleToggle = (key) => setOpenKey((cur) => (cur === key ? null : key));
 
-  // Click / keyboard toggle (touch, tablet, keyboard users)
-  // On desktop (hover menus) a click goes to the menu's main landing page when it has one.
-  const handleToggle = (item) => {
-    if (item.to && isDesktopHover()) {
-      navigate(withLng(item.to));
-      return;
-    }
-    setOpenKey((cur) => (cur === item.key ? null : item.key));
-  };
-
-  // Highlight the trigger whose menu contains the current page
   const isActivePath = (path) => {
     const full = withLng(path);
     return location.pathname === full || location.pathname.startsWith(`${full}/`);
   };
   const menuIsActive = (item) =>
-    (item.to ? isActivePath(item.to) : false) ||
-    item.groups.some((group) => group.links.some((link) => link.to && isActivePath(link.to)));
+    item.groups.some((group) => group.links.some((link) => isActivePath(link.to)));
 
   // Close on route change
   useEffect(() => {
     closeAll();
   }, [location.pathname, closeAll]);
 
-  // Escape, outside click, and resize to desktop
+  // Escape, outside click, resize to desktop
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && closeAll();
     const onDown = (e) => {
       if (headerRef.current && !headerRef.current.contains(e.target)) closeAll();
     };
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const onResize = () => mq.matches && setMobileOpen(false);
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const onChange = () => closeAll();
 
     document.addEventListener('keydown', onKey);
     document.addEventListener('mousedown', onDown);
-    mq.addEventListener('change', onResize);
+    mq.addEventListener('change', onChange);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('mousedown', onDown);
-      mq.removeEventListener('change', onResize);
+      mq.removeEventListener('change', onChange);
       clearTimer();
     };
   }, [closeAll]);
 
-  // Lock page scroll while the mobile drawer is open
+  // Lock page scroll while the mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => {
@@ -125,189 +269,196 @@ const Navbar = () => {
     };
   }, [mobileOpen]);
 
-  // All motion lives in one GSAP hook (glass, dropdowns, drawer, burger, hovers)
-  useNavbarAnimations(headerRef, { openKey, mobileOpen });
+  const label = (item) => t(`nav.${item.key}.title`, item.label);
+  const groupTitle = (item, group) => t(`nav.${item.key}.${group.key}.title`, group.title);
+  const linkLabel = (item, group, link) => t(`nav.${item.key}.${group.key}.${link.key}`, link.label);
 
   return (
     <header
       ref={headerRef}
       className={styles.header}
-      data-theme={theme}
-      data-menu-open={openKey !== null}
       data-mobile-open={mobileOpen}
+      data-menu-open={openKey !== null}
       onMouseLeave={handleLeave}
       onMouseEnter={clearTimer}
     >
-      {/* decorative layers, animated by GSAP */}
-      <span className={styles.glass} data-n="glass" aria-hidden="true" />
-      <span className={styles.scrim} data-n="scrim" aria-hidden="true" />
-      <span className={styles.progress} data-n="progress" aria-hidden="true" />
+      {/* dims the page behind an open dropdown / mobile menu */}
+      <div className={styles.scrim} data-n="scrim" onClick={closeAll} aria-hidden="true" />
 
-      <div className={styles.bar}>
-        <Link to={withLng('/')} className={styles.logo} data-n="logo" aria-label="Nexgn home">
-          <LogoMark />
-          <span className={styles.logoText}>Nexgn</span>
-        </Link>
+      <div className={styles.bar} data-n="bar">
+        <span className={styles.glass} data-n="glass" aria-hidden="true" />
+        <span className={styles.progress} data-n="progress" aria-hidden="true" />
 
-        <nav
-          id="main-nav"
-          className={styles.nav}
-          data-n="nav"
-          data-open={mobileOpen}
-          aria-label={t('nav.label', 'Main navigation')}
-        >
-          <ul className={styles.menu}>
-            {MENUS.map((item) =>
-              item.groups ? (
-                <li
-                  key={item.key}
-                  className={styles.item}
-                  data-n="item"
-                  onMouseEnter={() => handleEnter(item.key)}
-                >
-                  <button
-                    type="button"
-                    className={`${styles.trigger} ${menuIsActive(item) ? styles.active : ''}`}
-                    data-n="trigger"
-                    aria-expanded={openKey === item.key}
-                    aria-controls={`panel-${item.key}`}
-                    onClick={() => handleToggle(item)}
-                    onFocus={() => handleEnter(item.key)}
-                  >
-                    <span className={styles.pill} data-n="pill" aria-hidden="true" />
-                    <span className={styles.triggerLabel}>
-                      {t(`nav.${item.key}.title`, item.label)}
-                    </span>
-                    <FiChevronDown className={styles.chevron} data-n="chevron" aria-hidden="true" />
-                  </button>
+        <div className={styles.row} data-n="row">
+          <Link to={withLng('/')} className={styles.logo} data-n="logo" aria-label="Nexgn home">
+            <LogoMark />
+            <span className={styles.logoWord} data-n="word">
+              <span className={styles.logoText}>Nexgn</span>
+            </span>
+          </Link>
 
-                  <div
-                    id={`panel-${item.key}`}
-                    className={styles.panel}
-                    data-n="panel"
-                    data-k={item.key}
-                    data-open={openKey === item.key}
-                    style={{ '--cols': item.groups.filter((g) => !g.strip).length }}
-                  >
-                    <div className={styles.panelClip} data-n="clip">
-                      <div className={styles.panelInner} data-n="inner">
+          {/* ---------------- desktop navigation ---------------- */}
+          <nav className={styles.nav} aria-label={t('nav.label', 'Main navigation')}>
+            <ul className={styles.menu} data-n="menu">
+              <li className={styles.hlWrap} aria-hidden="true">
+                <span className={styles.hl} data-n="hl" />
+              </li>
+              {MENUS.map((item) =>
+                item.groups ? (
+                  <li key={item.key} className={styles.item} onMouseEnter={() => handleEnter(item.key)}>
+                    <button
+                      type="button"
+                      className={`${styles.trigger} ${menuIsActive(item) ? styles.active : ''}`}
+                      data-n="trigger"
+                      data-k={item.key}
+                      aria-expanded={openKey === item.key}
+                      aria-controls={`panel-${item.key}`}
+                      onClick={() => handleToggle(item.key)}
+                      onFocus={() => handleEnter(item.key)}
+                    >
+                      <span>{label(item)}</span>
+                      <FiChevronDown className={styles.chevron} data-n="chev" aria-hidden="true" />
+                    </button>
+
+                    <div
+                      id={`panel-${item.key}`}
+                      className={styles.panel}
+                      data-n="panel"
+                      data-k={item.key}
+                      data-open={openKey === item.key}
+                      style={{ '--cols': item.groups.length }}
+                    >
+                      <div className={styles.panelInner}>
                         {item.groups.map((group) => (
-                          <div
-                            key={group.key}
-                            className={`${styles.group} ${group.strip ? styles.strip : ''}`}
-                            data-n="group"
-                          >
-                            <h3 className={styles.groupTitle}>
-                              {t(`nav.${item.key}.${group.key}.title`, group.title)}
-                            </h3>
+                          <div key={group.key} className={styles.group} data-n="group">
+                            <h3 className={styles.groupTitle}>{groupTitle(item, group)}</h3>
                             <ul className={styles.groupList}>
-                              {group.links.map((link) => {
-                                const label = t(`nav.${item.key}.${group.key}.${link.key}`, link.label);
-                                return (
-                                  <li key={link.key}>
-                                    {link.href ? (
-                                      <a
-                                        href={link.href}
-                                        className={styles.panelLink} data-n="plink"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                      >
-                                        {label}
-                                        <FiArrowUpRight className={styles.external} aria-hidden="true" />
-                                        <span className={styles.srOnly}> {t('nav.newTab', '(opens in a new tab)')}</span>
-                                      </a>
-                                    ) : (
-                                      <Link to={withLng(link.to)} className={styles.panelLink} data-n="plink">
-                                        {label}
-                                      </Link>
-                                    )}
-                                  </li>
-                                );
-                              })}
+                              {group.links.map((link) => (
+                                <li key={link.key}>
+                                  <Link to={withLng(link.to)} className={styles.panelLink} data-n="plink">
+                                    {linkLabel(item, group, link)}
+                                  </Link>
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         ))}
-                        {item.to && (
-                          <div className={`${styles.group} ${styles.landing}`} data-n="group">
-                            <Link to={withLng(item.to)} className={styles.landingLink}>
-                              {t(`nav.${item.key}.overview`, item.landingLabel || item.label)}
-                              <FiArrowRight aria-hidden="true" />
-                            </Link>
-                          </div>
-                        )}
                       </div>
+                    </div>
+                  </li>
+                ) : (
+                  <li key={item.key} className={styles.item}>
+                    <NavLink
+                      to={withLng(item.to)}
+                      data-n="trigger"
+                      className={({ isActive }) => `${styles.trigger} ${isActive ? styles.active : ''}`}
+                    >
+                      <span>{t(`nav.${item.key}`, item.label)}</span>
+                    </NavLink>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
+
+          <div className={styles.actions}>
+            <a href={LOGIN_URL} className={styles.login} data-n="login">
+              <span>{t('nav.login', 'Log in')}</span>
+              <i className={styles.loginLine} data-n="loginLine" aria-hidden="true" />
+            </a>
+            <a href={SIGNUP_URL} className={styles.cta} data-n="cta">
+              <span className={styles.ctaLabel}>{t('nav.cta', 'Start for free')}</span>
+              <i className={styles.sheen} data-n="sheen" aria-hidden="true" />
+            </a>
+          </div>
+
+          {/* ---------------- mobile: three dots -> X ---------------- */}
+          <button
+            type="button"
+            className={styles.burger}
+            data-n="burger"
+            aria-label={mobileOpen ? t('nav.close', 'Close menu') : t('nav.open', 'Open menu')}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            onClick={() => {
+              setOpenKey(null);
+              setMobileOpen((v) => !v);
+            }}
+          >
+            <span className={styles.dots} aria-hidden="true">
+              <i className={styles.dot} data-n="dot" />
+              <i className={styles.dot} data-n="dot" />
+              <i className={styles.dot} data-n="dot" />
+              <i className={styles.xl} data-n="xl" />
+              <i className={styles.xl} data-n="xl" />
+            </span>
+          </button>
+        </div>
+
+        {/* ---------------- mobile menu card (grows out of the bar) ---------------- */}
+        <div id="mobile-menu" className={styles.drawer} data-n="drawer" data-open={mobileOpen}>
+          <ul className={styles.mList}>
+            {MENUS.map((item) =>
+              item.groups ? (
+                <li key={item.key} className={styles.mItem} data-n="mitem">
+                  <button
+                    type="button"
+                    className={styles.mTrigger}
+                    aria-expanded={openKey === item.key}
+                    aria-controls={`m-${item.key}`}
+                    data-k={item.key}
+                    onClick={() => handleToggle(item.key)}
+                  >
+                    <span>{label(item)}</span>
+                    <FiChevronDown className={styles.mChev} data-n="mchev" aria-hidden="true" />
+                  </button>
+                  <div
+                    id={`m-${item.key}`}
+                    className={styles.mAcc}
+                    data-n="acc"
+                    data-k={item.key}
+                    data-open={openKey === item.key}
+                  >
+                    <div className={styles.mAccInner}>
+                      {item.groups.map((group) => (
+                        <div key={group.key} className={styles.mGroup}>
+                          <h3 className={styles.mGroupTitle}>{groupTitle(item, group)}</h3>
+                          <ul className={styles.mLinks}>
+                            {group.links.map((link) => (
+                              <li key={link.key}>
+                                <Link to={withLng(link.to)} className={styles.mLink} data-n="mlink">
+                                  {linkLabel(item, group, link)}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </li>
               ) : (
-                <li key={item.key} className={styles.item} data-n="item">
+                <li key={item.key} className={styles.mItem} data-n="mitem">
                   <NavLink
                     to={withLng(item.to)}
-                    data-n="trigger"
-                    className={({ isActive }) =>
-                      `${styles.trigger} ${isActive ? styles.active : ''}`
-                    }
+                    className={({ isActive }) => `${styles.mTrigger} ${isActive ? styles.mActive : ''}`}
                   >
-                    <span className={styles.pill} data-n="pill" aria-hidden="true" />
-                    <span className={styles.triggerLabel}>{t(`nav.${item.key}`, item.label)}</span>
+                    <span>{t(`nav.${item.key}`, item.label)}</span>
                   </NavLink>
                 </li>
               )
             )}
           </ul>
 
-          {/* Mobile drawer actions (desktop actions live in the bar) */}
-          <div className={styles.drawerActions} data-n="drawerActions">
-            <a href={LOGIN_URL} className={styles.login} data-n="login">
-              <span className={styles.loginLabel}>{t('nav.login', 'Log in')}</span>
+          <div className={styles.mActions} data-n="mactions">
+            <a href={LOGIN_URL} className={styles.mLogin}>
+              {t('nav.login', 'Log in')}
             </a>
-            <a href={SIGNUP_URL} className={styles.cta} data-n="cta">
-              <span className={styles.sheen} data-n="sheen" aria-hidden="true" />
+            <a href={SIGNUP_URL} className={styles.mCta} data-n="mcta">
               {t('nav.cta', 'Start for free')}
             </a>
-            <Link to={withLng(HELP_PATH)} className={styles.drawerHelp}>
-              <FiHelpCircle aria-hidden="true" />
-              {t('nav.helpLabel', 'Help Center')}
-            </Link>
           </div>
-        </nav>
-
-        <div className={styles.actions} data-n="actions">
-          <Link
-            to={withLng(HELP_PATH)}
-            className={styles.help}
-            data-n="help"
-            aria-label={t('nav.help', 'Help Center')}
-          >
-            <FiHelpCircle aria-hidden="true" />
-          </Link>
-          <a href={LOGIN_URL} className={styles.login} data-n="login">
-            <span className={styles.loginLabel}>{t('nav.login', 'Log in')}</span>
-          </a>
-          <a href={SIGNUP_URL} className={styles.cta} data-n="cta">
-            <span className={styles.sheen} data-n="sheen" aria-hidden="true" />
-            {t('nav.cta', 'Start for free')}
-          </a>
         </div>
-
-        <button
-          type="button"
-          className={styles.burger}
-          data-n="burger"
-          aria-label={mobileOpen ? t('nav.close', 'Close menu') : t('nav.open', 'Open menu')}
-          aria-expanded={mobileOpen}
-          aria-controls="main-nav"
-          onClick={() => {
-            setOpenKey(null);
-            setMobileOpen((v) => !v);
-          }}
-        >
-          <span className={styles.burgerBox} data-n="burgerBox" aria-hidden="true">
-            <span className={styles.burgerLine} data-n="line" />
-            <span className={styles.burgerLine} data-n="line" />
-            <span className={styles.burgerLine} data-n="line" />
-          </span>
-        </button>
       </div>
     </header>
   );

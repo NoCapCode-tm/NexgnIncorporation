@@ -1,792 +1,622 @@
-/* Fonts: DM Sans (links) + MuseoModerno (logo). Must stay the first rule.
-   Tip: load these once with a <link> in public/index.html and delete the @import here and in Footer.module.css. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=MuseoModerno:wght@100..900&display=swap');
+/* =====================================================================
+   Navbar — one component, every page. Fluid from 320px phones to 4K.
+   NO CSS transitions or keyframes: every state change is tweened by GSAP
+   (hooks/useNavbarAnimations.js). What is here are the resting states + the
+   instant fallbacks used when the hook has not run (no-JS) or motion is reduced.
 
-/* Navbar — frosted-glass, responsive from mobile (320px) up to 4K (3840px+).
-   Dark glass on the homepage, light glass everywhere else (data-theme).
-
-   IMPORTANT: the glass (backdrop-filter) lives on .glass (a real element), NOT on .header.
-   backdrop-filter on an ancestor would trap the position:fixed mobile drawer inside the
-   header's box. Likewise the dropdown animates .panelInner (which owns its own
-   backdrop-filter), so the blur never flickers while it fades. */
+   Desktop (>=1024px)  top of page: full-width transparent bar
+                       scrolled:     floating glass pill (GSAP animates width / height / radius)
+   Mobile  (<1024px)   rounded glass bar, 3 dots -> X, the bar grows into the menu card
+   ===================================================================== */
 
 .header {
-  /* sizing (fluid) */
+  /* sizing (fluid) — --nav-h matches what the pages use to clear the bar */
   --nav-h: clamp(3.5rem, 2vw + 2.5rem, 7rem);
-  --bar-h: calc(var(--nav-h) * var(--bar-k, 1));
-  --fs: clamp(0.875rem, 0.3vw + 0.8rem, 2rem);
-  --fs-group: clamp(0.75rem, 0.25vw + 0.7rem, 1.6rem);
+  --bar-h: var(--nav-h);
+  --fs: clamp(0.9rem, 0.32vw + 0.8rem, 2.1rem);
+  --fs-group: clamp(0.72rem, 0.22vw + 0.66rem, 1.5rem);
   --pad-x: clamp(1.25rem, 4vw + 0.5rem, 10rem);
-  --col-w: clamp(10.5rem, 15vw, 24rem);
+  --pill-pad: clamp(1rem, 1.4vw, 3rem);
+  --pill-gap: clamp(0.6rem, 0.9vw, 2rem);
+  --pill-r: clamp(1rem, 1.3vw, 2.5rem);
+  --cw: min(calc(100vw - 2 * var(--pad-x)), max(76vw, 60rem)); /* JS keeps this exact (scrollbar) */
 
-  /* brand */
+  /* brand + glass */
   --red: #ed040f;
   --red-hover: #d1030d;
-
-  /* GSAP animates these two on scroll (see useNavbarAnimations) */
-  --bar-k: 1;
-  --blur: 16px;
-
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  box-sizing: border-box;
-  background: transparent;
-  color: var(--text);
-  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-}
-
-/* ---------- Themes ---------- */
-
-/* ---------- Themes ---------- */
-
-/* Universal Dark Navbar (Solid) */
-.header[data-theme='dark'],
-.header[data-theme='light'] {
   --text: #ffffff;
-  --muted: #a3aab6;
-  --line: rgba(255, 255, 255, 0.1);
-  --hover-bg: rgba(255, 255, 255, 0.09);
-  
-  /* Solid background for the main navbar */
-  --glass: #0d1017; 
-  --glass-scrolled: #0a0c10;
-  
-  --bar-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  --bar-shadow-scrolled: 0 10px 40px -12px rgba(0, 0, 0, 0.5);
-  
-  /* Keep transparent glass values for the dropdown menus */
-  --panel-glass: rgba(10, 12, 16, 0.62);
-  --panel-border: rgba(255, 255, 255, 0.12);
-  --panel-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --scrim: rgba(3, 5, 8, 0.35);
-  --drawer-bg: rgba(10, 12, 16, 0.9);
+  --muted: rgba(255, 255, 255, 0.78);
+  --glass: rgba(13, 16, 23, 0.66);
+  --glass-open: rgba(13, 16, 23, 0.9);
+  --line: rgba(255, 255, 255, 0.12);
+  --panel-glass: rgba(13, 16, 23, 0.82);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* only the bar / panels take clicks */
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: var(--fs);
+  color: var(--text);
 }
 
-/* ---------- Glass layer (bar background) ---------- */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(3, 5, 8, 0.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: auto;
+}
+
+/* ---------- the bar ---------- */
+.bar {
+  position: relative;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--bar-h);
+  margin: 0 auto;
+}
 
 .glass {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
+  border-radius: inherit;
   background: var(--glass);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
-  backdrop-filter: blur(var(--blur)) saturate(180%);
-  border-bottom: 1px solid var(--line);
-  box-shadow: var(--bar-shadow);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  opacity: 0; /* top-of-page: transparent. GSAP fades it in on scroll. */
   pointer-events: none;
 }
 
-/* reading-progress hairline (scaleX is driven by ScrollTrigger) */
+/* reading progress along the bottom edge of the pill */
 .progress {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 1.2em;
+  right: 1.2em;
   bottom: 0;
+  z-index: 1;
   height: 2px;
+  border-radius: 2px;
   background: var(--red);
-  transform: scaleX(0);
   transform-origin: 0 50%;
+  transform: scaleX(0);
+  opacity: 0;
   pointer-events: none;
 }
 
-/* page dim behind an open desktop menu (shown only >=1024px) */
-.scrim {
-  display: none;
-  pointer-events: none;
-}
-
-/* ---------- Bar ---------- */
-
-.bar {
-  height: var(--bar-h);
-  width: 100%;
-  max-width: 2400px;
-  margin: 0 auto;
-  padding: 0 var(--pad-x);
-  box-sizing: border-box;
+.row {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: clamp(0.75rem, 1.6vw, 3rem);
+  width: var(--cw);
+  height: 100%;
 }
 
-/* ---------- Logo ---------- */
-
+/* ---------- logo ---------- */
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
+  flex: none;
+  gap: 0;
   color: var(--red);
   text-decoration: none;
-  font-size: clamp(1.25rem, 0.6vw + 1rem, 3rem);
 }
-
 .logoMark {
-  width: 1.35em;
-  height: 1.35em;
   flex: none;
+  width: calc(var(--bar-h) * 0.46);
+  height: calc(var(--bar-h) * 0.46);
+  min-width: 1.6rem;
+  min-height: 1.6rem;
+  display: block;
 }
-
+.logoWord {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0.15em 0.2em 0.2em 0;
+  margin: -0.15em 0 -0.2em;
+}
 .logoText {
+  display: inline-block;
+  margin-left: 0.55em;
   font-family: 'MuseoModerno', 'DM Sans', sans-serif;
   font-weight: 500;
+  font-size: calc(var(--bar-h) * 0.4);
   letter-spacing: -0.01em;
   line-height: 1;
+  color: var(--red);
 }
 
-/* ---------- Nav (mobile drawer by default) ---------- */
-
+/* ---------- desktop nav ---------- */
 .nav {
-  position: fixed;
-  top: var(--bar-h);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  max-height: calc(100dvh - var(--bar-h));
+  flex: 1 1 auto;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.75rem var(--pad-x) 1.5rem;
-  background: var(--drawer-bg);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  visibility: hidden; /* GSAP reveals it (or the reduced-motion rule at the bottom) */
+  justify-content: center;
+  min-width: 0;
 }
-
 .menu {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.1rem, 0.4vw, 1rem);
 }
-
+.hlWrap {
+  display: contents;
+}
+/* hover highlight that glides between items */
+.hl {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.11);
+  opacity: 0;
+  pointer-events: none;
+}
 .item {
-  border-bottom: 1px solid var(--line);
+  position: static;
 }
-
 .trigger {
   position: relative;
-  isolation: isolate;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  width: 100%;
-  min-height: 3.25rem;
-  padding: 0;
-  background: none;
+  gap: 0.4em;
+  padding: 0.6em 1.05em;
   border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: calc(var(--fs) * 1.15);
   font-weight: 500;
+  white-space: nowrap;
   text-decoration: none;
-  text-align: left;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
-
-.triggerLabel {
-  position: relative;
+.trigger:focus-visible,
+.login:focus-visible,
+.cta:focus-visible,
+.burger:focus-visible,
+.mTrigger:focus-visible,
+.mLink:focus-visible,
+.panelLink:focus-visible,
+.logo:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
 }
-
 .chevron {
   flex: none;
+  width: 1.05em;
+  height: 1.05em;
+}
+.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0.18em;
+  width: 0.34em;
+  height: 0.34em;
+  margin-left: -0.17em;
+  border-radius: 50%;
+  background: var(--red);
 }
 
-/* hover highlight behind the label (desktop only; GSAP drives opacity and scale) */
-.pill {
-  display: none;
+/* ---------- desktop actions ---------- */
+.actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 1.5vw, 2.6rem);
+}
+.login {
+  position: relative;
+  padding: 0.35em 0.1em;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.loginLine {
+  position: absolute;
+  left: 0.1em;
+  right: 0.1em;
+  bottom: 0.05em;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+.cta {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.78em 1.5em;
+  border-radius: 0.55em;
+  background: var(--red);
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.ctaLabel {
+  position: relative;
+  z-index: 1;
+}
+.sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-130%) skewX(-18deg);
   pointer-events: none;
 }
 
-.active {
-  color: var(--red);
-}
-
-/* Panel — mobile: accordion inside the drawer (GSAP tweens .panelClip height) */
+/* ---------- desktop dropdown ---------- */
 .panel {
-  display: block;
+  position: absolute;
+  top: calc(100% + var(--pill-gap));
+  left: calc(var(--pill-pad) * -1);
+  right: calc(var(--pill-pad) * -1);
+  z-index: 5;
   visibility: hidden;
+  opacity: 0;
 }
-
-.panelClip {
-  min-height: 0;
-  overflow: hidden;
+.panel[data-open='true'] {
+  visibility: visible;
+  opacity: 1;
 }
-
+/* hover bridge so the pointer can travel from the trigger to the panel */
+.panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--pill-gap) * -1.5);
+  height: calc(var(--pill-gap) * 1.5);
+}
 .panelInner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.25rem;
-  padding: 0.25rem 0 1.25rem;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.4vw, 5rem);
+  padding: clamp(1.4rem, 2.2vw, 4.5rem) clamp(1.6rem, 2.6vw, 5.5rem);
+  border-radius: var(--pill-r);
+  background: var(--panel-glass);
+  border: 1px solid var(--line);
+  box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
 }
-
 .group {
   min-width: 0;
 }
-
 .groupTitle {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.85em;
+  padding-bottom: 0.7em;
+  border-bottom: 1px solid var(--line);
   font-size: var(--fs-group);
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.55);
 }
-
 .groupList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
 }
-
 .panelLink {
   display: block;
-  padding: 0.5rem 0;
+  padding: 0.5em 0;
   color: var(--muted);
-  font-size: var(--fs);
   line-height: 1.35;
   text-decoration: none;
 }
 
-.panelLink:focus-visible {
-  color: var(--text);
-}
-
-/* Drawer buttons (shown <1024px) */
-.drawerActions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 1.5rem;
-}
-
-/* Desktop actions are hidden on mobile */
-.actions {
-  display: none;
-}
-
-/* ---------- Buttons ---------- */
-
-.login {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3rem;
-  color: var(--text);
-  font-size: calc(var(--fs) * 1.05);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* underline that draws in from the left */
-.loginLabel {
-  padding-bottom: 2px;
-  --u: 0%; /* GSAP animates this on hover */
-  background: linear-gradient(currentColor, currentColor) left bottom / var(--u) 1.5px no-repeat;
-}
-
-.login:focus-visible .loginLabel {
-  --u: 100%;
-}
-
-.cta {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3rem;
-  padding: 0 1.4em;
-  background: var(--red);
-  color: #fff;
-  border-radius: 0.5em;
-  font-size: calc(var(--fs) * 1.05);
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(237, 4, 15, 0);
-}
-
-/* soft light sweep across the button on hover (GSAP moves it) */
-.sheen {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    110deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 70%
-  );
-  transform: translateX(-120%);
-  pointer-events: none;
-}
-
-.cta:focus-visible {
-  background: var(--red-hover);
-}
-
-/* ---------- Burger (animated hamburger -> X) ---------- */
-
+/* ---------- mobile burger: three dots <-> X ---------- */
 .burger {
-  display: inline-flex;
+  display: none;
+  flex: none;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  background: none;
+  width: 2.9rem;
+  height: 2.9rem;
+  margin-right: -0.4rem;
+  padding: 0;
   border: 0;
-  border-radius: 0.6rem;
-  color: var(--text);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-
-.burgerBox {
+.dots {
   position: relative;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+}
+.dot {
   display: block;
-  width: 1.4rem;
-  height: 1rem;
-}
-
-.burgerLine {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  border-radius: 2px;
-  background: currentColor;
-}
-
-.burgerLine:nth-child(1) {
-  top: 0;
-}
-
-.burgerLine:nth-child(2) {
-  top: calc(50% - 1px);
-}
-
-.burgerLine:nth-child(3) {
-  top: calc(100% - 2px);
-}
-
-/* ---------- Spec additions: footer strip, landing row, external links, help ---------- */
-
-/* full-width row at the bottom of a mega menu (Product > Explore strip, landing link) */
-.strip,
-.landing {
-  grid-column: 1 / -1;
-  padding-top: 1rem;
-  border-top: 1px solid var(--panel-border);
-}
-
-.strip .groupList {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.75rem;
-}
-
-.landingLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  color: var(--text);
-  font-size: var(--fs);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.landingLink:hover {
-  color: var(--red);
-}
-
-/* arrow after links that open another site */
-.external {
-  width: 0.9em;
-  height: 0.9em;
-  margin-left: 0.3em;
-  vertical-align: -0.12em;
-  opacity: 0.7;
-}
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* help icon (desktop bar) */
-.help {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  flex: none;
   border-radius: 50%;
-  color: var(--muted);
-  font-size: calc(var(--fs) * 1.35);
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
+  background: #fff;
+}
+.dot:nth-child(1) {
+  width: 0.34rem;
+  height: 0.34rem;
+  align-self: flex-start;
+  margin-top: 0.42rem;
+}
+.dot:nth-child(2) {
+  width: 0.46rem;
+  height: 0.46rem;
+  align-self: flex-end;
+  margin-bottom: 0.4rem;
+}
+.dot:nth-child(3) {
+  width: 0.56rem;
+  height: 0.56rem;
+}
+.xl {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.2rem;
+  height: 2px;
+  margin: -1px 0 0 -0.6rem;
+  border-radius: 2px;
+  background: #fff;
+  transform: rotate(45deg) scaleX(0);
+}
+.xl:nth-of-type(5) {
+  transform: rotate(-45deg) scaleX(0);
 }
 
-/* help row at the end of the mobile drawer */
-.drawerHelp {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  min-height: 3rem;
-  color: var(--muted);
-  font-size: calc(var(--fs) * 1.05);
-  font-weight: 600;
-  text-decoration: none;
+/* ---------- mobile menu card ---------- */
+.drawer {
+  display: none;
 }
 
-.drawerHelp:hover {
-  color: var(--text);
+/* =====================================================================
+   Desktop vs mobile
+   ===================================================================== */
+@media (max-width: 1023.98px) {
+  .header {
+    --m: clamp(0.75rem, 3.6vw, 1.25rem);
+    --bar-h: 4rem;
+    padding: var(--m);
+    box-sizing: border-box;
+  }
+
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: auto;
+    min-height: var(--bar-h);
+    border-radius: 1.1rem;
+    overflow: hidden;
+  }
+  .glass {
+    opacity: 1;
+    background: var(--glass);
+  }
+  .progress {
+    display: none;
+  }
+
+  .row {
+    flex: none;
+    width: 100%;
+    height: var(--bar-h);
+    padding: 0 1.15rem;
+    box-sizing: border-box;
+  }
+  .logoMark {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+  .logoText {
+    font-size: 1.7rem;
+  }
+
+  .nav,
+  .actions,
+  .panel {
+    display: none;
+  }
+  .burger {
+    display: inline-flex;
+  }
+
+  .drawer {
+    position: relative;
+    z-index: 2;
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    max-height: calc(100dvh - 2 * var(--m) - var(--bar-h));
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .drawer[data-open='true'] {
+    height: auto;
+    visibility: visible;
+    overflow-y: auto;
+  }
+
+  .mList {
+    list-style: none;
+    margin: 0;
+    padding: 0.2rem 1.15rem 0;
+  }
+  .mItem {
+    border: 0;
+  }
+  .mTrigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.05rem 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mActive {
+    color: #fff;
+  }
+  .mActive span::after {
+    content: '';
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-left: 0.6rem;
+    border-radius: 50%;
+    background: var(--red);
+    vertical-align: middle;
+  }
+  .mChev {
+    flex: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .mAcc {
+    overflow: hidden;
+  }
+  .mAcc[data-open='false'] {
+    height: 0;
+    visibility: hidden;
+  }
+  .mAccInner {
+    display: grid;
+    gap: 1.1rem;
+    padding: 0.1rem 0 1.1rem 0.9rem;
+    border-left: 2px solid rgba(237, 4, 15, 0.7);
+    margin-left: 0.1rem;
+  }
+  .mGroupTitle {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .mLinks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mLink {
+    display: block;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.98rem;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .mActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.6rem 1.15rem 1.35rem;
+  }
+  .mLogin {
+    color: #fff;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.6rem 0.2rem;
+  }
+  .mCta {
+    flex: none;
+    padding: 0.85rem 1.6rem;
+    border-radius: 0.6rem;
+    background: var(--red);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
 }
-
-/* ---------- Focus ---------- */
-
-.logo:focus-visible,
-.trigger:focus-visible,
-.panelLink:focus-visible,
-.login:focus-visible,
-.cta:focus-visible,
-.burger:focus-visible,
-.help:focus-visible,
-.drawerHelp:focus-visible,
-.landingLink:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 3px;
-  border-radius: 6px;
-}
-
-/* ---------- Desktop (≥1024px): inline nav + hover mega-menu ---------- */
 
 @media (min-width: 1024px) {
   .bar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    /* GSAP animates width / height / margin / radius between the two states */
+    border-radius: 0;
   }
-
-  .burger,
-  .drawerActions {
+  .drawer,
+  .burger {
     display: none;
   }
-
-  .nav {
-    position: static;
-    inset: auto;
-    max-height: none;
-    display: block;
-    padding: 0;
-    background: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    overflow: visible;
-    visibility: visible;
-  }
-
-  .menu {
-    flex-direction: row;
-    align-items: center;
-    gap: clamp(0.25rem, 0.8vw, 1.5rem);
-  }
-
-  .item {
-    border: 0;
-    /* NOT position: relative — the panel anchors to the sticky header instead */
-  }
-
-  .trigger {
-    width: auto;
-    min-height: var(--bar-h);
-    padding: 0 0.8em;
-    gap: 0.4em;
-    font-size: var(--fs);
-  }
-
-  /* hover pill: GSAP fades + scales it in behind the label */
-  .pill {
-    display: block;
-    position: absolute;
-    inset: 22% 0;
-    z-index: -1;
-    border-radius: 0.7em;
-    background: var(--hover-bg);
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  /* current-section marker: small red dot under the label */
-  .active::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: calc(var(--bar-h) * 0.14);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--red);
-    translate: -50% 0;
-  }
-
-  .active {
-    color: var(--text);
-  }
-
-  .actions {
-    display: flex;
-    align-items: center;
-    justify-self: end;
-    gap: clamp(1rem, 1.6vw, 3rem);
-  }
-
-  .login,
-  .cta {
-    font-size: var(--fs);
-  }
-
-  .cta {
-    min-height: clamp(2.5rem, 1.2vw + 1.8rem, 4.5rem);
-  }
-
-  /* soft page dim behind an open menu (GSAP tweens its opacity) */
-  .scrim {
-    display: block;
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background: var(--scrim);
-    opacity: 0;
-  }
-
-  /* Mega-menu panel wrapper: positioning only. GSAP toggles its visibility and animates
-     .panelInner (which owns the backdrop blur, so the blur never flickers). */
-  .panel {
-    --panel-pad: clamp(1.25rem, 1.8vw, 3.5rem);
-    display: block;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    z-index: 2;
-    translate: -50% 0;
-    width: min(
-      calc(var(--cols) * var(--col-w) + 2 * var(--panel-pad)),
-      calc(100vw - 2 * var(--pad-x))
-    );
-    margin-top: clamp(0.35rem, 0.5vw, 1rem);
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  /* invisible bridge so the pointer can travel from the trigger to the panel */
-  .panel::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 100%;
-    height: clamp(0.5rem, 0.8vw, 1.5rem);
-  }
-
-  .panelClip {
-    overflow: visible;
-  }
-
-  /* the frosted dropdown card */
-  .panelInner {
-    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-    gap: clamp(1.25rem, 2vw, 3.5rem);
-    padding: var(--panel-pad);
-    background: var(--panel-glass);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid var(--panel-border);
-    border-radius: clamp(1rem, 1.4vw, 2.5rem);
-    box-shadow: var(--panel-shadow);
-    transform-origin: 50% 0;
-  }
-
-  .groupTitle {
-    margin-bottom: clamp(0.75rem, 1vw, 1.75rem);
-    line-height: 1.3;
-  }
-
-  .groupList {
-    gap: clamp(0.5rem, 0.7vw, 1.25rem);
-  }
-
-  .panelLink {
-    padding: 0;
-  }
 }
 
-/* ---------- Tablet / large-phone polish for the drawer ---------- */
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  .panelInner {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .drawerActions {
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1.25rem;
-  }
-}
-
-/* ---------- Large screens: keep content aligned with the Footer ---------- */
-
-@media (min-width: 1920px) {
-  .bar {
-    max-width: 1920px;
-  }
-}
-
+/* very large screens: the bar keeps proportion */
 @media (min-width: 2560px) {
-  .bar {
-    max-width: 2400px;
+  .header {
+    --fs: clamp(1.4rem, 0.9vw, 2.4rem);
   }
 }
 
-@media (min-width: 3200px) {
-  .bar {
-    max-width: 3200px;
+/* ---------- reduced motion: no tweens run, hovers get instant CSS fallbacks ---------- */
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .trigger:hover {
+    background: rgba(255, 255, 255, 0.11);
   }
-}
-
-/* ---------- Fallbacks & accessibility ---------- */
-
-/* Browsers without backdrop-filter, or users who asked for less transparency: near-solid bars */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .header[data-theme='dark'] {
-    --glass: rgba(14, 16, 21, 0.96);
-    --glass-scrolled: rgba(14, 16, 21, 0.98);
-    --panel-glass: rgba(10, 12, 16, 0.98);
-    --drawer-bg: rgba(10, 12, 16, 0.99);
-  }
-
-  .header[data-theme='light'] {
-    --glass: rgba(250, 250, 250, 0.96);
-    --glass-scrolled: rgba(250, 250, 250, 0.98);
-    --panel-glass: rgba(255, 255, 255, 0.99);
-    --drawer-bg: rgba(250, 250, 250, 0.99);
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .header[data-theme='dark'] {
-    --glass: #0e1015;
-    --glass-scrolled: #0e1015;
-    --panel-glass: #0a0c10;
-    --drawer-bg: #0a0c10;
-  }
-
-  .header[data-theme='light'] {
-    --glass: #fafafa;
-    --glass-scrolled: #fafafa;
-    --panel-glass: #ffffff;
-    --drawer-bg: #fafafa;
-  }
-
-  .glass,
-  .panelInner,
-  .nav {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
-
-/* Reduced motion: GSAP is switched off, so every state change is instant and driven by
-   plain attributes (data-open, aria-expanded, :hover). Nothing slides, fades or sweeps. */
-@media (prefers-reduced-motion: reduce) {
-  .nav[data-open='true'] {
-    visibility: visible;
-  }
-
-  .panel {
-    display: none;
-  }
-
-  .panel[data-open='true'] {
-    display: block;
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .trigger[aria-expanded='true'] .chevron {
-    transform: rotate(180deg);
-  }
-
-  .panelLink:hover {
-    color: var(--text);
-  }
-
-  .login:hover .loginLabel {
-    --u: 100%;
-  }
-
   .cta:hover {
     background: var(--red-hover);
   }
-
-  .burger:hover {
-    background: var(--hover-bg);
+  .login:hover .loginLine {
+    transform: scaleX(1);
   }
-
-  .help:hover {
-    color: var(--text);
-    background: var(--hover-bg);
-  }
-
-  .burger[aria-expanded='true'] .burgerLine:nth-child(1) {
-    top: calc(50% - 1px);
-    transform: rotate(45deg);
-  }
-
-  .burger[aria-expanded='true'] .burgerLine:nth-child(2) {
-    opacity: 0;
-  }
-
-  .burger[aria-expanded='true'] .burgerLine:nth-child(3) {
-    top: calc(50% - 1px);
-    transform: rotate(-45deg);
-  }
-
-  .header[data-mobile-open='true'] .glass {
-    background: var(--glass-scrolled);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
-  .trigger:hover .pill,
-  .trigger:focus-visible .pill,
-  .trigger[aria-expanded='true'] .pill {
-    opacity: 1;
-    transform: none;
-  }
-
-  .header[data-menu-open='true'] .scrim {
-    opacity: 1;
+  .panelLink:hover {
+    color: #fff;
   }
 }
