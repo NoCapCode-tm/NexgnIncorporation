@@ -185,8 +185,8 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  margin-top: calc(var(--nav-h) * -1);
-  padding: calc(var(--nav-h) + clamp(1rem, 2vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
+  margin-top: 0; /* the Navbar is position: fixed, so it takes no space in the page flow */
+  padding: calc(var(--nav-h) + clamp(1.75rem, 2.4vw, 4rem)) var(--pad-x) clamp(1.5rem, 3vw, 6rem);
   background: #2a2420;
   color: var(--on-dark);
   text-align: center;
@@ -749,4 +749,15 @@
   .submit {
     width: 100%;
   }
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
