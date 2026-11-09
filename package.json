@@ -8,7 +8,7 @@
     "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "rsbuild build",
     "preview": "rsbuild preview",
-    "postbuild": "cp dist/index.html dist/404.html",
+    "postbuild": "node scripts/prerender-shells.mjs",
     "format": "prettier --write src/"
   },
   "keywords": [
