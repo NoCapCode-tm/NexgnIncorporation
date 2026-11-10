@@ -127,11 +127,14 @@ const getDynamicSolutionRoutes = () => {
 
   if (fs.existsSync(jsonPath)) {
     try {
-      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-      if (Array.isArray(data)) {
-        data.forEach((item) => item?.slug && slugs.add(item.slug));
-      } else if (data && typeof data === 'object') {
-        Object.keys(data).forEach((key) => slugs.add(key));
+      const raw = fs.readFileSync(jsonPath, 'utf-8').trim();
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data)) {
+          data.forEach((item) => item?.slug && slugs.add(item.slug));
+        } else if (data && typeof data === 'object') {
+          Object.keys(data).forEach((key) => slugs.add(key));
+        }
       }
     } catch (err) {
       console.warn('⚠️ Could not parse solutionsData.json, using default solution slugs.', err.message);
@@ -155,7 +158,7 @@ const getAlternativeRoutes = () =>
     file: 'src/pages/solutions/AlternativeCompare.jsx',
   }));
 
-const BLOG_SLUGS = [
+const DEFAULT_BLOG_SLUGS = [
   'building-trust-at-scale',
   'shift-to-aes-256',
   'navigating-it-act-2000',
@@ -163,14 +166,55 @@ const BLOG_SLUGS = [
   'webhooks-vs-polling',
   'sustainable-code-reductions',
   'automating-legal-reviews',
+  'press-1',
+  'press-2',
+  'press-3',
 ];
-const getBlogRoutes = () =>
-  BLOG_SLUGS.map((slug) => ({
-    path: `/blog/${slug}`,
-    priority: '0.7',
-    changefreq: 'monthly',
-    file: 'src/pages/company/Blog.jsx',
-  }));
+
+const getBlogRoutes = () => {
+  const jsonPath = path.resolve(ROOT_DIR, 'src/pages/company/blogsData.json');
+  const entries = new Map();
+
+  // Seed default blog & press slugs
+  DEFAULT_BLOG_SLUGS.forEach((slug) => {
+    entries.set(slug, {
+      path: `/blog/${slug}`,
+      priority: slug === 'building-trust-at-scale' ? '0.8' : '0.7',
+      changefreq: 'monthly',
+      file: 'src/pages/company/blogsData.json',
+      lastmod: null,
+    });
+  });
+
+  // Dynamically read articles and pressReleases from blogsData.json
+  if (fs.existsSync(jsonPath)) {
+    try {
+      const raw = fs.readFileSync(jsonPath, 'utf-8').trim();
+      if (raw) {
+        const data = JSON.parse(raw);
+        const allItems = [...(data.articles || []), ...(data.pressReleases || [])];
+
+        allItems.forEach((item) => {
+          if (!item?.slug) return;
+          const validIso =
+            item.isoDate && /^\d{4}-\d{2}-\d{2}$/.test(item.isoDate) ? item.isoDate : null;
+
+          entries.set(item.slug, {
+            path: `/blog/${item.slug}`,
+            priority: item.featured ? '0.8' : '0.7',
+            changefreq: 'monthly',
+            file: 'src/pages/company/blogsData.json',
+            lastmod: validIso,
+          });
+        });
+      }
+    } catch (err) {
+      console.warn('⚠️ Could not parse blogsData.json, using default blog slugs.', err.message);
+    }
+  }
+
+  return Array.from(entries.values());
+};
 
 /* =====================================================================
    3. AEO / GEO STATIC KNOWLEDGE BASE FILES (Non-localized root assets)
@@ -239,7 +283,7 @@ const generateSitemap = () => {
 
   // 1. Render localized app routes with full bidirectional hreflang + x-default
   localizedRoutes.forEach((route) => {
-    const lastmod = getLastMod(route.file);
+    const lastmod = route.lastmod || getLastMod(route.file);
     const xDefaultUrl = `${BASE_URL}/${DEFAULT_LOCALE}${route.path}`;
 
     LOCALES.forEach((locale) => {

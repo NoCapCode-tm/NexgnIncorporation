@@ -1,0 +1,393 @@
+{
+  "categories": [
+    "View All",
+    "Engineering",
+    "Design",
+    "Security",
+    "Workflows",
+    "Legal & Compliance",
+    "Sustainability"
+  ],
+  "team": [
+    {
+      "id": "odin",
+      "name": "Odin O.",
+      "role": "Founder, Product Lead & Chief Executive Officer (CEO)",
+      "shortRole": "Founder & CEO",
+      "img": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80"
+    },
+    {
+      "id": "noar",
+      "name": "Noar Z.",
+      "role": "Chief Technology Officer (CTO) | Vice President, Engineering",
+      "shortRole": "CTO & VP Engineering",
+      "img": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+    },
+    {
+      "id": "robert",
+      "name": "Robert Y.",
+      "role": "Chief Design Officer (CDO) | Head of Design",
+      "shortRole": "Chief Design Officer",
+      "img": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80"
+    },
+    {
+      "id": "nia",
+      "name": "Nia P.",
+      "role": "Chief Strategy & Sustainability Officer | Strategy & Innovation Lead",
+      "shortRole": "Chief Sustainability Officer",
+      "img": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80"
+    }
+  ],
+  "articles": [
+    {
+      "id": "feat-1",
+      "slug": "building-trust-at-scale",
+      "featured": true,
+      "typeLabel": "Blog",
+      "title": "Building Trust at Scale: The Architecture Behind Secure Document Signing",
+      "excerpt": "Building trust at scale requires more than just digital signatures. It is an evolving process to reduce friction while ensuring document integrity and standardizing legal frameworks. Discover how getting the architecture right is critical.",
+      "author": "Odin O.",
+      "authorRole": "Founder & CEO",
+      "authorAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+      "date": "24 Oct 2026",
+      "isoDate": "2026-10-24",
+      "relativeDate": "5d ago",
+      "readTime": "5 min read",
+      "category": "Engineering",
+      "image": "https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      "intro": [
+        "Building trust at scale in an era of distributed teams requires more than just slapping a bitmap image onto a PDF. When we started engineering Nexgn, we saw a fundamental flaw across legacy agreement platforms: they forced companies to choose between strict cryptographic security, developer agility, and predictable pricing. Every time a startup or enterprise scaled its agreement volume, they were punished with surprise 'envelope taxes' and clunky, multi-page account sign-ups that slowed down deals.",
+        "Our mission with Nexgn was simple—build a zero-friction agreement engine where cryptographic non-repudiation, instant mobile execution, and bring-your-own-cloud sovereignty work together out of the box."
+      ],
+      "sections": [
+        {
+          "id": "why-we-built-nexgn",
+          "tocLabel": "Why We Built Nexgn: Ending the Envelope Tax",
+          "heading": "Why We Built Nexgn: Ending the Envelope Tax",
+          "paragraphs": [
+            "Traditional eSignature platforms were architected two decades ago around rigid per-envelope quotas. If an HR department onboarded fifty new hires or a sales team closed a record quarter, their platform penalized that growth with steep overage fees. At Nexgn, we decoupled document security from artificial volume throttling, introducing flat-rate unlimited business workflows so teams can scale from ten to ten thousand agreements with 100% predictable cost.",
+            "At the same time, we eliminated signer friction completely. Recipients never need to create a Nexgn account, remember a password, or install a mobile app—they simply open a secure link, review the AI-generated executive summary, and sign from any device in seconds."
+          ]
+        },
+        {
+          "id": "cryptographic-non-repudiation",
+          "tocLabel": "Cryptographic Non-Repudiation & SHA-256 Sealing",
+          "heading": "Cryptographic Non-Repudiation & SHA-256 Sealing",
+          "paragraphs": [
+            "Speed means nothing if a contract cannot stand up in court. Every agreement executed on Nexgn is sealed with a cryptographic SHA-256 hash and encrypted at rest using AES-256-GCM. If even a single byte or pixel of a signed PDF is modified after completion, the cryptographic seal invalidates immediately, giving legal and compliance teams mathematical proof of document integrity."
+          ]
+        },
+        {
+          "id": "global-compliance-byos",
+          "tocLabel": "Global Legal Compliance & Bring Your Own Storage",
+          "heading": "Global Legal Compliance & Bring Your Own Storage",
+          "paragraphs": [
+            "From Section 65B of the Indian Evidence Act and the IT Act 2000 to the US ESIGN Act, UETA, and European eIDAS regulations, Nexgn embeds forensic telemetry—including UTC timestamps, IPv4/IPv6 network routing, TOTP verification, and browser fingerprints—directly into every completion certificate. Combined with our Bring Your Own Storage (BYOS) synchronization with Google Drive, your signed agreements always live in storage you control."
+          ]
+        },
+        {
+          "id": "intelligent-workflows",
+          "tocLabel": "The Future: Intelligent & Sustainable Workflows",
+          "heading": "The Future: Intelligent & Sustainable Workflows",
+          "paragraphs": [
+            "With zero-retention Nexgn AI summaries, drag-and-drop template coordinates, and HMAC-secured real-time webhooks, we are building the modern agreement layer for high-velocity teams worldwide—where every digital signature leaves a smaller environmental footprint and a stronger evidentiary trail."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-1",
+      "slug": "shift-to-aes-256",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Zero-Trust Envelopes: Inside Our AES-256 & SHA-256 Security Pipeline",
+      "excerpt": "Building trust at scale requires more than just digital signatures. Discover how getting the cryptographic architecture right protects every byte.",
+      "author": "Odin O.",
+      "authorRole": "Security & Process Lead",
+      "authorAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+      "date": "24 Oct 2026",
+      "isoDate": "2026-10-24",
+      "readTime": "5 min read",
+      "category": "Security",
+      "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "When sensitive agreements cross organizational boundaries, transport encryption alone is never enough. Every document processed through Nexgn passes through a multi-stage cryptographic pipeline designed to guarantee both confidentiality and tamper-evidence.",
+        "Here is how our security engineering team architected zero-trust envelope handling from the ground up."
+      ],
+      "sections": [
+        {
+          "id": "encryption-at-rest",
+          "tocLabel": "Block-Level AES-256-GCM Encryption",
+          "heading": "Block-Level AES-256-GCM Encryption",
+          "paragraphs": [
+            "All PDF binaries, signature strokes, and audit metadata are encrypted at rest using AES-256-GCM and transmitted exclusively over TLS 1.3 with Perfect Forward Secrecy. Even before a document reaches your connected Google Drive, its payload is isolated inside ephemeral memory buffers.",
+            "By combining TOTP two-factor authentication (RFC 6238) with granular role-based access control, workspace administrators maintain complete authority over who can prepare, route, or void an envelope."
+          ]
+        },
+        {
+          "id": "tamper-evident-sealing",
+          "tocLabel": "Tamper-Evident SHA-256 Digital Seals",
+          "heading": "Tamper-Evident SHA-256 Digital Seals",
+          "paragraphs": [
+            "Upon final signature execution, Nexgn computes a deterministic SHA-256 checksum across the flattened PDF and its forensic audit certificate. Any subsequent alteration to the file immediately breaks the hash match during verification."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-2",
+      "slug": "navigating-it-act-2000",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Navigating the Indian IT Act 2000 & Global eSignature Laws for SaaS",
+      "excerpt": "A comprehensive breakdown of Section 65B, US ESIGN, and EU eIDAS—and how to ensure your digital signatures are court-admissible worldwide.",
+      "author": "Odin O.",
+      "authorRole": "Founder & CEO",
+      "authorAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+      "date": "18 Oct 2026",
+      "isoDate": "2026-10-18",
+      "readTime": "6 min read",
+      "category": "Legal & Compliance",
+      "image": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "Cross-border agreements demand an evidentiary trail that satisfies multiple legal jurisdictions simultaneously. Whether your counterparty is signing in Bengaluru, San Francisco, or Berlin, the validity of an electronic signature rests on intent, consent, and verifiable attribution."
+      ],
+      "sections": [
+        {
+          "id": "it-act-section-65b",
+          "tocLabel": "IT Act 2000 & Section 65B Admissibility",
+          "heading": "IT Act 2000 & Section 65B Admissibility",
+          "paragraphs": [
+            "Under Sections 5 and 10A of India’s Information Technology Act, 2000, contracts formed electronically carry full legal recognition. To satisfy Section 65B of the Indian Evidence Act, Nexgn automatically records immutable UTC timestamps, IPv4/IPv6 addresses, and browser User-Agent strings inside every Audit Certificate."
+          ]
+        },
+        {
+          "id": "esign-ueta-eidas",
+          "tocLabel": "Aligning with US ESIGN, UETA & EU eIDAS",
+          "heading": "Aligning with US ESIGN, UETA & EU eIDAS",
+          "paragraphs": [
+            "Before any signature is applied, Nexgn captures explicit affirmative consent to conduct business electronically—fulfilling US ESIGN Act and UETA mandates as well as EU eIDAS Article 25 requirements for Standard Electronic Signatures."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-3",
+      "slug": "designing-frictionless-workflows",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Designing Frictionless Signing Workflows for Enterprise HR & Sales",
+      "excerpt": "How optimizing the mobile signing flow and eliminating account walls increases completion speed by 60%.",
+      "author": "Robert Y.",
+      "authorRole": "Chief Design Officer",
+      "authorAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
+      "date": "12 Oct 2026",
+      "isoDate": "2026-10-12",
+      "readTime": "4 min read",
+      "category": "Design",
+      "image": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "Every extra click in a signing flow costs conversion. When we studied why agreements stall in enterprise HR and sales pipelines, the culprit was almost always forced account creation and clumsy mobile PDF zooming."
+      ],
+      "sections": [
+        {
+          "id": "zero-account-signing",
+          "tocLabel": "Zero-Account Guest Execution",
+          "heading": "Zero-Account Guest Execution",
+          "paragraphs": [
+            "We designed Nexgn so signers can open an agreement link on any smartphone, step directly to their assigned fields, and sign with a natural touch gesture or curated calligraphic typeface—with zero login walls."
+          ]
+        },
+        {
+          "id": "pixel-perfect-coordinates",
+          "tocLabel": "Pixel-Perfect Responsive Coordinates",
+          "heading": "Pixel-Perfect Responsive Coordinates",
+          "paragraphs": [
+            "By anchoring every text, date, radio, and signature widget relative to the PDF page geometry, documents look identical whether prepared on a 4K studio display or signed on a compact mobile screen."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-4",
+      "slug": "webhooks-vs-polling",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Webhooks vs Polling: Building Real-Time Agreement Integrations",
+      "excerpt": "Architectural patterns for syncing document statuses between Nexgn and your internal CRMs using HMAC-SHA256 webhooks.",
+      "author": "Noar Z.",
+      "authorRole": "CTO & VP Engineering",
+      "authorAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+      "date": "05 Oct 2026",
+      "isoDate": "2026-10-05",
+      "readTime": "5 min read",
+      "category": "Engineering",
+      "image": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "Polling an API every minute to check if a contract has been signed wastes compute, hits rate limits, and delays downstream provisioning. Event-driven webhooks turn agreement completion into an instant trigger."
+      ],
+      "sections": [
+        {
+          "id": "event-driven-webhooks",
+          "tocLabel": "Sub-Second Event Dispatch",
+          "heading": "Sub-Second Event Dispatch",
+          "paragraphs": [
+            "The moment a recipient views, signs, or completes an envelope, Nexgn dispatches a structured JSON payload to your configured webhook endpoint—allowing your backend to unlock onboarding or trigger invoicing in real time."
+          ]
+        },
+        {
+          "id": "hmac-verification",
+          "tocLabel": "Verifying Payloads with HMAC-SHA256",
+          "heading": "Verifying Payloads with HMAC-SHA256",
+          "paragraphs": [
+            "Every webhook request includes a cryptographic signature header computed with your endpoint secret, ensuring your servers only process authentic events originating from Nexgn."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-5",
+      "slug": "sustainable-code-reductions",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Sustainable Code: Reducing Paper Waste and Data Center Emissions",
+      "excerpt": "We measure everything from Node process memory to payload compression so every digital agreement leaves a smaller footprint.",
+      "author": "Nia P.",
+      "authorRole": "Chief Sustainability Officer",
+      "authorAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
+      "date": "28 Sep 2026",
+      "isoDate": "2026-09-28",
+      "readTime": "4 min read",
+      "category": "Sustainability",
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "Transitioning from physical paper and air-freighted couriers to digital agreements saves millions of sheets of paper and gallons of water—but true sustainability also requires efficient cloud engineering."
+      ],
+      "sections": [
+        {
+          "id": "green-cloud-engineering",
+          "tocLabel": "Lean Bundles & Ephemeral Compute",
+          "heading": "Lean Bundles & Ephemeral Compute",
+          "paragraphs": [
+            "By building on React 19 and Rsbuild with aggressive asset compression and zero-retention ephemeral workers, Nexgn minimizes redundant data duplication and lowers per-envelope compute energy across our infrastructure."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "post-6",
+      "slug": "automating-legal-reviews",
+      "featured": false,
+      "typeLabel": "Blog",
+      "title": "Automating Legal Reviews with Zero-Retention AI Models",
+      "excerpt": "How to safely integrate LLMs into contract summarization and clause review without compromising enterprise data borders.",
+      "author": "Noar Z.",
+      "authorRole": "CTO & VP Engineering",
+      "authorAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+      "date": "14 Sep 2026",
+      "isoDate": "2026-09-14",
+      "readTime": "5 min read",
+      "category": "Workflows",
+      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "intro": [
+        "Signers routinely face contract fatigue when confronted with dense, 40-page agreements. Nexgn AI bridges the gap between speed and informed consent without ever training public models on customer data."
+      ],
+      "sections": [
+        {
+          "id": "ai-agreement-summary",
+          "tocLabel": "Plain-Language Executive Summaries",
+          "heading": "Plain-Language Executive Summaries",
+          "paragraphs": [
+            "Before a signer applies their signature, Nexgn AI distills key obligations, renewal dates, and liability clauses into a clear summary—while strictly enforcing zero data retention across isolated inference containers."
+          ]
+        }
+      ]
+    }
+  ],
+  "pressReleases": [
+    {
+      "id": "press-1",
+      "slug": "press-1",
+      "typeLabel": "Press Release",
+      "title": "Nexgn Announces $10M Series A Funding to Scale AI Agreement Workflows",
+      "excerpt": "Nexgn secures Series A backing to expand its zero-trust eSignature infrastructure and zero-retention AI contract intelligence globally.",
+      "author": "Odin O.",
+      "authorRole": "Founder & CEO",
+      "authorAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+      "date": "November 1, 2026",
+      "isoDate": "2026-11-01",
+      "readTime": "3 min read",
+      "category": "Press Release",
+      "image": "https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=1200&q=80",
+      "intro": [
+        "Nexgn today announced $10M in Series A funding to accelerate the global rollout of its zero-trust electronic signature and intelligent contract lifecycle platform."
+      ],
+      "sections": [
+        {
+          "id": "expanding-global-infrastructure",
+          "tocLabel": "Expanding Zero-Trust Infrastructure",
+          "heading": "Expanding Zero-Trust Infrastructure",
+          "paragraphs": [
+            "The new capital will scale Nexgn’s high-burst REST API, expand regional compliance tooling across India, the US, and the European Union, and deepen native AI contract workflows."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "press-2",
+      "slug": "press-2",
+      "typeLabel": "Press Release",
+      "title": "Nexgn Public Beta Launched Globally with Unlimited Business Envelopes",
+      "excerpt": "Modern businesses can now send, sign, and automate legally binding documents without punitive per-envelope overage taxes.",
+      "author": "Odin O.",
+      "authorRole": "Founder & CEO",
+      "authorAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+      "date": "September 20, 2026",
+      "isoDate": "2026-09-20",
+      "readTime": "3 min read",
+      "category": "Press Release",
+      "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80",
+      "intro": [
+        "On September 20, 2026, Nexgn officially launched its public beta worldwide, introducing flat-rate unlimited envelopes and frictionless guest signing."
+      ],
+      "sections": [
+        {
+          "id": "public-beta-highlights",
+          "tocLabel": "Public Beta Highlights",
+          "heading": "Public Beta Highlights",
+          "paragraphs": [
+            "Organizations of all sizes can now prepare templates, route multi-signer agreements, and automatically sync completed PDFs + SHA-256 audit certificates directly to Google Drive."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "press-3",
+      "slug": "press-3",
+      "typeLabel": "Press Release",
+      "title": "Nexgn Introduces Zero-Trust SHA-256 & TOTP Security Updates",
+      "excerpt": "Enhanced cryptographic sealing and RFC 6238 two-factor authentication set a new benchmark for court-admissible digital agreements.",
+      "author": "Noar Z.",
+      "authorRole": "CTO & VP Engineering",
+      "authorAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+      "date": "August 14, 2026",
+      "isoDate": "2026-08-14",
+      "readTime": "3 min read",
+      "category": "Press Release",
+      "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&q=80",
+      "intro": [
+        "Nexgn has rolled out mandatory SHA-256 tamper-evident sealing and workspace-wide TOTP two-factor authentication across all plans."
+      ],
+      "sections": [
+        {
+          "id": "court-admissible-telemetry",
+          "tocLabel": "Court-Admissible Telemetry",
+          "heading": "Court-Admissible Telemetry",
+          "paragraphs": [
+            "Every completed envelope now embeds millisecond-precise UTC timestamps, IPv4/IPv6 network routing, and device fingerprints directly into the completion certificate."
+          ]
+        }
+      ]
+    }
+  ]
+}
