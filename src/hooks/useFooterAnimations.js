@@ -182,24 +182,24 @@ export default function useFooterAnimations(rootRef, routeKey) {
           }
 
           /* the red x breathes while the wordmark is on screen */
-          const accent = letters.find((l) => l.dataset.accent === 'true');
-          if (accent) {
-            gsap.set(accent, { textShadow: '0 0 0em rgba(238,5,16,0)' });
-            const breathe = gsap.to(accent, {
-              textShadow: '0 0 0.2em rgba(238,5,16,0.5)',
-              duration: 2.6,
-              ease: 'sine.inOut',
-              yoyo: true,
-              repeat: -1,
-              paused: true,
-            });
-            ScrollTrigger.create({
-              trigger: word,
-              start: 'top 95%',
-              end: 'bottom top',
-              onToggle: (self) => (self.isActive ? breathe.play() : breathe.pause()),
-            });
-          }
+          // const accent = letters.find((l) => l.dataset.accent === 'true');
+          // if (accent) {
+          //   gsap.set(accent, { textShadow: '0 0 0em rgba(238,5,16,0)' });
+          //   const breathe = gsap.to(accent, {
+          //     textShadow: '0 0 0.2em rgba(238,5,16,0.5)',
+          //     duration: 2.6,
+          //     ease: 'sine.inOut',
+          //     yoyo: true,
+          //     repeat: -1,
+          //     paused: true,
+          //   });
+          //   ScrollTrigger.create({
+          //     trigger: word,
+          //     start: 'top 95%',
+          //     end: 'bottom top',
+          //     onToggle: (self) => (self.isActive ? breathe.play() : breathe.pause()),
+          //   });
+          // }
         }
 
         /* ---------- 4. divider + bottom bar ---------- */

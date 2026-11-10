@@ -41,7 +41,7 @@
   "articles": [
     {
       "id": "feat-1",
-      "slug": "building-trust-at-scale",
+      "slug": "nexgn-origin-story",
       "featured": true,
       "typeLabel": "Blog",
       "title": "The Nexgn origin story: What a global search taught us about broken document workflows",
@@ -71,7 +71,7 @@
           ]
         },
         {
-          "id": "testing-our-assumptions",
+          "id": "the-on-ground-reality",
           "tocLabel": "The on-ground reality: Testing our assumptions",
           "heading": "The on-ground reality: Testing our assumptions",
           "paragraphs": [
