@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { FiArrowRight } from 'react-icons/fi';
 import useProductAnimations from '../../hooks/useProductAnimations';
 import styles from './ProductLayout.module.css';
 
@@ -121,6 +122,18 @@ export const FlagList = ({ items = [] }) => (
   </ul>
 );
 
+/* Red call-to-action button (router link) */
+export const ProductCta = ({ to, icon, children }) => (
+  <Link to={to} className={styles.cta} data-pl="note">
+    <span>{children}</span>
+    {icon && (
+      <span className={styles.ctaIcon} aria-hidden="true">
+        {icon}
+      </span>
+    )}
+  </Link>
+);
+
 /* Light note / disclaimer banner */
 export const ProductNote = ({ icon, children }) => (
   <div className={styles.note} data-pl="note">
@@ -146,6 +159,39 @@ export const ChatExampleGrid = ({ messages = [] }) => (
       </div>
     ))}
   </div>
+);
+
+
+/* Plain bullet list (Template Highlight) */
+export const ProductBulletList = ({ items = [] }) => (
+  <ul className={styles.bulletList} data-pl="check-list">
+    {items.map((text) => (
+      <li key={text} className={styles.bulletItem} data-pl="check-item">
+        {text}
+      </li>
+    ))}
+  </ul>
+);
+
+/* Horizontal process flow: pill -> pill -> pill (stacks on phones) */
+export const FlowSteps = ({ steps = [] }) => (
+  <ol className={styles.flow} data-pl="flow">
+    {steps.map((step, i) => (
+      <React.Fragment key={step.label}>
+        <li className={styles.flowStep} data-pl="flow-step">
+          <span className={styles.flowIcon} aria-hidden="true">
+            {step.icon}
+          </span>
+          <span className={styles.flowLabel}>{step.label}</span>
+        </li>
+        {i < steps.length - 1 && (
+          <li className={styles.flowArrow} data-pl="flow-arrow" aria-hidden="true">
+            <FiArrowRight />
+          </li>
+        )}
+      </React.Fragment>
+    ))}
+  </ol>
 );
 
 export const ProductStepList = ({ steps = [] }) => (
@@ -183,7 +229,7 @@ export const ProductCheckList = ({ items = [] }) => (
   </ul>
 );
 
-export const ProductHero = ({ eyebrow, title, lead, align = 'center', children }) => (
+export const ProductHero = ({ eyebrow, title, titleAccent, lead, align = 'center', children }) => (
   <section
     className={`${styles.hero} ${align === 'center' ? styles.heroCenter : ''}`}
     data-pl="hero"
@@ -197,6 +243,14 @@ export const ProductHero = ({ eyebrow, title, lead, align = 'center', children }
       )}
       <h1 className={styles.heroTitle}>
         <Words text={title} />
+        {titleAccent && (
+          <>
+            <br />
+            <span className={styles.heroAccent}>
+              <Words text={titleAccent} />
+            </span>
+          </>
+        )}
       </h1>
       {lead && (
         <p className={styles.heroLead} data-pl="hero-lead">
@@ -252,6 +306,7 @@ const resolveTargetSectionId = (pathname, hash, sectionsList) => {
 const ProductLayout = ({
   eyebrow = 'PRODUCTS',
   title,
+  titleAccent,
   lead,
   align = 'center',
   navHeader = 'ON THIS PAGE',
@@ -425,7 +480,7 @@ const ProductLayout = ({
   return (
     <div className={styles.page} ref={rootRef}>
       <div className={styles.progress} data-pl="progress" aria-hidden="true" />
-      <ProductHero eyebrow={eyebrow} title={title} lead={lead} align={align} />
+      <ProductHero eyebrow={eyebrow} title={title} titleAccent={titleAccent} lead={lead} align={align} />
 
       <section className={styles.contentSection}>
         <div className={styles.container}>
