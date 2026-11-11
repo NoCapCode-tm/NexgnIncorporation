@@ -33,7 +33,6 @@ const WorkspaceOverview = lazy(() => import('../pages/products/WorkspaceOverview
 const TeamsOverview = lazy(() => import('../pages/solutions/TeamsOverview'));
 const IndustriesOverview = lazy(() => import('../pages/solutions/IndustriesOverview'));
 const CompanySizeOverview = lazy(() => import('../pages/solutions/CompanySizeOverview'));
-const SolutionTemplate = lazy(() => import('../pages/solutions/SolutionTemplate'));
 const AlternativeCompare = lazy(() => import('../pages/solutions/AlternativeCompare'));
 
 // 4. Developers
@@ -192,7 +191,6 @@ const LanguageWrapper = () => {
               {['individuals', 'smb', 'enterprise'].map((slug) => (
                 <Route key={slug} path={`/solutions/${slug}`} element={<CompanySizeOverview />} />
               ))}
-              <Route path="/solutions/:industry" element={<SolutionTemplate />} />
               <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 
               {/* Developer Routes */}
