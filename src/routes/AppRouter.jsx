@@ -30,6 +30,9 @@ const TrustOverview = lazy(() => import('../pages/products/TrustOverview')); // 
 const WorkspaceOverview = lazy(() => import('../pages/products/WorkspaceOverview')); // Workspace & Management
 
 // 3. Solutions Pages (Optimized to Single Master Template)
+const TeamsOverview = lazy(() => import('../pages/solutions/TeamsOverview'));
+const IndustriesOverview = lazy(() => import('../pages/solutions/IndustriesOverview'));
+const CompanySizeOverview = lazy(() => import('../pages/solutions/CompanySizeOverview'));
 const SolutionTemplate = lazy(() => import('../pages/solutions/SolutionTemplate'));
 const AlternativeCompare = lazy(() => import('../pages/solutions/AlternativeCompare'));
 
@@ -180,6 +183,15 @@ const LanguageWrapper = () => {
               <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
 
               {/* Solutions Routes (Dynamic Template Engine) */}
+              {['hr', 'sales', 'legal'].map((slug) => (
+                <Route key={slug} path={`/solutions/${slug}`} element={<TeamsOverview />} />
+              ))}
+              {['startups', 'real-estate', 'agencies'].map((slug) => (
+                <Route key={slug} path={`/solutions/${slug}`} element={<IndustriesOverview />} />
+              ))}
+              {['individuals', 'smb', 'enterprise'].map((slug) => (
+                <Route key={slug} path={`/solutions/${slug}`} element={<CompanySizeOverview />} />
+              ))}
               <Route path="/solutions/:industry" element={<SolutionTemplate />} />
               <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 

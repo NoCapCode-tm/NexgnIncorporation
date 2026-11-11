@@ -384,6 +384,21 @@ export default function useProductAnimations(rootRef, deps = []) {
             scrollTrigger: { trigger: list, start: 'top 90%', toggleActions: TOGGLE },
           });
         });
+
+        $$(root, '[data-pl="flow"]').forEach((flow) => {
+          const steps = $$(flow, '[data-pl="flow-step"]');
+          const arrows = $$(flow, '[data-pl="flow-arrow"]');
+          if (!steps.length) return;
+          const tl = gsap.timeline({
+            scrollTrigger: { trigger: flow, start: 'top 90%', toggleActions: TOGGLE },
+          });
+          steps.forEach((step, i) => {
+            tl.from(step, { y: 18, scale: 0.94, autoAlpha: 0, duration: 0.55, ease: 'power3.out' }, i * 0.28);
+            if (arrows[i]) {
+              tl.from(arrows[i], { x: -10, autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, i * 0.28 + 0.22);
+            }
+          });
+        });
       },
       root
     );

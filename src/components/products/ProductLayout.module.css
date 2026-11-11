@@ -929,6 +929,111 @@
   color: var(--ink);
 }
 
+
+/* ---------- Hero accent (muted second line of the title) ---------- */
+.heroAccent {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- CTA button ---------- */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: max(1.1rem, 1.5vw);
+  padding: 0.85em 1.4em;
+  background: var(--red);
+  color: #fff;
+  border-radius: 0.4rem;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  text-decoration: none;
+  will-change: transform;
+}
+.cta:hover {
+  filter: brightness(1.08);
+}
+.cta:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.ctaIcon {
+  display: inline-flex;
+}
+
+/* ---------- Plain bullet list ---------- */
+.bulletList {
+  margin: max(1rem, 1.4vw) 0 0;
+  padding: 0 0 0 1.25em;
+  display: flex;
+  flex-direction: column;
+  gap: max(0.5rem, 0.7vw);
+}
+.bulletItem {
+  padding-left: 0.2em;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.bulletItem::marker {
+  color: var(--ink);
+}
+
+/* ---------- Process flow ---------- */
+.flow {
+  list-style: none;
+  margin: max(1.25rem, 1.8vw) 0 0;
+  padding: 0;
+  max-width: 54em;
+  display: flex;
+  flex-direction: column;
+  gap: max(0.5rem, 0.7vw);
+}
+.flowStep {
+  display: flex;
+  align-items: center;
+  gap: max(0.7rem, 0.9vw);
+  padding: max(0.8rem, 1vw) max(1rem, 1.3vw);
+  background: var(--grey);
+  border-radius: max(0.65rem, 1vw);
+  will-change: transform;
+}
+.flowIcon {
+  display: inline-flex;
+  color: var(--soft);
+  font-size: 1.1em;
+}
+.flowLabel {
+  font-family: 'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: calc(var(--fs-body) * 0.82);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.flowArrow {
+  display: flex;
+  justify-content: center;
+  color: var(--soft);
+  font-size: 1em;
+  transform: rotate(90deg);
+}
+@media (min-width: 640px) {
+  .flow {
+    flex-direction: row;
+    align-items: center;
+    gap: max(0.4rem, 0.8vw);
+  }
+  .flowStep {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: flex-start;
+  }
+  .flowArrow {
+    flex: none;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .progress {
     display: none;
