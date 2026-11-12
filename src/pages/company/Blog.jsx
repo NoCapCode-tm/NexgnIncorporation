@@ -9,7 +9,7 @@ import useBlogAnimations from '../../hooks/useBlogAnimations';
 import blogsData from './blogsData.json';
 import styles from './Blog.module.css';
 
-import ctaOtherImg from '../../assets/common/cta.png';
+import ctaOtherImg from '../../assets/common/cta-blog.png';
 
 const LANGS = ['en', 'es', 'hi'];
 

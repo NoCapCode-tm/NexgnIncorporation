@@ -244,7 +244,7 @@ const Sustainability = () => {
         title={tr('cta.title', 'Start signing documents')}
         highlight={tr('cta.highlight', 'signing')}
         text={tr(
-          'cta.text',
+          'cta.Start signing documents',
           'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
         )}
         primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}

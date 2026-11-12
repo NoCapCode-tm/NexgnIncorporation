@@ -15,7 +15,7 @@ const SCROLL_AT = 24;
  *     the glass fades in, the wordmark folds away (no progress line: pages own that)
  *   - hover: a highlight pill glides between items; chevrons turn; links nudge
  *   - dropdown: frosted panel rises in, columns then links cascade; switching menus crossfades
- *   - CTA: magnetic pull, colour shift, light sweep; "Log in" underline draws
+ *   - CTA: colour shift + light sweep (no movement); "Log in" underline draws
  * MOBILE (< 1024px)
  *   - plain three dots; on tap they burst out and an X draws in
  *   - the bar grows into the menu card (height tween), wordmark unfolds, items cascade
@@ -354,23 +354,14 @@ export default function useNavbarAnimations(rootRef, { openKey, mobileOpen }) {
             });
           });
 
-          /* CTA: magnet + colour + light sweep */
+          /* CTA: colour + light sweep (the button itself stays put) */
           q('cta').forEach((c) => {
             const sheen = one('sheen', c);
-            const xTo = gsap.quickTo(c, 'x', { duration: 0.5, ease: 'power3' });
-            const yTo = gsap.quickTo(c, 'y', { duration: 0.5, ease: 'power3' });
-            on(c, 'pointermove', (e) => {
-              const r = c.getBoundingClientRect();
-              xTo((e.clientX - (r.left + r.width / 2)) * 0.2);
-              yTo((e.clientY - (r.top + r.height / 2)) * 0.28);
-            });
             on(c, 'pointerenter', () => {
               gsap.to(c, { backgroundColor: '#d1030d', duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
               gsap.fromTo(sheen, { xPercent: -130 }, { xPercent: 380, duration: 0.9, ease: 'power2.inOut' });
             });
             on(c, 'pointerleave', () => {
-              xTo(0);
-              yTo(0);
               gsap.to(c, { backgroundColor: '#ed040f', duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
             });
           });

@@ -18,7 +18,6 @@ gsap.registerPlugin(ScrollTrigger);
    - Pricing card animations
    - Final CTA expansion
    - Trusted-by marquee
-   - Magnetic buttons
 
    Signature sequence:
    1. DM Sans
@@ -121,7 +120,7 @@ export default function useHomeAnimations(rootRef, deps = []) {
       },
 
       (ctx) => {
-        const { motion, fine } = ctx.conditions;
+        const { motion, fine } = ctx.conditions; // fine: pricing-card tilt only (buttons no longer move)
 
         if (!motion) return undefined;
 
@@ -763,49 +762,6 @@ export default function useHomeAnimations(rootRef, deps = []) {
           ctx.add(() => () => {
             holder.removeEventListener('mouseenter', over);
             holder.removeEventListener('mouseleave', out);
-          });
-        }
-
-        /* =============================================================
-           10. MAGNETIC BUTTONS
-           ============================================================= */
-
-        if (fine) {
-          $$(root, '[data-a="magnet"]').forEach((btn) => {
-            const x = gsap.quickTo(btn, 'x', {
-              duration: 0.5,
-              ease: 'power3.out',
-            });
-
-            const y = gsap.quickTo(btn, 'y', {
-              duration: 0.5,
-              ease: 'power3.out',
-            });
-
-            const move = (e) => {
-              const r = btn.getBoundingClientRect();
-
-              x(
-                (e.clientX - (r.left + r.width / 2)) * 0.28
-              );
-
-              y(
-                (e.clientY - (r.top + r.height / 2)) * 0.4 - 2
-              );
-            };
-
-            const leave = () => {
-              x(0);
-              y(0);
-            };
-
-            btn.addEventListener('pointermove', move);
-            btn.addEventListener('pointerleave', leave);
-
-            ctx.add(() => () => {
-              btn.removeEventListener('pointermove', move);
-              btn.removeEventListener('pointerleave', leave);
-            });
           });
         }
 
