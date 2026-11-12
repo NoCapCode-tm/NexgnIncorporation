@@ -39,10 +39,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # Headless Chromium for scripts/prerender-shells.mjs (snapshots each page so crawlers see its <h1>/title)
+      - name: Install Chromium for prerender
+        run: npx playwright install --with-deps chromium
+
       # `npm run build` runs, in order:
       #   prebuild  -> scripts/generate-sitemap.mjs   (writes sitemap.xml)
       #   build     -> rsbuild build                  (outputs dist/)
-      #   postbuild -> scripts/prerender-shells.mjs   (one real .html file per sitemap URL + 404.html)
+      #   postbuild -> scripts/prerender-shells.mjs   (one real, rendered .html file per sitemap URL + 404.html)
       - name: Build Application
         run: npm run build
 
