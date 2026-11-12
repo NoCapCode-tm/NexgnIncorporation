@@ -17,10 +17,34 @@ const main = async () => {
     return;
   }
 
-  const xml = await (await fetch(`${SITE}/sitemap.xml`)).text();
-  const urlList = [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)]
-    .map((m) => m[1])
-    .filter((u) => u.startsWith(SITE) && !/\.(txt|md)$/.test(u));
+  const parse = (xml) =>
+    [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)]
+      .map((m) => m[1].replace(/&amp;/g, '&'))
+      .filter((u) => u.startsWith(SITE) && !/\.(txt|md)$/.test(u));
+
+  // 1) the live sitemap (exactly what was published)
+  let urlList = [];
+  try {
+    const res = await fetch(`${SITE}/sitemap.xml`, { headers: { 'User-Agent': 'nexgn-indexnow/1.0', Accept: 'application/xml,text/xml' } });
+    const body = await res.text();
+    urlList = parse(body);
+    if (!urlList.length) {
+      console.warn(`indexnow: live sitemap gave no URLs (HTTP ${res.status}, ${res.headers.get('content-type')}): ${body.slice(0, 120).replace(/\s+/g, ' ')}`);
+    }
+  } catch (err) {
+    console.warn(`indexnow: could not fetch live sitemap (${err.message})`);
+  }
+
+  // 2) fall back to the sitemap generated in this workflow run (public/sitemap.xml)
+  if (!urlList.length) {
+    try {
+      const { readFile } = await import('node:fs/promises');
+      urlList = parse(await readFile('public/sitemap.xml', 'utf8'));
+      console.log(`indexnow: using local public/sitemap.xml (${urlList.length} URLs)`);
+    } catch {
+      /* handled below */
+    }
+  }
   if (!urlList.length) {
     console.warn('indexnow: no URLs in sitemap, nothing to submit.');
     return;
