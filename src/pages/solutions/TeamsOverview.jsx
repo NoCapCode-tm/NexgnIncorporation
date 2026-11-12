@@ -13,6 +13,7 @@ import {
   FiMapPin,
   FiShield,
 } from 'react-icons/fi';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import { FlagUS, FlagEU, FlagIN } from '../../components/products/Flags';
 import ProductLayout, {
@@ -35,15 +36,16 @@ const TeamsOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/solutions/hr');
   const k = 'solutions.teams';
   const tr = (key, fallback) => t(`${k}.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Nexgn for Teams: HR, Sales & Legal | Nexgn');
+  const seoTitle = tr('seo.title', 'Nexgn for Teams: HR, Sales & Legal');
   const seoDescription = tr(
     'seo.description',
     'Departmental e-signature workflows for HR, Sales and Legal teams: faster onboarding, quicker deal closes and audit-ready contracts.'
   );
-  const pageUrl = `https://nexgn.cloud/${currentLng}/solutions/hr`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -166,7 +168,7 @@ const TeamsOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/solutions/hr" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'SOLUTIONS')}
         title={tr('hero.title', 'By Team')}

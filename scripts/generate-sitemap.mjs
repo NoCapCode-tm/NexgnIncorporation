@@ -44,8 +44,8 @@ const getLastMod = (relFilePath) => {
 
 /* =====================================================================
    1. STATIC LOCALIZED ROUTES (Mapped from src/routes/AppRouter.jsx)
-   Note: Redirect-only aliases (/legal/cookies, /products/storage,
-   /products/workflows, /products/reminders) are excluded to keep SEO clean.
+   Note: Redirect-only aliases (/legal/cookies, /products/storage) are excluded to keep SEO clean.
+   /products/workflows and /products/reminders are real hub sections and stay in.
    ===================================================================== */
 const STATIC_ROUTES = [
   // Core Pages
@@ -61,6 +61,8 @@ const STATIC_ROUTES = [
   { path: '/products/document-editor', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/ProductOverview.jsx' },
   { path: '/products/templates', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/ProductOverview.jsx' },
   { path: '/products/automation', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/ProductOverview.jsx' },
+  { path: '/products/workflows', priority: '0.7', changefreq: 'monthly', file: 'src/pages/products/ProductOverview.jsx' },
+  { path: '/products/reminders', priority: '0.7', changefreq: 'monthly', file: 'src/pages/products/ProductOverview.jsx' },
 
   // Product Hub 2: Nexgn AI (Intelligence)
   { path: '/products/ai-summary', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/IntelligenceOverview.jsx' },
@@ -103,7 +105,6 @@ const STATIC_ROUTES = [
   { path: '/about', priority: '0.8', changefreq: 'monthly', file: 'src/pages/company/About.jsx' },
   { path: '/contact', priority: '0.8', changefreq: 'monthly', file: 'src/pages/company/Contact.jsx' },
   { path: '/careers', priority: '0.7', changefreq: 'weekly', file: 'src/pages/company/Careers.jsx' },
-  { path: '/press', priority: '0.7', changefreq: 'weekly', file: 'src/pages/company/Press.jsx' },
   { path: '/partners', priority: '0.7', changefreq: 'monthly', file: 'src/pages/company/Partners.jsx' },
   { path: '/blog', priority: '0.8', changefreq: 'weekly', file: 'src/pages/company/Blog.jsx' },
   { path: '/help', priority: '0.8', changefreq: 'weekly', file: 'src/pages/help/HelpCenter.jsx' },
@@ -121,32 +122,21 @@ const STATIC_ROUTES = [
    2. DYNAMIC ROUTES DISCOVERY (Solutions, Alternatives, Blog Posts)
    ===================================================================== */
 const getDynamicSolutionRoutes = () => {
-  const defaultSlugs = ['startups', 'hr', 'legal', 'sales', 'real-estate', 'finance', 'agencies', 'individuals', 'smb', 'enterprise'];
-  const jsonPath = path.resolve(ROOT_DIR, 'src/pages/solutions/solutionsData.json');
-  const slugs = new Set(defaultSlugs);
+  // Exactly the URLs served by the three Solutions hubs in src/routes/AppRouter.jsx
+  const HUBS = {
+    TeamsOverview: ['hr', 'sales', 'legal'],
+    IndustriesOverview: ['startups', 'real-estate', 'agencies'],
+    CompanySizeOverview: ['individuals', 'smb', 'enterprise'],
+  };
 
-  if (fs.existsSync(jsonPath)) {
-    try {
-      const raw = fs.readFileSync(jsonPath, 'utf-8').trim();
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (Array.isArray(data)) {
-          data.forEach((item) => item?.slug && slugs.add(item.slug));
-        } else if (data && typeof data === 'object') {
-          Object.keys(data).forEach((key) => slugs.add(key));
-        }
-      }
-    } catch (err) {
-      console.warn('⚠️ Could not parse solutionsData.json, using default solution slugs.', err.message);
-    }
-  }
-
-  return Array.from(slugs).map((slug) => ({
-    path: `/solutions/${slug}`,
-    priority: '0.8',
-    changefreq: 'monthly',
-    file: 'src/pages/solutions/SolutionTemplate.jsx',
-  }));
+  return Object.entries(HUBS).flatMap(([file, slugs]) =>
+    slugs.map((slug) => ({
+      path: `/solutions/${slug}`,
+      priority: '0.8',
+      changefreq: 'monthly',
+      file: `src/pages/solutions/${file}.jsx`,
+    }))
+  );
 };
 
 const COMPETITOR_SLUGS = ['docusign', 'adobe-sign', 'dropbox-sign', 'pandadoc', 'signnow'];

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiCode, FiUser, FiEye, FiEdit3 } from 'react-icons/fi';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import ProductLayout, {
   ProductText,
@@ -21,15 +22,16 @@ const IndustriesOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/solutions/startups');
   const k = 'solutions.industries';
   const tr = (key, fallback) => t(`${k}.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Nexgn by Industry: Startups, Real Estate & Agencies | Nexgn');
+  const seoTitle = tr('seo.title', 'Nexgn by Industry: SaaS, Real Estate, Agencies');
   const seoDescription = tr(
     'seo.description',
     'E-signature workflows tailored to startups, real estate and property management, and agencies and consulting.'
   );
-  const pageUrl = `https://nexgn.cloud/${currentLng}/solutions/startups`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -147,7 +149,7 @@ const IndustriesOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/solutions/startups" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'SOLUTIONS')}
         title={tr('hero.title', 'By Industry')}

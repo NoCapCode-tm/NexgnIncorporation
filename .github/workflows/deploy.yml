@@ -82,3 +82,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Tell IndexNow engines (Bing, Yandex, ...) about the fresh pages. Never blocks a deploy.
+      - name: Checkout (for scripts)
+        uses: actions/checkout@v4
+
+      - name: Submit URLs to IndexNow
+        continue-on-error: true
+        run: |
+          sleep 45
+          node scripts/indexnow.mjs

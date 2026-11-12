@@ -29,7 +29,7 @@ const IntelligenceOverview = lazy(() => import('../pages/products/IntelligenceOv
 const TrustOverview = lazy(() => import('../pages/products/TrustOverview')); // Trust & Evidence
 const WorkspaceOverview = lazy(() => import('../pages/products/WorkspaceOverview')); // Workspace & Management
 
-// 3. Solutions Pages (Optimized to Single Master Template)
+// 3. Solutions Pages (3 hubs: By Team, By Industry, By Company Size)
 const TeamsOverview = lazy(() => import('../pages/solutions/TeamsOverview'));
 const IndustriesOverview = lazy(() => import('../pages/solutions/IndustriesOverview'));
 const CompanySizeOverview = lazy(() => import('../pages/solutions/CompanySizeOverview'));
@@ -68,7 +68,6 @@ const Refunds = lazy(() => import('../pages/legal/Refunds'));
 const Contact = lazy(() => import('../pages/company/Contact'));
 const About = lazy(() => import('../pages/company/About'));
 const Careers = lazy(() => import('../pages/company/Careers'));
-const Press = lazy(() => import('../pages/company/Press'));
 const Partners = lazy(() => import('../pages/company/Partners'));
 const Blog = lazy(() => import('../pages/company/Blog'));
 const HelpCenter = lazy(() => import('../pages/help/HelpCenter')); // Added Help Center
@@ -181,7 +180,7 @@ const LanguageWrapper = () => {
               )}
               <Route path="/products/storage" element={<Navigate to={`/${lng}/products/cloud-storage`} replace />} />
 
-              {/* Solutions Routes (Dynamic Template Engine) */}
+              {/* Solutions Routes: one hub per group, each serving 3 section URLs */}
               {['hr', 'sales', 'legal'].map((slug) => (
                 <Route key={slug} path={`/solutions/${slug}`} element={<TeamsOverview />} />
               ))}
@@ -227,12 +226,13 @@ const LanguageWrapper = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/careers" element={<Careers />} />
-              <Route path="/press" element={<Press />} />
               <Route path="/partners" element={<Partners />} />
               <Route path="/help" element={<HelpCenter />} />
 
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
+              {/* /press lives on the Blog page (#press section); there is no separate Press page */}
+              <Route path="/press" element={<Navigate to={`/${lng}/blog#press`} replace />} />
               <Route path="/blog/:slug" element={<Blog />} />
 
               {/* Global 404 Catch-All */}

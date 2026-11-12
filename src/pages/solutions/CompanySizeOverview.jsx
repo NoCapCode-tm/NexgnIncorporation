@@ -12,6 +12,7 @@ import {
   FiFileText,
   FiHeadphones,
 } from 'react-icons/fi';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import ProductLayout, {
   ProductText,
@@ -31,15 +32,16 @@ const CompanySizeOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/solutions/individuals');
   const k = 'solutions.size';
   const tr = (key, fallback) => t(`${k}.${key}`, fallback);
 
-  const seoTitle = tr('seo.title', 'Nexgn by Company Size: Freelancers, SMBs & Enterprise | Nexgn');
+  const seoTitle = tr('seo.title', 'Nexgn by Company Size: Solo to Enterprise');
   const seoDescription = tr(
     'seo.description',
     'From a free tier for freelancers to team workspaces for SMBs and security controls for enterprise, find the Nexgn plan that fits your size.'
   );
-  const pageUrl = `https://nexgn.cloud/${currentLng}/solutions/individuals`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -148,7 +150,7 @@ const CompanySizeOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/solutions/individuals" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'SOLUTIONS')}
         title={tr('hero.title', 'By Company Size')}
