@@ -121,7 +121,7 @@ const STATIC_ROUTES = [
    2. DYNAMIC ROUTES DISCOVERY (Solutions, Alternatives, Blog Posts)
    ===================================================================== */
 const getDynamicSolutionRoutes = () => {
-  const defaultSlugs = ['startups', 'hr', 'legal', 'sales', 'real-estate', 'finance'];
+  const defaultSlugs = ['startups', 'hr', 'legal', 'sales', 'real-estate', 'finance', 'agencies', 'individuals', 'smb', 'enterprise'];
   const jsonPath = path.resolve(ROOT_DIR, 'src/pages/solutions/solutionsData.json');
   const slugs = new Set(defaultSlugs);
 

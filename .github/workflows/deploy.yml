@@ -58,6 +58,9 @@ jobs:
           test -f dist/en/pricing.html
           test -f dist/en/legal/terms.html
           test -f dist/en/sustainability.html
+          # every page must carry its own <h1> in the raw HTML (what Ahrefs / non-JS crawlers see)
+          grep -q "<h1" dist/en/pricing.html
+          grep -q "<h1" dist/es/legal/terms.html
           echo "Page shells OK: $(find dist -name '*.html' | wc -l) HTML files"
 
       # Custom domain (nexgn.cloud) comes from public/CNAME, which Rsbuild copies into dist/

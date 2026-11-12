@@ -96,7 +96,9 @@ const snapshotPages = async (pathnames, shell) => {
   try {
     ({ chromium } = await import('playwright'));
   } catch {
-    console.warn('prerender: "playwright" is not installed, keeping plain shells (no per-page <h1>/title).');
+    const msg = 'prerender: "playwright" is not installed, so pages have no per-page <h1>/title. Run: npm i -D playwright';
+    if (process.env.CI) throw new Error(msg); // never ship un-rendered pages from CI
+    console.warn(`${msg} (keeping plain shells)`);
     return { ok: 0, failed: [], noH1: [] };
   }
 
@@ -104,7 +106,9 @@ const snapshotPages = async (pathnames, shell) => {
   try {
     browser = await chromium.launch();
   } catch (err) {
-    console.warn(`prerender: Chromium could not start (${err.message.split('\n')[0]}). Keeping plain shells.`);
+    const msg = `prerender: Chromium could not start (${err.message.split('\n')[0]})`;
+    if (process.env.CI) throw new Error(msg);
+    console.warn(`${msg}. Keeping plain shells.`);
     return { ok: 0, failed: [], noH1: [] };
   }
 
