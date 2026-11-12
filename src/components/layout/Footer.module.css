@@ -82,8 +82,7 @@
 
 .link:focus-visible,
 .social:focus-visible,
-.builtLink:focus-visible,
-.langBtn:focus-visible {
+.builtLink:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 4px;
@@ -167,7 +166,7 @@
   gap: clamp(0.75rem, 1.2vw, 2.5rem);
 }
 
-/* ---------- Custom Language Picker ---------- */
+/* ---------- Language picker (custom listbox, opens upward) ---------- */
 
 .langWrap {
   position: relative;
@@ -188,7 +187,6 @@
   font-size: var(--fs-small);
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .langBtn:hover,
@@ -198,30 +196,37 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.langBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .langGlobe {
-  font-size: 1.15em;
   flex: none;
+  font-size: 1.15em;
 }
 
 .langChevron {
+  flex: none;
   font-size: 1em;
+  margin-left: 0.15rem;
   color: var(--muted);
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
 }
 
-.langBtn:hover .langChevron {
+.langBtn:hover .langChevron,
+.langBtnActive .langChevron {
   color: var(--text);
 }
 
 .langChevronOpen {
   transform: rotate(180deg);
-  color: var(--text);
 }
 
 .langMenu {
   position: absolute;
   bottom: calc(100% + 0.5rem);
   left: 0;
+  z-index: 50;
   min-width: 100%;
   width: max-content;
   margin: 0;
@@ -233,41 +238,25 @@
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  z-index: 50;
-  animation: langFadeIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes langFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  outline: none;
 }
 
 .langOption {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
+  gap: 1.25rem;
   padding: 0.55rem 0.75rem;
-  border: 0;
   border-radius: calc(clamp(0.5rem, 0.6vw, 1rem) - 0.2rem);
-  background: transparent;
   color: var(--muted);
-  font-family: inherit;
   font-size: var(--fs-small);
   font-weight: 400;
-  text-align: left;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  user-select: none;
 }
 
-.langOption:hover {
+.langOptionFocus {
   background: rgba(255, 255, 255, 0.07);
   color: var(--text);
 }
@@ -275,17 +264,16 @@
 .langOptionActive {
   color: var(--text);
   font-weight: 500;
-  background: rgba(238, 5, 16, 0.14);
 }
 
-.langOptionActive:hover {
-  background: rgba(238, 5, 16, 0.22);
+.langOptionActive.langOptionFocus {
+  background: rgba(238, 5, 16, 0.18);
 }
 
 .langCheck {
+  flex: none;
   color: var(--accent);
   font-size: 1em;
-  flex: none;
 }
 
 /* ---------- Socials ---------- */
@@ -377,9 +365,5 @@
   .builtLink:hover {
     color: var(--text);
     --u: 100%;
-  }
-
-  .langMenu {
-    animation: none;
   }
 }

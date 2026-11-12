@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaLinkedinIn } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaInstagram } from 'react-icons/fa';
-import { FiGlobe } from 'react-icons/fi';
+import { FiGlobe, FiChevronUp, FiCheck } from 'react-icons/fi';
+import gsap from 'gsap';
 import useFooterAnimations from '../../hooks/useFooterAnimations';
 import styles from './Footer.module.css';
 
@@ -35,7 +36,7 @@ const COLUMNS = [
       { key: 'legal', label: 'Legal', to: '/solutions/legal' },
       { key: 'sales', label: 'Sales', to: '/solutions/sales' },
       { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
-      { key: 'finance', label: 'Finance', to: '/solutions/finance' },
+      { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
     ],
   },
   {
@@ -64,11 +65,9 @@ const COLUMNS = [
     title: 'Company',
     links: [
       { key: 'about', label: 'About Us', to: '/about' },
-      // { key: 'careers', label: 'Careers', to: '/careers' },
       { key: 'contact', label: 'Contact', to: '/contact' },
       { key: 'help', label: 'Help Center', to: '/help' },
-      // { key: 'partners', label: 'Partners', to: '/partners' },
-      { key: 'blog', label: 'Blog', to: '/blog' }, // Added Blog Route Here
+      { key: 'blog', label: 'Blog', to: '/blog' },
     ],
   },
   {
@@ -108,7 +107,7 @@ const WORDMARK = [
 const Footer = () => {
   const footerRef = useRef(null);
   const { t } = useTranslation();
-  const { lng } = useParams(); 
+  const { lng } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -120,10 +119,79 @@ const Footer = () => {
 
   const withLng = (path) => `/${currentLng}${path === '/' ? '' : path}`;
 
-  const handleLanguageChange = (e) => {
-    const next = e.target.value;
-    const nextPath = location.pathname.replace(/^\/[^/]+/, `/${next}`);
+  /* ---------- language picker (custom listbox, styled to match the footer) ---------- */
+  const [langOpen, setLangOpen] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const langRef = useRef(null);
+  const menuRef = useRef(null);
+  const btnRef = useRef(null);
+
+  const switchLanguage = (next) => {
+    setLangOpen(false);
+    if (next === currentLng) return;
+    const nextPath = location.pathname.replace(/^\/[^/]+/, `/${next}`) || `/${next}`;
     navigate(`${nextPath}${location.search}${location.hash}`);
+  };
+
+  const openMenu = () => {
+    setActiveIdx(Math.max(0, LANGUAGES.findIndex((l) => l.code === currentLng)));
+    setLangOpen(true);
+  };
+
+  // close on outside click / Escape
+  useEffect(() => {
+    if (!langOpen) return undefined;
+    const onDown = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setLangOpen(false);
+        btnRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [langOpen]);
+
+  // menu entrance (GSAP; skipped for reduced motion) + keyboard focus on the list
+  useEffect(() => {
+    const menu = menuRef.current;
+    if (!langOpen || !menu) return undefined;
+    menu.focus({ preventScroll: true });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const items = menu.querySelectorAll('[role="option"]');
+    const tween = gsap.timeline();
+    tween.fromTo(menu, { autoAlpha: 0, y: 10, scale: 0.97 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.35, ease: 'power3.out' });
+    tween.fromTo(items, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out' }, 0.05);
+    return () => tween.kill();
+  }, [langOpen]);
+
+  const onMenuKeyDown = (e) => {
+    const last = LANGUAGES.length - 1;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIdx((i) => (i >= last ? 0 : i + 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIdx((i) => (i <= 0 ? last : i - 1));
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setActiveIdx(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setActiveIdx(last);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      switchLanguage(LANGUAGES[activeIdx].code);
+      btnRef.current?.focus();
+    } else if (e.key === 'Tab') {
+      setLangOpen(false);
+    }
   };
 
   return (
@@ -183,22 +251,55 @@ const Footer = () => {
           </p>
 
           <div className={styles.meta}>
-            <label className={styles.lang} data-f="lang bottom">
-              <FiGlobe aria-hidden="true" />
-              <span>{currentLabel}</span>
-              <select
-                className={styles.langSelect}
-                value={currentLng}
-                onChange={handleLanguageChange}
-                aria-label={t('footer.language', 'Select language')}
+            <div className={styles.langWrap} ref={langRef} data-f="bottom">
+              <button
+                type="button"
+                ref={btnRef}
+                className={`${styles.langBtn} ${langOpen ? styles.langBtnActive : ''}`}
+                data-f="lang"
+                aria-haspopup="listbox"
+                aria-expanded={langOpen}
+                aria-label={`${t('footer.language', 'Select language')}: ${currentLabel}`}
+                onClick={() => (langOpen ? setLangOpen(false) : openMenu())}
               >
-                {LANGUAGES.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <FiGlobe className={styles.langGlobe} aria-hidden="true" />
+                <span>{currentLabel}</span>
+                <FiChevronUp
+                  className={`${styles.langChevron} ${langOpen ? styles.langChevronOpen : ''}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              {langOpen && (
+                <ul
+                  ref={menuRef}
+                  className={styles.langMenu}
+                  role="listbox"
+                  tabIndex={-1}
+                  aria-label={t('footer.language', 'Select language')}
+                  aria-activedescendant={`lang-opt-${LANGUAGES[activeIdx].code}`}
+                  onKeyDown={onMenuKeyDown}
+                >
+                  {LANGUAGES.map((l, i) => (
+                    <li
+                      key={l.code}
+                      id={`lang-opt-${l.code}`}
+                      role="option"
+                      lang={l.code}
+                      aria-selected={l.code === currentLng}
+                      className={`${styles.langOption} ${l.code === currentLng ? styles.langOptionActive : ''} ${
+                        i === activeIdx ? styles.langOptionFocus : ''
+                      }`}
+                      onPointerEnter={() => setActiveIdx(i)}
+                      onClick={() => switchLanguage(l.code)}
+                    >
+                      <span>{l.label}</span>
+                      {l.code === currentLng && <FiCheck className={styles.langCheck} aria-hidden="true" />}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <ul className={styles.socials}>
               {SOCIALS.map(({ key, label, href, Icon }) => (

@@ -15,8 +15,8 @@ gsap.registerPlugin(ScrollTrigger);
  *     a soft red glow sweeps across it with the scroll (and follows the mouse on desktop),
  *     letters lift gently near the pointer, the red x breathes while it is on screen
  *   - divider draws left to right, bottom bar items cascade, social icons pop in
- *   - hovers: underline draws + nudge + the other links in the column dim, social icons are
- *     magnetic with the glyph moving a little further than the button, language globe spins
+ *   - hovers: underline draws + nudge + the other links in the column dim, social icons only
+ *     highlight (no movement), language globe spins
  *
  * All distances are percentages of the element itself (yPercent / xPercent) or measured from the
  * element's own size, so the motion scales from a 320px phone to 4K without media-query tuning.
@@ -181,25 +181,6 @@ export default function useFooterAnimations(rootRef, routeKey) {
             }
           }
 
-          /* the red x breathes while the wordmark is on screen */
-          // const accent = letters.find((l) => l.dataset.accent === 'true');
-          // if (accent) {
-          //   gsap.set(accent, { textShadow: '0 0 0em rgba(238,5,16,0)' });
-          //   const breathe = gsap.to(accent, {
-          //     textShadow: '0 0 0.2em rgba(238,5,16,0.5)',
-          //     duration: 2.6,
-          //     ease: 'sine.inOut',
-          //     yoyo: true,
-          //     repeat: -1,
-          //     paused: true,
-          //   });
-          //   ScrollTrigger.create({
-          //     trigger: word,
-          //     start: 'top 95%',
-          //     end: 'bottom top',
-          //     onToggle: (self) => (self.isActive ? breathe.play() : breathe.pause()),
-          //   });
-          // }
         }
 
         /* ---------- 4. divider + bottom bar ---------- */
@@ -266,50 +247,29 @@ export default function useFooterAnimations(rootRef, routeKey) {
             });
           });
 
-          /* social buttons: magnetic, glyph travels a little further than the button */
+          /* social buttons: highlight only (colour, border, background). No movement or scaling. */
           q('social').forEach((el) => {
-            const glyph = el.querySelector('svg');
-            const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' });
-            const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' });
-            const gx = glyph ? gsap.quickTo(glyph, 'x', { duration: 0.5, ease: 'power3.out' }) : null;
-            const gy = glyph ? gsap.quickTo(glyph, 'y', { duration: 0.5, ease: 'power3.out' }) : null;
-
             on(el, 'pointerenter', () =>
               gsap.to(el, {
-                scale: 1.08,
                 color: C.text,
                 borderColor: C.muted,
                 backgroundColor: 'rgba(255,255,255,0.06)',
-                duration: 0.4,
-                ease: 'power3.out',
+                duration: 0.35,
+                ease: 'power2.out',
                 overwrite: 'auto',
               }),
             );
-            on(el, 'pointermove', (e) => {
-              const r = el.getBoundingClientRect();
-              const dx = e.clientX - (r.left + r.width / 2);
-              const dy = e.clientY - (r.top + r.height / 2);
-              xTo(dx * 0.25);
-              yTo(dy * 0.25 - 2);
-              gx?.(dx * 0.18);
-              gy?.(dy * 0.18);
-            });
-            on(el, 'pointerleave', () => {
-              xTo(0);
-              yTo(0);
-              gx?.(0);
-              gy?.(0);
+            on(el, 'pointerleave', () =>
               gsap.to(el, {
-                scale: 1,
                 color: C.muted,
                 borderColor: C.line,
                 backgroundColor: 'rgba(255,255,255,0)',
-                duration: 0.6,
-                ease: 'power3.out',
+                duration: 0.45,
+                ease: 'power2.out',
                 overwrite: 'auto',
-                onComplete: () => gsap.set(el, { clearProps: 'color,borderColor,backgroundColor,scale' }),
-              });
-            });
+                onComplete: () => gsap.set(el, { clearProps: 'color,borderColor,backgroundColor' }),
+              }),
+            );
           });
 
           /* NoCapCode link: colour + underline that draws in */
