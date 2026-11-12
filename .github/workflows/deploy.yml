@@ -91,4 +91,5 @@ jobs:
         continue-on-error: true
         run: |
           sleep 45
+          node scripts/generate-sitemap.mjs   # local fallback copy of the sitemap
           node scripts/indexnow.mjs
