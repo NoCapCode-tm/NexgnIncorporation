@@ -250,7 +250,7 @@ const Pricing = () => {
     <div className={styles.page} ref={rootRef}>
       <div className={styles.progress} data-p="progress" aria-hidden="true" />
       <SEOHead
-        title={tr('seo.title', 'Simple Pricing')}
+        title={tr('seo.title', 'Pricing')}
         description={tr(
           'seo.description',
           'Transparent, affordable pricing for startups and enterprise. Start sending legally binding documents for free.'
