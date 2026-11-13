@@ -86,7 +86,10 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  margin-top: calc(var(--nav-h) * -1);
+  /* The navbar is position: fixed (out of the page flow), so there is nothing to slide under: a negative
+     margin here only pulls the hero's top edge off-screen and the title ends up behind the navbar.
+     Keep the hero at the top of the page and reserve the navbar's height as padding instead. */
+  margin-top: 0;
   padding-top: calc(var(--nav-h) + clamp(3rem, 5.8vw, 6.5rem));
   padding-bottom: clamp(3rem, 5.8vw, 6.5rem);
   text-align: center;
