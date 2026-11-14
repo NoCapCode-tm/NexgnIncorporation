@@ -204,11 +204,26 @@ const applyHeadFallbacks = async (html, pathname, info) => {
   const productSlug = (pathname.match(/^\/(?:en|es|hi)\/products\/([^/]+)$/) || [])[1];
   const pageName = info.secTitle || info.h1;
 
+  // Hub URLs (/products/<slug>, /solutions/<slug>) share one page component and so one SEO title/description.
+  // Give each URL its own, taken from the section it shows (avoids "duplicate title / description" in audits).
+  const isHubSection = /^\/(?:en|es|hi)\/(?:products|solutions)\/[^/]+$/.test(pathname) && info.secTitle;
+  if (isHubSection) {
+    const st = clip(`${info.secTitle} | Nexgn`, 60);
+    head = head.replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '') + `  <title>${esc(st)}</title>\n`;
+    head = head.replace(/<meta\b[^>]*name=["']description["'][^>]*>\s*/gi, '');
+    head = head.replace(/<meta\b[^>]*(?:property|name)=["'](?:og:title|og:description|twitter:title|twitter:description)["'][^>]*>\s*/gi, '');
+    const sd = info.secSub && info.secSub.length >= 40 ? info.secSub : `${info.secTitle}: ${info.lead || ''}`.trim();
+    if (sd) head += `  <meta name="description" content="${esc(clip(sd))}" />\n`;
+    used.push('section title/description');
+  }
+
   // title: the live document.title is what react-helmet-async set, so it is authoritative.
   // (the shell's static generic <title> must never win over it)
   const live = (info.liveTitle || '').trim();
   const t = (head.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '';
-  if (live && !DEFAULT_TITLE.test(live)) {
+  if (isHubSection) {
+    /* already set above */
+  } else if (live && !DEFAULT_TITLE.test(live)) {
     head = head.replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '') + `  <title>${esc(live)}</title>\n`;
     if (unesc(t.trim()) !== live) used.push('title(live)');
   } else if (pageName && /\/(?:en|es|hi)\/.+/.test(pathname)) {
@@ -283,7 +298,7 @@ const renderOnce = async (page, origin, pathname, getErrs, resetErrs) => {
 
   let html = await page.content();
   if (!/<!doctype/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
-  const slug = (pathname.match(/\/products\/([^/]+)$/) || [])[1] || '';
+  const slug = (pathname.match(/\/(?:products|solutions)\/([^/]+)$/) || [])[1] || '';
   const info = await page.evaluate((sl) => {
     const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
     const art =
