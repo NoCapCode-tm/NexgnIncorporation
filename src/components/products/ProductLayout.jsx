@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
+import { Helmet } from 'react-helmet-async';
 import useProductAnimations from '../../hooks/useProductAnimations';
+import { buildProductSchema } from '../../utils/productSchema';
 import styles from './ProductLayout.module.css';
 
 const prefersReducedMotion = () =>
@@ -477,8 +479,22 @@ const ProductLayout = ({
   );
   const pad = (n) => String(n).padStart(2, '0');
 
+  // /products/<slug> URLs get Product structured data (name/description come from the matching section)
+  const productSchema = buildProductSchema({
+    pathname: location.pathname,
+    lng,
+    sections,
+    hubTitle: title,
+    hubLead: lead,
+  });
+
   return (
     <div className={styles.page} ref={rootRef}>
+      {productSchema && (
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+        </Helmet>
+      )}
       <div className={styles.progress} data-pl="progress" aria-hidden="true" />
       <ProductHero eyebrow={eyebrow} title={title} titleAccent={titleAccent} lead={lead} align={align} />
 
