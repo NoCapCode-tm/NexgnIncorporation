@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiEye, FiFileText, FiTrash2, FiCreditCard, FiServer } from 'react-icons/fi';
 import { FaGoogleDrive } from 'react-icons/fa';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import ProductLayout, {
   ProductText,
@@ -23,6 +24,7 @@ const WorkspaceOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/products/workspace');
   const k = 'products.workspace';
   const tr = (key, fallback) => t(`${k}.${key}`, fallback);
 
@@ -32,7 +34,7 @@ const WorkspaceOverview = () => {
     'Give every teammate the right access with role-based permissions and activity logs, and keep signed contracts in your own Google Drive.'
   );
 
-  const pageUrl = `https://nexgn.cloud/${currentLng}/products/workspace`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -133,7 +135,7 @@ const WorkspaceOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/products/workspace" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'PRODUCT')}
         title={tr('hero.title', 'Workspace & Management')}

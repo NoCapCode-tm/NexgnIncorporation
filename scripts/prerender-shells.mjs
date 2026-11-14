@@ -301,10 +301,8 @@ const renderOnce = async (page, origin, pathname, getErrs, resetErrs) => {
   const slug = (pathname.match(/\/(?:products|solutions)\/([^/]+)$/) || [])[1] || '';
   const info = await page.evaluate((sl) => {
     const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
-    const art =
-      (sl && document.getElementById(sl)) ||
-      document.querySelector('[class*="activeBlock"]')?.closest('article') ||
-      null;
+    // ProductLayout marks the section the URL points at (alias-aware) with data-target
+    const art = document.querySelector('article[data-target="true"]') || (sl && document.getElementById(sl)) || null;
     const lead =
       txt(document.querySelector('[data-pl="hero-lead"]')) ||
       Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 60) ||

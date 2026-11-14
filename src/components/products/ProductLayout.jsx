@@ -479,6 +479,9 @@ const ProductLayout = ({
   );
   const pad = (n) => String(n).padStart(2, '0');
 
+  // Section this URL points at (route slug / alias / #hash). Marked in the DOM so the prerender can read it.
+  const targetSectionId = resolveTargetSectionId(location.pathname, location.hash, sections);
+
   // /products/<slug> URLs get Product structured data (name/description come from the matching section)
   const productSchema = buildProductSchema({
     pathname: location.pathname,
@@ -547,6 +550,7 @@ const ProductLayout = ({
                 <article
                   key={section.id}
                   id={section.id}
+                  data-target={targetSectionId === section.id ? 'true' : undefined}
                   ref={(el) => {
                     sectionRefs.current[section.id] = el;
                   }}

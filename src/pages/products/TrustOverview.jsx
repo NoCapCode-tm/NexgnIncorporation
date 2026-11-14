@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FiClock, FiGlobe, FiHash, FiKey, FiMail, FiMonitor, FiShield } from 'react-icons/fi';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import ProductLayout, {
   ProductText,
@@ -24,6 +25,7 @@ const TrustOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/products/audit-trail');
   const tr = (key, fallback) => t(`products.trustEvidence.${key}`, fallback);
 
   const seoTitle = tr('seo.title', 'Trust & Evidence | Nexgn');
@@ -32,7 +34,7 @@ const TrustOverview = () => {
     'Every Nexgn agreement carries a tamper-evident audit certificate and tiered signer identity checks, built for Enterprise IT, Legal Ops and Compliance teams.'
   );
 
-  const pageUrl = `https://nexgn.cloud/${currentLng}/products/audit-trail`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -176,7 +178,7 @@ const TrustOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/products/audit-trail" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'PRODUCT')}
         title={tr('hero.title', 'Trust & Evidence')}

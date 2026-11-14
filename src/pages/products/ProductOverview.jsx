@@ -17,6 +17,7 @@ import {
   FiUserCheck,
   FiZap,
 } from 'react-icons/fi';
+import useCurrentPath from '../../hooks/useCurrentPath';
 import { SEOHead } from '../../components/seo/SEOHead';
 import ProductLayout, {
   ProductText,
@@ -35,6 +36,7 @@ const ProductOverview = () => {
   const { t } = useTranslation();
   const { lng } = useParams();
   const currentLng = LANGS.includes(lng) ? lng : 'en';
+  const pagePath = useCurrentPath('/products');
   const tr = (key, fallback) => t(`products.core.${key}`, fallback);
 
   const seoTitle = tr('seo.title', 'Core Agreement Products | Nexgn');
@@ -43,7 +45,7 @@ const ProductOverview = () => {
     'Explore Nexgn’s core agreement products: legally binding eSignature, drag-and-drop Document Editor, reusable Templates, and automated Agreement Workflows & Scheduler.'
   );
 
-  const pageUrl = `https://nexgn.cloud/${currentLng}/products`;
+  const pageUrl = `https://nexgn.cloud/${currentLng}${pagePath}`;
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -354,7 +356,7 @@ const ProductOverview = () => {
 
   return (
     <>
-      <SEOHead title={seoTitle} description={seoDescription} url="/products" schema={schema} />
+      <SEOHead title={seoTitle} description={seoDescription} url={pagePath} schema={schema} />
       <ProductLayout
         eyebrow={tr('hero.eyebrow', 'PRODUCTS')}
         title={tr('hero.title', 'Core Agreement Products')}
