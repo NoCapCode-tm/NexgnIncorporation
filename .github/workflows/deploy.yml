@@ -61,6 +61,9 @@ jobs:
           # every page must carry its own <h1> in the raw HTML (what Ahrefs / non-JS crawlers see)
           grep -q "<h1" dist/en/pricing.html
           grep -q "<h1" dist/es/legal/terms.html
+          # product pages must carry Product JSON-LD in raw HTML
+          grep -q '"@type":"Product"' dist/en/products/ai-summary.html
+          grep -q '"@type":"Product"' dist/hi/products/workflows.html
           echo "Page shells OK: $(find dist -name '*.html' | wc -l) HTML files"
 
       # Custom domain (nexgn.cloud) comes from public/CNAME, which Rsbuild copies into dist/
