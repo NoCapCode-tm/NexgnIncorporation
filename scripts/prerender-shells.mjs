@@ -204,12 +204,18 @@ const applyHeadFallbacks = async (html, pathname, info) => {
   const productSlug = (pathname.match(/^\/(?:en|es|hi)\/products\/([^/]+)$/) || [])[1];
   const pageName = info.secTitle || info.h1;
 
-  // generic title -> "<page> | Nexgn"
+  // title: the live document.title is what react-helmet-async set, so it is authoritative.
+  // (the shell's static generic <title> must never win over it)
+  const live = (info.liveTitle || '').trim();
   const t = (head.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '';
-  if (pageName && (!t.trim() || DEFAULT_TITLE.test(unesc(t.trim())))) {
+  if (live && !DEFAULT_TITLE.test(live)) {
+    head = head.replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '') + `  <title>${esc(live)}</title>\n`;
+    if (unesc(t.trim()) !== live) used.push('title(live)');
+  } else if (pageName && /\/(?:en|es|hi)\/.+/.test(pathname)) {
+    // Helmet never set one: "<page> | Nexgn"
     const nt = clip(`${pageName} | Nexgn`, 60);
     head = head.replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '') + `  <title>${esc(nt)}</title>\n`;
-    used.push('title');
+    used.push('title(h1)');
   }
 
   // missing description
@@ -236,6 +242,68 @@ const applyHeadFallbacks = async (html, pathname, info) => {
     }
   }
   return { html: head + rest, used };
+};
+
+const ERROR_PAGE = /new version of nexgn is available|couldn.?t load this page|something went wrong/i;
+
+/* Load one URL, wait for the app (h1, Product JSON-LD, Helmet) and read what the fallbacks need. */
+const renderOnce = async (page, origin, pathname, getErrs, resetErrs) => {
+  resetErrs();
+  await page.goto(`${origin}${pathname}`, { waitUntil: 'load', timeout: 30000 });
+  // Lazy route + i18n: wait until the page has an <h1> with text (or give up after 8s)
+  const hasH1 = await page
+    .waitForFunction(
+      () => {
+        const h1 = document.querySelector('h1');
+        return !!h1 && h1.textContent.trim().length > 0;
+      },
+      null,
+      { timeout: 8000 }
+    )
+    .then(() => true)
+    .catch(() => false);
+  // /products/<slug> pages must ship Product JSON-LD in the raw HTML
+  let schemaMissing = false;
+  if (/^\/(en|es|hi)\/products\/[^/]+$/.test(pathname)) {
+    await page
+      .waitForFunction(
+        () =>
+          Array.from(document.querySelectorAll('script[type="application/ld+json"]')).some((el) =>
+            /"@type"\s*:\s*"Product"/.test(el.textContent)
+          ),
+        null,
+        { timeout: 5000 }
+      )
+      .catch(() => {
+        schemaMissing = true;
+      });
+  }
+  // let react-helmet-async flush <title>/<meta>
+  await page.waitForTimeout(250);
+
+  let html = await page.content();
+  if (!/<!doctype/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
+  const slug = (pathname.match(/\/products\/([^/]+)$/) || [])[1] || '';
+  const info = await page.evaluate((sl) => {
+    const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
+    const art =
+      (sl && document.getElementById(sl)) ||
+      document.querySelector('[class*="activeBlock"]')?.closest('article') ||
+      null;
+    const lead =
+      txt(document.querySelector('[data-pl="hero-lead"]')) ||
+      Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 60) ||
+      '';
+    return {
+      h1: txt(document.querySelector('h1')),
+      lead,
+      liveTitle: document.title || '',
+      secTitle: sl ? txt(art?.querySelector('h2')) : '',
+      secSub: sl ? txt(art?.querySelector('header p')) : '',
+    };
+  }, slug);
+  const isErrorPage = ERROR_PAGE.test(info.h1) && !/\/(404|not-found)/.test(pathname);
+  return { html, info, hasH1, schemaMissing, isErrorPage, errs: getErrs() };
 };
 
 const snapshotPages = async (pathnames, shell) => {
@@ -275,6 +343,7 @@ const snapshotPages = async (pathnames, shell) => {
   const noH1 = [];
   const noSchema = [];
   const fallbackUsed = [];
+  const errorPages = [];
   const seo = [];
   let rootHtml = null;
   const queue = [...pathnames];
@@ -286,68 +355,35 @@ const snapshotPages = async (pathnames, shell) => {
     page.on('console', (m) => {
       if (m.type() === 'error') errs.push(`console: ${m.text().split('\n')[0].slice(0, 200)}`);
     });
+    page.on('requestfailed', (r) => {
+      if (/^https?:\/\/127\.0\.0\.1/.test(r.url())) errs.push(`requestfailed: ${r.url().replace(/^https?:\/\/[^/]+/, '')} ${r.failure()?.errorText || ''}`);
+    });
+    page.on('response', (r) => {
+      if (r.status() >= 400 && /^https?:\/\/127\.0\.0\.1/.test(r.url())) errs.push(`http ${r.status()}: ${r.url().replace(/^https?:\/\/[^/]+/, '')}`);
+    });
     for (let pathname = queue.shift(); pathname; pathname = queue.shift()) {
       try {
-        errs = [];
-        await page.goto(`${origin}${pathname}`, { waitUntil: 'load', timeout: 30000 });
-        // Lazy route + i18n: wait until the page has an <h1> with text (or give up after 8s)
-        const hasH1 = await page
-          .waitForFunction(
-            () => {
-              const h1 = document.querySelector('h1');
-              return !!h1 && h1.textContent.trim().length > 0;
-            },
-            null,
-            { timeout: 8000 }
-          )
-          .then(() => true)
-          .catch(() => false);
-        // /products/<slug> pages must ship Product JSON-LD in the raw HTML (Ahrefs "Product page missing Product schema")
-        if (/^\/(en|es|hi)\/products\/[^/]+$/.test(pathname)) {
-          await page
-            .waitForFunction(
-              () =>
-                Array.from(document.querySelectorAll('script[type="application/ld+json"]')).some((el) =>
-                  /"@type"\s*:\s*"Product"/.test(el.textContent)
-                ),
-              null,
-              { timeout: 5000 }
-            )
-            .catch(() => noSchema.push(pathname));
+        let result = null;
+        // The error boundary renders an <h1> too, so detect it and retry once before giving up
+        for (let attempt = 1; attempt <= 2; attempt += 1) {
+          result = await renderOnce(page, origin, pathname, () => errs, () => { errs = []; });
+          if (!result.isErrorPage) break;
+          await page.waitForTimeout(600);
         }
-        // let react-helmet-async flush <title>/<meta>
-        await page.waitForTimeout(250);
-        if (!hasH1) noH1.push(pathname);
+        const { html: rawHtml, info, hasH1, schemaMissing } = result;
 
-        let html = await page.content();
-        if (!/<!doctype/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
-        const slug = (pathname.match(/\/products\/([^/]+)$/) || [])[1] || '';
-        const info = await page.evaluate((sl) => {
-          const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
-          const art =
-            (sl && document.getElementById(sl)) ||
-            document.querySelector('[class*="activeBlock"]')?.closest('article') ||
-            null;
-          const lead =
-            txt(document.querySelector('[data-pl="hero-lead"]')) ||
-            Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 60) ||
-            '';
-          return {
-            h1: txt(document.querySelector('h1')),
-            lead,
-            secTitle: sl ? txt(art?.querySelector('h2')) : '',
-            secSub: sl ? txt(art?.querySelector('header p')) : '',
-          };
-        }, slug);
-        // an error boundary also renders an <h1>; never turn that into a page title/description
-        const looksBroken = /something went wrong|error|not found|404/i.test(info.h1) && !/\/(404|not-found)/.test(pathname);
-        const fb = looksBroken ? { html, used: [] } : await applyHeadFallbacks(html, pathname, info);
-        html = fb.html;
-        if (fb.used.length || looksBroken) {
-          const why = errs.length ? ` | ${errs.slice(0, 2).join(' ; ')}` : '';
-          fallbackUsed.push(`${pathname} [${fb.used.join(', ') || 'SKIPPED: error page'}] h1="${info.h1.slice(0, 50)}"${why}`);
+        if (result.isErrorPage) {
+          const why = errs.length ? errs : ['(no error was logged by the page)'];
+          errorPages.push({ pathname, h1: info.h1, errs: why });
+          failed.push(`${pathname} (page crashed: "${info.h1.slice(0, 40)}")`);
+          continue; // keep the plain shell from step 1; never publish an error screen as the page
         }
-        const n = normalizeHead(html, pathname);
+        if (!hasH1) noH1.push(pathname);
+        if (schemaMissing) noSchema.push(pathname);
+
+        const fb = await applyHeadFallbacks(rawHtml, pathname, info);
+        if (fb.used.length) fallbackUsed.push(`${pathname} [${fb.used.join(', ')}]`);
+        const n = normalizeHead(fb.html, pathname);
         seo.push({ pathname, title: n.title, description: n.description });
         if (pathname === ROOT_SOURCE) rootHtml = n.html;
         await fs.writeFile(path.join(DIST, `${pathname}.html`), n.html);
@@ -362,7 +398,7 @@ const snapshotPages = async (pathnames, shell) => {
   await Promise.all(Array.from({ length: 4 }, worker));
   await browser.close();
   server.close();
-  return { ok: ok.length, failed, noH1, noSchema, fallbackUsed, seo, rootHtml };
+  return { ok: ok.length, failed, noH1, noSchema, fallbackUsed, errorPages, seo, rootHtml };
 };
 
 const main = async () => {
@@ -424,6 +460,14 @@ const main = async () => {
   }
 
   if (snap.ok) console.log(`prerender: rendered ${snap.ok}/${pathnames.length} pages with their own <title> and <h1>`);
+  if (snap.errorPages?.length) {
+    const byMsg = new Map();
+    for (const e of snap.errorPages) for (const m of e.errs.slice(0, 3)) byMsg.set(m, (byMsg.get(m) || 0) + 1);
+    console.warn(`prerender: ${snap.errorPages.length} pages CRASHED while rendering (plain shell kept, not published as an error screen):`);
+    console.warn(`  pages: ${snap.errorPages.map((e) => e.pathname).join(', ')}`);
+    console.warn('  errors (count x message):');
+    for (const [m, c] of [...byMsg].sort((a, b) => b[1] - a[1]).slice(0, 15)) console.warn(`   ${c}x ${m}`);
+  }
   if (snap.fallbackUsed?.length) console.warn(`prerender: head fallback used on ${snap.fallbackUsed.length} pages (react-helmet-async did not flush):\n  ${snap.fallbackUsed.join('\n  ')}`);
   if (snap.noSchema?.length) console.warn(`prerender: no Product schema on:\n  ${snap.noSchema.join('\n  ')}`);
   if (snap.noH1.length) console.warn(`prerender: no <h1> found on:\n  ${snap.noH1.join('\n  ')}`);
