@@ -3,7 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 import { Helmet } from 'react-helmet-async';
 import useProductAnimations from '../../hooks/useProductAnimations';
-import { buildProductSchema } from '../utils/productSchema';
+import { buildProductSchema } from './productSchema';
 import styles from './ProductLayout.module.css';
 
 const prefersReducedMotion = () =>
