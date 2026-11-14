@@ -179,6 +179,65 @@ const normalizeHead = (html, pathname) => {
   return { html: head + links + social + rest, title, description };
 };
 
+/* ---------------------------------------------------------------------------------------------
+ * Safety net: if react-helmet-async did not flush into the snapshot (no description / generic title /
+ * no Product JSON-LD), derive them from the rendered page itself so crawlers never get an empty head.
+ * Every use is logged ("prerender: head fallback used on ...") so a real Helmet problem stays visible.
+ * ------------------------------------------------------------------------------------------- */
+const DEFAULT_TITLE = /^Nexgn \| The Modern Agreement Platform/i;
+let productSchemaMod = null;
+const loadProductSchema = async () => {
+  if (productSchemaMod) return productSchemaMod;
+  const src = await fs.readFile(path.resolve('src', 'utils', 'productSchema.js'), 'utf8');
+  productSchemaMod = await import(`data:text/javascript;base64,${Buffer.from(src).toString('base64')}`);
+  return productSchemaMod;
+};
+const clip = (v, max = 158) => (v.length <= max ? v : `${v.slice(0, max - 1).replace(/\s+\S*$/, '')}…`);
+
+const applyHeadFallbacks = async (html, pathname, info) => {
+  const used = [];
+  const end = html.search(/<\/head>/i);
+  if (end === -1) return { html, used };
+  let head = html.slice(0, end);
+  const rest = html.slice(end);
+  const lng = pathname.split('/')[1];
+  const productSlug = (pathname.match(/^\/(?:en|es|hi)\/products\/([^/]+)$/) || [])[1];
+  const pageName = info.secTitle || info.h1;
+
+  // generic title -> "<page> | Nexgn"
+  const t = (head.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || '';
+  if (pageName && (!t.trim() || DEFAULT_TITLE.test(unesc(t.trim())))) {
+    const nt = clip(`${pageName} | Nexgn`, 60);
+    head = head.replace(/<title\b[^>]*>[\s\S]*?<\/title>\s*/gi, '') + `  <title>${esc(nt)}</title>\n`;
+    used.push('title');
+  }
+
+  // missing description
+  const hasDesc = /<meta\b[^>]*name=["']description["'][^>]*content=["'][^"']+/i.test(head);
+  const desc = info.secSub || info.lead;
+  if (!hasDesc && desc) {
+    head += `  <meta name="description" content="${esc(clip(desc))}" />\n`;
+    used.push('description');
+  }
+
+  // Product JSON-LD on /products/<slug>
+  if (productSlug && !/"@type"\s*:\s*"Product"/.test(head)) {
+    const { buildProductSchema } = await loadProductSchema();
+    const schema = buildProductSchema({
+      pathname,
+      lng,
+      sections: [{ id: productSlug, title: info.secTitle, subtitle: info.secSub }],
+      hubTitle: info.h1,
+      hubLead: info.lead,
+    });
+    if (schema) {
+      head += `  <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>\n`;
+      used.push('Product schema');
+    }
+  }
+  return { html: head + rest, used };
+};
+
 const snapshotPages = async (pathnames, shell) => {
   let chromium;
   try {
@@ -215,14 +274,21 @@ const snapshotPages = async (pathnames, shell) => {
   const failed = [];
   const noH1 = [];
   const noSchema = [];
+  const fallbackUsed = [];
   const seo = [];
   let rootHtml = null;
   const queue = [...pathnames];
 
   const worker = async () => {
     const page = await context.newPage();
+    let errs = [];
+    page.on('pageerror', (e) => errs.push(`pageerror: ${String(e.message).split('\n')[0]}`));
+    page.on('console', (m) => {
+      if (m.type() === 'error') errs.push(`console: ${m.text().split('\n')[0].slice(0, 200)}`);
+    });
     for (let pathname = queue.shift(); pathname; pathname = queue.shift()) {
       try {
+        errs = [];
         await page.goto(`${origin}${pathname}`, { waitUntil: 'load', timeout: 30000 });
         // Lazy route + i18n: wait until the page has an <h1> with text (or give up after 8s)
         const hasH1 = await page
@@ -255,6 +321,32 @@ const snapshotPages = async (pathnames, shell) => {
 
         let html = await page.content();
         if (!/<!doctype/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
+        const slug = (pathname.match(/\/products\/([^/]+)$/) || [])[1] || '';
+        const info = await page.evaluate((sl) => {
+          const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
+          const art =
+            (sl && document.getElementById(sl)) ||
+            document.querySelector('[class*="activeBlock"]')?.closest('article') ||
+            null;
+          const lead =
+            txt(document.querySelector('[data-pl="hero-lead"]')) ||
+            Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 60) ||
+            '';
+          return {
+            h1: txt(document.querySelector('h1')),
+            lead,
+            secTitle: sl ? txt(art?.querySelector('h2')) : '',
+            secSub: sl ? txt(art?.querySelector('header p')) : '',
+          };
+        }, slug);
+        // an error boundary also renders an <h1>; never turn that into a page title/description
+        const looksBroken = /something went wrong|error|not found|404/i.test(info.h1) && !/\/(404|not-found)/.test(pathname);
+        const fb = looksBroken ? { html, used: [] } : await applyHeadFallbacks(html, pathname, info);
+        html = fb.html;
+        if (fb.used.length || looksBroken) {
+          const why = errs.length ? ` | ${errs.slice(0, 2).join(' ; ')}` : '';
+          fallbackUsed.push(`${pathname} [${fb.used.join(', ') || 'SKIPPED: error page'}] h1="${info.h1.slice(0, 50)}"${why}`);
+        }
         const n = normalizeHead(html, pathname);
         seo.push({ pathname, title: n.title, description: n.description });
         if (pathname === ROOT_SOURCE) rootHtml = n.html;
@@ -270,7 +362,7 @@ const snapshotPages = async (pathnames, shell) => {
   await Promise.all(Array.from({ length: 4 }, worker));
   await browser.close();
   server.close();
-  return { ok: ok.length, failed, noH1, noSchema, seo, rootHtml };
+  return { ok: ok.length, failed, noH1, noSchema, fallbackUsed, seo, rootHtml };
 };
 
 const main = async () => {
@@ -332,6 +424,7 @@ const main = async () => {
   }
 
   if (snap.ok) console.log(`prerender: rendered ${snap.ok}/${pathnames.length} pages with their own <title> and <h1>`);
+  if (snap.fallbackUsed?.length) console.warn(`prerender: head fallback used on ${snap.fallbackUsed.length} pages (react-helmet-async did not flush):\n  ${snap.fallbackUsed.join('\n  ')}`);
   if (snap.noSchema?.length) console.warn(`prerender: no Product schema on:\n  ${snap.noSchema.join('\n  ')}`);
   if (snap.noH1.length) console.warn(`prerender: no <h1> found on:\n  ${snap.noH1.join('\n  ')}`);
   if (snap.failed.length) console.warn(`prerender: kept plain shell for:\n  ${snap.failed.join('\n  ')}`);
