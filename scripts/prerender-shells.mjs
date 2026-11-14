@@ -336,7 +336,13 @@ const snapshotPages = async (pathnames, shell) => {
     serviceWorkers: 'block',
   });
   // Never call out to analytics / fonts / third parties while snapshotting
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1)/, (route) => route.abort());
+  // Stylesheets must be answered (empty), not aborted: a CSS file with an external @import (Google Fonts in
+  // ProductLayout.module.css) otherwise fails to load and the app shows its "new version available" screen.
+  await context.route(/^https?:\/\/(?!127\.0\.0\.1)/, (route) =>
+    route.request().resourceType() === 'stylesheet'
+      ? route.fulfill({ status: 200, contentType: 'text/css', body: '/* external stylesheet skipped while prerendering */' })
+      : route.abort()
+  );
 
   const ok = [];
   const failed = [];
