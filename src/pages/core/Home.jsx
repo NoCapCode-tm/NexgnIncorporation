@@ -180,6 +180,14 @@ const LAUNCHED_ON = [
     src: 'https://launchbison.com/badge-light.svg',
     href: 'https://launchbison.com',
   },
+    {
+    key: 'postmake',
+    name: 'Postmake',
+    title: 'Featured on Postmake',
+    alt: 'Featured on Postmake',
+    src: 'https://postmake.io/postmake_badge_light.png',
+    href: 'https://postmake.io/submit',
+  },
 ];
 
 // Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
