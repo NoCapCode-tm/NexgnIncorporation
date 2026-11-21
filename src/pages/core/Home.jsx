@@ -172,6 +172,15 @@ const LAUNCHED_ON = [
     src: 'https://apprater.net/badge.svg',
     href: 'https://apprater.net',
   },
+  {
+    key: 'launchbison',
+    name: 'LaunchBison',
+    title: 'Featured on LaunchBison',
+    alt: 'Featured on LaunchBison',
+    src: 'https://launchbison.com/badge-light.svg',
+    href: 'https://launchbison.com',
+  }
+
 ];
 
 // Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
