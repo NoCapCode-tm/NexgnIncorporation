@@ -17,7 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
    - Compliance cards
    - Pricing card animations
    - Final CTA expansion
-   - Trusted-by marquee
+   - Trusted-by & Featured-on marquees
 
    Signature sequence:
    1. DM Sans
@@ -678,90 +678,99 @@ export default function useHomeAnimations(rootRef, deps = []) {
         });
 
         /* =============================================================
-           9. TRUSTED-BY MARQUEE
+           9. TRUSTED-BY & FEATURED-ON MARQUEES
            ============================================================= */
 
-        const track = root.querySelector(
-          '[data-a="marquee"]'
-        );
+        const tracks = $$(root, '[data-a="marquee"]');
 
-        if (track) {
-          const tween = gsap.to(track, {
-            xPercent: -50,
-            duration: 38,
-            ease: 'none',
-            repeat: -1,
-          });
+        if (tracks.length) {
+          const controllers = tracks.map((track) => {
+            const tween = gsap.to(track, {
+              xPercent: -50,
+              duration: 38,
+              ease: 'none',
+              repeat: -1,
+            });
 
-          let hovering = false;
-          let dir = 1;
+            const state = {
+              tween,
+              hovering: false,
+              dir: 1,
+            };
 
-          const settle = gsap.delayedCall(0.18, () => {
-            if (!hovering) {
+            const settle = gsap.delayedCall(0.18, () => {
+              if (!state.hovering) {
+                gsap.to(tween, {
+                  timeScale: state.dir,
+                  duration: 1.1,
+                  ease: 'power2.out',
+                  overwrite: true,
+                });
+              }
+            });
+
+            settle.pause();
+            state.settle = settle;
+
+            const over = () => {
+              state.hovering = true;
+
               gsap.to(tween, {
-                timeScale: dir,
-                duration: 1.1,
-                ease: 'power2.out',
+                timeScale: 0,
+                duration: 0.5,
                 overwrite: true,
               });
-            }
-          });
+            };
 
-          settle.pause();
+            const out = () => {
+              state.hovering = false;
+
+              gsap.to(tween, {
+                timeScale: state.dir,
+                duration: 0.8,
+                overwrite: true,
+              });
+            };
+
+            const holder = track.parentElement;
+
+            holder.addEventListener('mouseenter', over);
+            holder.addEventListener('mouseleave', out);
+
+            ctx.add(() => () => {
+              holder.removeEventListener('mouseenter', over);
+              holder.removeEventListener('mouseleave', out);
+              settle.kill();
+            });
+
+            return state;
+          });
 
           ScrollTrigger.create({
             start: 0,
             end: 'max',
 
             onUpdate: (self) => {
-              if (hovering) return;
-
-              dir = self.direction;
-
               const boost = gsap.utils.clamp(
                 0,
                 9,
                 Math.abs(self.getVelocity()) / 450
               );
 
-              gsap.to(tween, {
-                timeScale: dir * (1 + boost),
-                duration: 0.25,
-                overwrite: true,
+              controllers.forEach((ctrl) => {
+                if (ctrl.hovering) return;
+
+                ctrl.dir = self.direction;
+
+                gsap.to(ctrl.tween, {
+                  timeScale: ctrl.dir * (1 + boost),
+                  duration: 0.25,
+                  overwrite: true,
+                });
+
+                ctrl.settle.restart(true);
               });
-
-              settle.restart(true);
             },
-          });
-
-          const over = () => {
-            hovering = true;
-
-            gsap.to(tween, {
-              timeScale: 0,
-              duration: 0.5,
-              overwrite: true,
-            });
-          };
-
-          const out = () => {
-            hovering = false;
-
-            gsap.to(tween, {
-              timeScale: dir,
-              duration: 0.8,
-              overwrite: true,
-            });
-          };
-
-          const holder = track.parentElement;
-
-          holder.addEventListener('mouseenter', over);
-          holder.addEventListener('mouseleave', out);
-
-          ctx.add(() => () => {
-            holder.removeEventListener('mouseenter', over);
-            holder.removeEventListener('mouseleave', out);
           });
         }
 

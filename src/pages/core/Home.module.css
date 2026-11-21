@@ -412,12 +412,24 @@
   }
 }
 
-/* ---------- 2. Trusted by ---------- */
+/* ---------- 2. Trusted by & Featured On ---------- */
 
 .trusted {
   --logo-gap: max(2rem, 4.5vw);
   background: var(--light);
   padding: max(1.25rem, 2vw) var(--pad-x);
+}
+
+.featuredOn {
+  --logo-gap: max(1.5rem, 3vw);
+  padding-top: max(1.75rem, 2.6vw);
+  padding-bottom: max(1.75rem, 2.6vw);
+}
+
+.featuredOn .logoItem img {
+  height: clamp(2.5rem, 3.6vw, 4rem);
+  width: auto;
+  object-fit: contain;
 }
 
 .trustedRow {
@@ -472,6 +484,19 @@
   letter-spacing: -0.02em;
   color: #5d6470;
   white-space: nowrap;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  opacity: 0.9;
+  transition: opacity 0.25s ease, transform 0.3s var(--ease-out);
+}
+
+.logoLink:hover {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 @media (min-width: 640px) {
@@ -1321,7 +1346,8 @@ div.cardMedia[data-k='storage'] {
 .btnGhost:focus-visible,
 .planBtn:focus-visible,
 .tab:focus-visible,
-.toggleBtn:focus-visible {
+.toggleBtn:focus-visible,
+.logoLink:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
 }
@@ -1390,7 +1416,8 @@ div.cardMedia[data-k='storage'] {
   .tab,
   .toggleBtn,
   .mediaSlide,
-  .flowBody {
+  .flowBody,
+  .logoLink {
     transition: none;
   }
 }

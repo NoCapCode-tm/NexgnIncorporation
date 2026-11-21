@@ -122,6 +122,67 @@ const LOGOS = [
   { key: 'orbit', name: 'orbit', src: null }, // Example: src/assets/logos/orbit.png
 ];
 
+
+const LAUNCHED_ON = [
+  {
+    key: 'launchbuff',
+    name: 'LaunchBuff',
+    title: 'Featured on LaunchBuff',
+    alt: 'Featured on LaunchBuff',
+    src: 'https://launchbuff.com/badge-featured-light.svg',
+    href: 'https://launchbuff.com/products/nexgn-wv9opp',
+  },
+  {
+    key: 'launchigniter',
+    name: 'LaunchIgniter',
+    title: 'Featured on LaunchIgniter',
+    alt: 'Featured on LaunchIgniter',
+    src: 'https://launchigniter.com/api/badge/nexgn?theme=light',
+    href: 'https://launchigniter.com/product/nexgn?ref=badge-nexgn',
+  },
+  {
+    key: 'smollaunch',
+    name: 'Smol Launch',
+    title: 'Featured on Smol Launch',
+    alt: 'Nexgn — Featured on Smol Launch',
+    src: 'https://smollaunch.com/badges/featured.svg',
+    href: 'https://smollaunch.com',
+  },
+  {
+    key: 'startupbase-launched',
+    name: 'StartupBase',
+    title: 'Launched on StartupBase',
+    alt: 'Launched on StartupBase',
+    src: 'https://statics.startupbase.io/site/badges/launched-on-sb-neutral.svg',
+    href: 'https://startupbase.io/products/nexgn?utm_source=startupbase&utm_medium=badge&utm_campaign=launch-badge-neutral',
+  },
+  {
+    key: 'startupbase-featured',
+    name: 'StartupBase Featured',
+    title: 'Featured on StartupBase',
+    alt: 'Featured on StartupBase',
+    src: 'https://statics.startupbase.io/site/badges/featured-on-sb-neutral.svg',
+    href: 'https://startupbase.io/products/nexgn?utm_source=startupbase&utm_medium=badge&utm_campaign=featured-badge-neutral',
+  },
+  {
+    key: 'apprater',
+    name: 'AppRater',
+    title: 'AppRater — the independent app index',
+    alt: 'AppRater — the independent app index',
+    src: 'https://apprater.net/badge.svg',
+    href: 'https://apprater.net',
+  },
+];
+
+// Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
+const LAUNCHED_TRACK = [
+  ...LAUNCHED_ON,
+  ...LAUNCHED_ON,
+  ...LAUNCHED_ON,
+  ...LAUNCHED_ON,
+];
+
+
 // Hover (or tap / focus) a step on the left and the panel on the right switches to it.
 // To show a product screenshot in the white box, set `img` (imported image) on a step.
 const FLOW = [
@@ -365,7 +426,12 @@ const Home = () => {
         '@id': 'https://nexgn.cloud/#organization',
         name: 'Nexgn',
         url: 'https://nexgn.cloud',
-        sameAs: ['https://www.linkedin.com/company/nexgncloud', 'https://x.com/nexgncloud', 'https://www.facebook.com/nexgncloud', 'https://instagram.com/nexgn.cloud/'],
+        sameAs: [
+          'https://www.linkedin.com/company/nexgncloud',
+          'https://x.com/nexgncloud',
+          'https://www.facebook.com/nexgncloud',
+          'https://instagram.com/nexgn.cloud/',
+        ],
       },
       {
         '@type': 'WebSite',
@@ -806,16 +872,69 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ============ 6B. FEATURED & LAUNCHED ON ============ */}
+      <section
+        className={`${styles.trusted} ${styles.featuredOn}`}
+        aria-label={tr('featuredOn.label', 'Featured & Launched On')}
+      >
+        <div className={styles.container}>
+          <div className={styles.trustedRow} data-a="up">
+            <p className={styles.trustedLabel}>
+              {tr('featuredOn.label', 'Featured & Launched On')}
+            </p>
+            <div className={styles.marquee}>
+              <ul className={styles.marqueeTrack} data-a="marquee">
+                {LAUNCHED_TRACK.map((item, i) => {
+                  const isDup = i >= LAUNCHED_ON.length;
+                  const content = item.src ? (
+                    <img
+                      src={item.src}
+                      alt={!isDup ? item.alt || item.name : ''}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className={styles.logoWord}>{item.name}</span>
+                  );
+
+                  return (
+                    <li
+                      key={`${item.key}-${i}`}
+                      className={styles.logoItem}
+                      aria-hidden={isDup ? 'true' : undefined}
+                    >
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={item.title || item.name}
+                          className={styles.logoLink}
+                          tabIndex={isDup ? -1 : undefined}
+                        >
+                          {content}
+                        </a>
+                      ) : (
+                        content
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ 7. FINAL CTA (reusable: src/components/common/CtaBanner) ============ */}
       <div data-a="expand">
         <CtaBanner
           image={IMAGES.cta}
-        title={tr('cta.title', 'Start signing documents')}
-        highlight={tr('cta.highlight', 'signing')}
-        text={tr(
-          'cta.text',
-          'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
-        )}
+          title={tr('cta.title', 'Start signing documents')}
+          highlight={tr('cta.highlight', 'signing')}
+          text={tr(
+            'cta.text',
+            'Start signing documents the simpler way. Join modern businesses sending and signing documents securely with Nexgn.'
+          )}
           primary={{ label: tr('cta.primary', 'Create your free account'), href: SIGNUP_URL }}
           secondary={{ label: tr('cta.secondary', 'Login'), href: LOGIN_URL }}
         />
