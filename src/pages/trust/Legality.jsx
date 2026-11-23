@@ -323,9 +323,10 @@ const Legality = () => {
                       {r.flagCode === 'globe' ? (
                         '🌐'
                       ) : (
-                      <img 
-                        src={`https://flagcdn.com/${r.flagCode}.svg`} 
-                        alt="" 
+                      <img
+                        src={`https://flagcdn.com/${r.flagCode}.svg`}
+                        alt=""
+                        loading="lazy"
                       />
                       )}
                     </span>

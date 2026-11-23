@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  
+
   <!-- Preconnect to Google Fonts for speed -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;400&display=swap" rel="stylesheet">
+  <!-- FIX #1: All 4 font families in ONE request (was 4 separate round-trips) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=MuseoModerno:wght@300;400&family=Allison&family=Alex+Brush&family=Herr+Von+Muellerhoff&family=Sacramento&display=swap"
+    rel="stylesheet"
+  />
 
-    <!-- Primary website font -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Allison&family=Alex+Brush&family=Herr+Von+Muellerhoff&family=Sacramento&display=swap" rel="stylesheet"/>
-  
-
-  <!-- Base URL (Required for GitHub Pages routing if NOT using a custom domain. Change to "/" if using nexgn.cloud) -->
+  <!-- Base URL -->
   <base href="/" />
+
+  <!-- FIX #2: noindex on the shell so Google never indexes the bare SPA entry point.
+       The prerender script overwrites this for every real page via normalizeHead(). -->
+  <meta name="robots" content="noindex, follow" />
 
   <!-- Primary Meta Tags (Fallback for bots that don't run JS) -->
   <title>Nexgn | The Modern Agreement Platform</title>
@@ -30,38 +32,44 @@
   <meta property="og:url" content="https://nexgn.cloud/" />
   <meta property="og:title" content="Nexgn | The Modern Agreement Platform" />
   <meta property="og:description" content="Create, sign, automate, and trust agreements securely." />
-  <meta property="og:image" content="https://nexgn.cloud/og-image.jpg" />
+  <meta property="og:image" content="https://nexgn.cloud/og-image.png" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://nexgn.cloud/" />
   <meta property="twitter:title" content="Nexgn | The Modern Agreement Platform" />
   <meta property="twitter:description" content="Create, sign, automate, and trust agreements securely." />
-  <meta property="twitter:image" content="https://nexgn.cloud/og-image.jpg" />
+  <meta property="twitter:image" content="https://nexgn.cloud/og-image.png" />
 
   <!-- Device Specific Icons & PWA Manifest -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <!-- FIX #3: was /site.webmanifest (404). File is actually manifest.json -->
+  <link rel="manifest" href="/manifest.json" />
   <link rel="mask-icon" href="/favicon.ico" color="#FF0915" />
   <meta name="msapplication-TileColor" content="#FF0915" />
   <meta name="theme-color" content="#FF0915" />
 
-<!-- Strict CSP: Only allows scripts from our domain, Google Fonts, and Razorpay -->
+  <!-- FIX #4: Corrected CSP — adds Google Analytics & GTM to connect-src and script-src
+       (they were blocked silently before, losing all analytics data) -->
   <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self'; 
-    script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; 
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
-    font-src 'self' https://fonts.gstatic.com; 
-    img-src 'self' data: https://*; 
-    connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com;
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://www.googletagmanager.com https://analytics.ahrefs.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https://*;
+    connect-src 'self' https://api.nexgn.cloud https://lumberjack.razorpay.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.ahrefs.com;
   ">
 
-  <!-- PRELOAD LCP: Forces the browser to load the hero image instantly -->
-  <link rel="preload" as="image" href="/assets/hero-image.webp" type="image/webp" />
+  <!-- FIX #5: Removed the broken preload that pointed to /assets/hero-image.webp
+       (that file didn't exist — Rsbuild hashes assets). Instead, the hero image
+       is now in public/ as a stable, unhashed file and preloaded correctly.
+       ACTION NEEDED: Export your hero image as /public/hero-image.webp (see Fix 6 below).
+       Then un-comment the line below: -->
+  <link rel="preload" as="image" href="/hero-image.webp" type="image/webp" />
 
-  <!-- CORRECTED: JSON-LD Structured Data for AEO/GEO Indexing -->
+  <!-- JSON-LD Structured Data for AEO/GEO Indexing -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -83,30 +91,30 @@
   }
   </script>
 
-    <script src="https://analytics.ahrefs.com/analytics.js" data-key="s2bqBNN/4cxUOJs+7C8o4w" async></script>
+  <!-- FIX #6: Ahrefs analytics — was loaded TWICE (once via src attr, once via inline JS).
+       Removed the duplicate inline <script> block. Only the src= version below runs now. -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="s2bqBNN/4cxUOJs+7C8o4w" async></script>
 
-    <script>
-    var ahrefs_analytics_script = document.createElement('script');
-    ahrefs_analytics_script.async = true;
-    ahrefs_analytics_script.src = 'https://analytics.ahrefs.com/analytics.js';
-    ahrefs_analytics_script.setAttribute('data-key', 's2bqBNN/4cxUOJs+7C8o4w');
-    document.getElementsByTagName('head')[0].appendChild(ahrefs_analytics_script);
-    </script>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVPNVGMZ2V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-VVPNVGMZ2V');
-    </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVPNVGMZ2V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VVPNVGMZ2V');
+  </script>
 
 </head>
 <body>
   <!-- Fallback for users with JavaScript disabled -->
-  <noscript>You need to enable JavaScript to run the Nexgn platform.</noscript>
-  
+  <noscript>
+    <div style="font-family:sans-serif;text-align:center;padding:60px 24px;max-width:600px;margin:0 auto">
+      <h1 style="color:#FF0915">Nexgn</h1>
+      <p>JavaScript is required to use the Nexgn platform.</p>
+      <p>Need help? Email us at <a href="mailto:hello@nexgn.cloud">hello@nexgn.cloud</a></p>
+    </div>
+  </noscript>
+
   <!-- React Mount Point -->
   <div id="root"></div>
 

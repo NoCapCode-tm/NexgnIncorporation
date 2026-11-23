@@ -67,18 +67,18 @@ const STATIC_ROUTES = [
   // Product Hub 2: Nexgn AI (Intelligence)
   { path: '/products/ai-summary', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/IntelligenceOverview.jsx' },
   { path: '/products/ai-builder', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/IntelligenceOverview.jsx' },
-  { path: '/products/ai-clause-assistant', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/IntelligenceOverview.jsx' },
+  // REMOVED: /products/ai-clause-assistant — retired redirect, not in sitemap (Google treats redirected sitemap entries as soft errors)
 
   // Product Hub 3: Trust & Evidence
   { path: '/products/audit-trail', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/TrustOverview.jsx' },
   { path: '/products/identity-assurance', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/TrustOverview.jsx' },
-  { path: '/products/agreement-verification', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/TrustOverview.jsx' },
+  // REMOVED: /products/agreement-verification — retired redirect
 
   // Product Hub 4: Workspace & Management
   { path: '/products/workspace', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/WorkspaceOverview.jsx' },
   { path: '/products/cloud-storage', priority: '0.8', changefreq: 'monthly', file: 'src/pages/products/WorkspaceOverview.jsx' },
-  { path: '/products/roles-permissions', priority: '0.7', changefreq: 'monthly', file: 'src/pages/products/WorkspaceOverview.jsx' },
-  { path: '/products/activity-logs', priority: '0.7', changefreq: 'monthly', file: 'src/pages/products/WorkspaceOverview.jsx' },
+  // REMOVED: /products/roles-permissions — retired redirect
+  // REMOVED: /products/activity-logs — retired redirect
 
   // Developers
   { path: '/developers', priority: '0.8', changefreq: 'monthly', file: 'src/pages/developers/DevPortal.jsx' },

@@ -357,7 +357,7 @@ const Privacy = () => {
               <li key={key} className={`${styles.card} ${styles.framework} ${styles.lift}`} data-p="item spot" data-hv="spot">
                 <span className={styles.tag}>
                   <span className={styles.flagIcon} aria-hidden="true">
-                    <img src={`https://flagcdn.com/${flagCode}.svg`} alt="" />
+                    <img src={`https://flagcdn.com/${flagCode}.svg`} alt="" loading="lazy" />
                   </span>
                   <span>{tr(`frameworks.${key}.region`, region)}</span>
                 </span>

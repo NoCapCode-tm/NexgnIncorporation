@@ -16,11 +16,15 @@ const enterpriseSchema = {
         "price": "0",
         "priceCurrency": "INR"
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "1250"
-      },
+      // "aggregateRating": {
+      //   "@type": "AggregateRating",
+      //   "ratingValue": "4.9",
+      //   "ratingCount": "1250"
+      // },
+      // NOTE: aggregateRating removed. Only add it back when you have real,
+      // verifiable reviews on G2 / Capterra / Trustpilot. Fake ratings can
+      // trigger a Google manual penalty and rich-result disqualification.
+
       "featureList": "AES-256 Encryption, ESIGN Act Compliant, IT Act 2000 Compliant, Multi-signer workflows"
     },
     {

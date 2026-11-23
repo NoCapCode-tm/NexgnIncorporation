@@ -106,10 +106,12 @@ const Blog = () => {
                 to={withLng(`/blog/${FEATURED_POST.slug}`)}
                 className={styles.featuredImgWrapper}
               >
-                <img
+                 <img
                   src={FEATURED_POST.image}
                   alt={FEATURED_POST.title}
                   className={styles.featuredImg}
+                  loading="lazy"
+                  decoding="async"
                 />
               </Link>
               <div className={styles.featuredContent}>

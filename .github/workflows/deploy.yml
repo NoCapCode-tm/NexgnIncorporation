@@ -32,10 +32,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules/.cache
-          key: ${{ runner.os }}-rsbuild-${{ github.sha }}
+          # FIX: was github.sha — always a cache miss on every commit.
+          # Now uses a hash of package-lock.json so the cache is only invalidated
+          # when dependencies actually change. Much higher cache hit rate.
+          key: ${{ runner.os }}-rsbuild-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-rsbuild-
-
       - name: Install Dependencies
         run: npm ci
 
