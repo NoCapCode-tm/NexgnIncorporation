@@ -14,9 +14,8 @@ const LOGIN_URL = 'https://sign.nexgn.cloud/login';
 const LANGS = ['en', 'es', 'hi'];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-// Leave '' to open the visitor's email app addressed to FORM_FALLBACK_EMAIL.
-// When set, the form POSTs JSON { name, email, subject, message } to it.
-const FORM_URL = '';
+// Formspree endpoint for the Nexgn contact form.
+const FORM_URL = 'https://formspree.io/f/xjywppnd';
 const FORM_FALLBACK_EMAIL = 'help@nexgn.cloud';
 
 /* Images: drop hero.* (typewriter photo) into src/assets/contact/. A missing file never breaks the build. */
@@ -362,10 +361,14 @@ const Contact = () => {
     setState('sending');
     try {
       if (FORM_URL) {
+        const submission = new FormData(e.currentTarget);
+        submission.set('name', name);
+        submission.set('email', email);
+        submission.set('subject', topic.label);
         const res = await fetch(FORM_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, subject: topic.label, message }),
+          headers: { Accept: 'application/json' },
+          body: submission,
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
       } else {
@@ -463,13 +466,14 @@ const Contact = () => {
           </div>
 
           <div className={styles.formWrap} data-ct="card">
-            <form className={styles.form} onSubmit={onSubmit} noValidate data-ct="form">
+            <form action={FORM_URL} method="POST" className={styles.form} onSubmit={onSubmit} noValidate data-ct="form">
               <div className={styles.field} data-ct="field">
                 <label htmlFor="ct-name" className={styles.label}>
                   {tr('form.name', 'Name')}
                 </label>
                 <input
                   id="ct-name"
+                  name="name"
                   className={styles.input}
                   type="text"
                   autoComplete="name"
@@ -485,6 +489,7 @@ const Contact = () => {
                 </label>
                 <input
                   id="ct-email"
+                  name="email"
                   className={styles.input}
                   type="email"
                   inputMode="email"
@@ -506,6 +511,11 @@ const Contact = () => {
                   placeholder={tr('form.subjectPh', 'Select a topic')}
                   options={topics}
                 />
+                <input
+                  type="hidden"
+                  name="subject"
+                  value={topics.find((o) => o.key === form.subject)?.label || ''}
+                />
               </div>
 
               <div className={styles.field} data-ct="field">
@@ -514,6 +524,7 @@ const Contact = () => {
                 </label>
                 <textarea
                   id="ct-message"
+                  name="message"
                   className={`${styles.input} ${styles.textarea}`}
                   rows={5}
                   placeholder={tr('form.messagePh', 'We would like to hear you')}
@@ -525,7 +536,7 @@ const Contact = () => {
               <input
                 className={styles.trap}
                 type="text"
-                name="company"
+                name="_gotcha"
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
