@@ -39,7 +39,7 @@ const findImage = (name) => {
 };
 
 const IMAGES = {
-  hero: findImage('hero'),
+  hero: '/hero-image.webp',
   workflow: findImage('workflow'),
   pricing: findImage('pricing'),
   cta: findImage('cta'),
