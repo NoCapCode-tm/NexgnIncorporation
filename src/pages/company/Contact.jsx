@@ -31,6 +31,124 @@ const findImage = (name) => {
 };
 const HERO_IMG = findImage('hero');
 
+/* ---------- Email templates ---------- */
+
+const EMAIL_TEMPLATE_GUIDANCE = [
+  'Email submission guidelines',
+  'Please complete the relevant fields in this template and retain its structure. In the subject line, replace only the final [2–3 word summary] with a brief description of your request. Keep the fixed Nexgn department wording unchanged.',
+  'The reference format helps us identify, route, and track your request. Removing or changing it may delay processing and affect response timelines where an SLA applies.',
+].join('\n');
+
+const MAIL_TEMPLATES = {
+  gateway: {
+    subject: 'Nexgn | Gateway Support | [2–3 word summary]',
+    body: [
+      'Hello Nexgn Gateway Team,',
+      '',
+      'I am contacting you for assistance with a gateway or transaction-related matter.',
+      '',
+      'Issue description:',
+      '[Please explain what happened, what you expected to happen, and any error message displayed.]',
+      '',
+      'Transaction / reference ID: [If available]',
+      'Date and time (including time zone): [If available]',
+      'Amount and currency: [If relevant]',
+      'Registered Nexgn account email: [Your account email]',
+      'Workspace / organisation: [If applicable]',
+      '',
+      EMAIL_TEMPLATE_GUIDANCE,
+      '',
+      'Security note: Do not include passwords, OTPs, CVVs, full card numbers, banking credentials, or other confidential authentication details.',
+      '',
+      'Regards,',
+      '[Your full name]',
+    ].join('\n'),
+  },
+  help: {
+    subject: 'Nexgn | Customer Support | [2–3 word summary]',
+    body: [
+      'Hello Nexgn Support Team,',
+      '',
+      'I am requesting assistance with the matter described below.',
+      '',
+      'Issue description:',
+      '[Please explain what you were trying to do, what happened, and the result you expected. Include the exact error message, if any.]',
+      '',
+      'Registered Nexgn account email: [Your account email]',
+      'Workspace / organisation: [If applicable]',
+      'Affected document / request ID: [If applicable]',
+      'Device, browser, and operating system: [If relevant]',
+      'Date and time (including time zone): [If relevant]',
+      '',
+      EMAIL_TEMPLATE_GUIDANCE,
+      '',
+      'Security note: Never include your password, OTP, authentication code, API key, or other login credentials.',
+      '',
+      'Regards,',
+      '[Your full name]',
+    ].join('\n'),
+  },
+  security: {
+    subject: 'Nexgn | Security Disclosure | [2–3 word summary]',
+    body: [
+      'Hello Nexgn Security Team,',
+      '',
+      'I am submitting a potential security issue for your assessment.',
+      '',
+      'Security issue summary:',
+      '[Describe the issue, the potential impact, and the conditions under which it may occur.]',
+      '',
+      'Affected service / URL / component: [Details]',
+      'Affected version or environment: [If known]',
+      'Steps to reproduce: [Provide concise steps, where safe and authorised]',
+      'Date and time observed (including time zone): [Details]',
+      'Supporting evidence: [List relevant, safely redacted evidence, if available]',
+      'Your contact email: [Your email address]',
+      '',
+      EMAIL_TEMPLATE_GUIDANCE,
+      '',
+      'Responsible disclosure: Do not include live credentials, private keys, access tokens, or unnecessary personal data. Do not access, modify, or download data that does not belong to you, or conduct testing beyond what you are authorised to perform.',
+      '',
+      'Regards,',
+      '[Your full name]',
+    ].join('\n'),
+  },
+  privacy: {
+    subject: 'Nexgn | Privacy Request | [2–3 word summary]',
+    body: [
+      'Hello Nexgn Privacy Team,',
+      '',
+      'I am contacting you regarding a privacy or personal-data request.',
+      '',
+      'Request type: [Access / Correction / Deletion / Other]',
+      'Request details:',
+      '[Please describe the information or concern and the action you are requesting.]',
+      '',
+      'Full name: [Your name]',
+      'Registered Nexgn account email: [Your account email, if applicable]',
+      'Workspace / organisation: [If applicable]',
+      'Relevant document / reference ID: [If applicable]',
+      'Country or region: [If relevant]',
+      '',
+      EMAIL_TEMPLATE_GUIDANCE,
+      '',
+      'Privacy note: Please provide only the information needed to understand your request. Do not attach identity documents or other sensitive personal information unless our team requests them through an appropriate secure channel. We may contact you if additional information or identity verification is required.',
+      '',
+      'Regards,',
+      '[Your full name]',
+    ].join('\n'),
+  },
+};
+
+const createMailtoLink = (address, templateKey) => {
+  const template = MAIL_TEMPLATES[templateKey];
+  if (!template) return `mailto:${address}`;
+
+  const subject = encodeURIComponent(template.subject);
+  const body = encodeURIComponent(template.body);
+  return `mailto:${address}?subject=${subject}&body=${body}`;
+};
+
 /* ---------- Content ---------- */
 
 const CHANNELS = [
@@ -40,8 +158,8 @@ const CHANNELS = [
     title: 'Customer Service & Support',
     text: 'Need help with your account, billing, or a technical issue? Our team is available to keep your workflows moving.',
     emails: [
-      { address: 'gateway@nexgn.cloud', Icon: FiMail },
-      { address: 'help@nexgn.cloud', Icon: FiHelpCircle },
+      { address: 'gateway@nexgn.cloud', template: 'gateway', Icon: FiMail },
+      { address: 'help@nexgn.cloud', template: 'help', Icon: FiHelpCircle },
     ],
   },
   {
@@ -50,8 +168,8 @@ const CHANNELS = [
     title: 'Enterprise & Security',
     text: 'For vulnerability disclosures, data privacy requests, or enterprise SLA compliance',
     emails: [
-      { address: 'security@nexgn.cloud', Icon: FiShield },
-      { address: 'privacy@nexgn.cloud', Icon: FiLock },
+      { address: 'security@nexgn.cloud', template: 'security', Icon: FiShield },
+      { address: 'privacy@nexgn.cloud', template: 'privacy', Icon: FiLock },
     ],
   },
 ];
@@ -61,6 +179,7 @@ const TOPICS = [
   { key: 'api', label: 'API & Developer Help' },
   { key: 'sales', label: 'Sales & Pricing' },
   { key: 'press', label: 'Press & Media' },
+  { key: 'other', label: 'Other' },
 ];
 
 const OFFICES = [
@@ -324,9 +443,14 @@ const Contact = () => {
                   <h3 className={styles.channelTitle}>{tr(`touch.${c.key}.title`, c.title)}</h3>
                   <p className={styles.channelText}>{tr(`touch.${c.key}.text`, c.text)}</p>
                   <ul className={styles.emails}>
-                    {c.emails.map(({ address, Icon }) => (
+                    {c.emails.map(({ address, template, Icon }) => (
                       <li key={address}>
-                        <a href={`mailto:${address}`} className={styles.email}>
+                        <a
+                          href={createMailtoLink(address, template)}
+                          className={styles.email}
+                          aria-label={`Compose a prefilled ${template} email to ${address}`}
+                          title={`Open a prefilled email to ${address}`}
+                        >
                           <Icon className={styles.emailIcon} aria-hidden="true" />
                           <span className={styles.emailText}>{address}</span>
                         </a>
