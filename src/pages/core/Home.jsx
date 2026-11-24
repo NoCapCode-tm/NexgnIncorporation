@@ -212,6 +212,14 @@ const LAUNCHED_ON = [
     src: 'https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=neutral',
     href: 'https://fazier.com/launches/nexgn.cloud',
   },
+    {
+    key: 'startupfa-me',
+    name: 'Startup Fame',
+    title: 'Featured on Startup Fame',
+    alt: 'Featured on Startup Fame',
+    src: 'https://startupfa.me/badges/featured-badge-small.webp',
+    href: 'https://startupfa.me/s/nexgn?utm_source=nexgn.cloud',
+  },
 
 ];
 
