@@ -196,6 +196,23 @@ const LAUNCHED_ON = [
     src: 'https://builtbyindies.com/badge/98f77109-e97d-4c77-8d3c-2d77ab96558c.svg',
     href: 'https://builtbyindies.com/products/nexgn?utm_source=badge&utm_medium=embed&utm_campaign=live',
   },
+    {
+    key: 'fazier',
+    name: 'Fazier',
+    title: 'Featured on Fazier',
+    alt: 'Featured on Fazier',
+    src: 'https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral',
+    href: 'https://fazier.com/launches/nexgn.cloud',
+  },
+    {
+    key: 'fazier-1',
+    name: 'Fazier',
+    title: 'Launched on Fazier',
+    alt: 'Launched on Fazier',
+    src: 'https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=neutral',
+    href: 'https://fazier.com/launches/nexgn.cloud',
+  },
+
 ];
 
 // Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
