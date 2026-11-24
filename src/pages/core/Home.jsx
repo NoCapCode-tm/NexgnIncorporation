@@ -188,6 +188,14 @@ const LAUNCHED_ON = [
     src: 'https://postmake.io/postmake_badge_light.png',
     href: 'https://postmake.io/submit',
   },
+    {
+    key: 'builtbyindies',
+    name: 'BuiltByIndies',
+    title: 'Featured on BuiltByIndies',
+    alt: 'Featured on BuiltByIndies',
+    src: 'https://builtbyindies.com/badge/98f77109-e97d-4c77-8d3c-2d77ab96558c.svg',
+    href: 'https://builtbyindies.com/products/nexgn?utm_source=badge&utm_medium=embed&utm_campaign=live',
+  },
 ];
 
 // Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
