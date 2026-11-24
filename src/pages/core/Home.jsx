@@ -218,7 +218,7 @@ const LAUNCHED_ON = [
     title: 'Featured on Startup Fame',
     alt: 'Featured on Startup Fame',
     src: 'https://startupfa.me/badges/featured-badge-small.webp',
-    href: 'https://startupfa.me/s/nexgn?utm_source=nexgn.cloud',
+    href: 'https://startupfa.me',
   },
 
 ];
