@@ -220,7 +220,14 @@ const LAUNCHED_ON = [
     src: 'https://startupfa.me/badges/featured-badge-small.webp',
     href: 'https://startupfa.me/s/nexgn?utm_source=nexgn.cloud',
   },
-
+    {
+    key: 'pluggyback',
+    name: 'PluggyBack',
+    title: 'Featured on PluggyBack',
+    alt: 'Featured on PluggyBack',
+    src: 'https://pluggyback.com/badge.svg',
+    href: 'https://pluggyback.com',
+  },
 ];
 
 // Repeat 4x so GSAP's xPercent: -50 loop never shows empty gaps on wide/4K monitors
