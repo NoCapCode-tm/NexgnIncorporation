@@ -190,6 +190,7 @@ const LanguageWrapper = () => {
               {['individuals', 'smb', 'enterprise'].map((slug) => (
                 <Route key={slug} path={`/solutions/${slug}`} element={<CompanySizeOverview />} />
               ))}
+              <Route path="/alternatives" element={<AlternativeCompare />} />
               <Route path="/alternatives/:competitor" element={<AlternativeCompare />} />
 
               {/* Developer Routes */}

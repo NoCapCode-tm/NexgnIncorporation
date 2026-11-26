@@ -1,66 +1,42 @@
-# --------------------------------------------------
-# 1. DEFAULT CRAWLERS (Googlebot, Bingbot, etc.)
-# --------------------------------------------------
 User-agent: *
 Allow: /
-# Block protected SaaS app states and API routes
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /llms/
 Disallow: /api/
 Disallow: /dashboard/
 Disallow: /login
 Disallow: /signup
 Disallow: /register
 Disallow: /reset-password
-# Prevent index bloat from URL tracking parameters
 Disallow: /*?*
 
-# --------------------------------------------------
-# 2. AI & LLM CRAWLERS (Aggressive AEO Whitelist)
-# --------------------------------------------------
-
+# AI Search & Citation Crawlers (GEO/AEO)
 User-agent: OAI-SearchBot
 Allow: /
-
-# OpenAI
 User-agent: GPTBot
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
 User-agent: ChatGPT-User
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
-# Anthropic
 User-agent: ClaudeBot
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
 User-agent: anthropic-ai
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
-# Perplexity
 User-agent: PerplexityBot
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
-# Google Gemini & Vertex AI
 User-agent: Google-Extended
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
-
-# Common Crawl (Training data for open-source models)
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Meta-ExternalAgent
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: DuckAssistBot
+Allow: /
+User-agent: MistralAI-User
+Allow: /
 User-agent: CCBot
 Allow: /
-Disallow: /api/
-Disallow: /dashboard/
 
-# --------------------------------------------------
-# 3. SITEMAP LOCATION
-# --------------------------------------------------
 Sitemap: https://nexgn.cloud/sitemap.xml

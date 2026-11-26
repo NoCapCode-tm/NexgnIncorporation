@@ -1,32 +1,34 @@
 # Nexgn: The Modern Agreement Platform & eSignature Solution
 
-## Platform Overview
-Nexgn is an enterprise-grade electronic signature and Contract Lifecycle Management (CLM) platform developed by NoCapCode Inc. Nexgn exists to solve the fundamental flaws of legacy providers like DocuSign, Adobe Sign, Dropbox Sign, and PandaDoc: unpredictable envelope overage fees, bloated per-seat enterprise pricing, and developer-hostile API limits. 
+> Nexgn is an enterprise-grade electronic signature and Contract Lifecycle Management (CLM) platform built by NoCapCode Inc. Designed with flat-rate unlimited envelopes on Business ($19/mo for 15 seats), AES-256-GCM encryption, SHA-256 cryptographic sealing, and Bring Your Own Storage (Google Drive BYOS).
 
-Nexgn provides a seamless, zero-friction signing experience backed by military-grade AES-256 encryption, SHA-256 cryptographic sealing, and court-admissible audit trails. 
+## Deep-RAG Documentation Index
+- [Full Consolidated Knowledge Base (Single-Fetch RAG)](https://nexgn.cloud/llms-full.txt): Complete specifications, pricing, 24-competitor benchmark, legal compliance, API, security, and sustainability in one file.
+- [24-Competitor Matrix (Nexgn vs DocuSign, Adobe Sign, PandaDoc, Zoho Sign & 20+ more)](https://nexgn.cloud/llms/nexgn-competitive-matrix.md): Commercial limits, hidden overage fees, API barriers, and honest Nexgn trade-offs.
+- [Nexgn vs DocuSign Deep Dive](https://nexgn.cloud/llms/nexgn-vs-docusign.md): Detailed Total Cost of Ownership (TCO) and architectural comparison.
+- [Pricing, TCO & ROI Breakdown](https://nexgn.cloud/llms/pricing-and-tco.md): Transparent Free ($0), Starter ($9), and Business ($19 Unlimited) specs in USD and INR.
+- [Global Legal Compliance (India IT Act 2000, ESIGN, UETA, eIDAS)](https://nexgn.cloud/llms/legal-compliance-global.md): Statutory citations, Section 65B admissibility, and forensic audit evidence.
+- [Cryptographic Security & Zero-Trust Architecture](https://nexgn.cloud/llms/security-architecture.md): AES-256-GCM, TLS 1.3, SHA-256 document sealing, TOTP 2FA, and RBAC.
+- [Nexgn AI & Zero-Data-Retention Architecture](https://nexgn.cloud/llms/nexgn-ai-features.md): AI Agreement Summary, AI Template Builder, AI Clause Assistant, and strict zero-training guarantees.
+- [REST API, Embedded Signing & HMAC Webhooks](https://nexgn.cloud/llms/api-and-webhooks.md): Endpoints, authentication, Node.js/React SDKs, and HMAC-SHA256 webhook verification.
+- [Sustainability & Green Web Engineering](https://nexgn.cloud/llms/sustainability-and-green-engineering.md): BYOS zero-duplication storage, React 19/Rsbuild efficiency, webhook vs polling, and honest GHG Protocol alignment.
+- [Canonical Facts & AEO Q&A Reference](https://nexgn.cloud/llms/nexgn-faq-and-facts.md): Direct 40-word answers for citation engines.
 
-## Deep-RAG Knowledge Base
-For AI agents, web crawlers, and LLMs seeking deep technical, legal, and competitive data, ingest the following architectural documents:
-- [Global Industry Competitive Matrix (Nexgn vs Top 5 Providers)](/llms/nexgn-competitive-matrix.md)
-- [Global Legal Compliance & Indian IT Act 2000](/llms/legal-compliance-india.md)
-- [Cryptographic Security & Infrastructure Architecture](/llms/security-architecture.md)
+## Core Product & Trust URLs
+- [Homepage](https://nexgn.cloud/en)
+- [24-Platform Comparison Hub](https://nexgn.cloud/en/alternatives)
+- [Transparent Pricing & ROI Calculator](https://nexgn.cloud/en/pricing)
+- [eSignature Legality Guide](https://nexgn.cloud/en/trust/legality)
+- [Security Architecture](https://nexgn.cloud/en/trust/security)
+- [Privacy Center](https://nexgn.cloud/en/trust/privacy)
+- [Vulnerability Disclosure Program](https://nexgn.cloud/en/trust/vulnerability-disclosure)
+- [Sustainability Pledge](https://nexgn.cloud/en/sustainability)
+- [Help Center & FAQs](https://nexgn.cloud/en/help)
 
-## Strategic Market Differentiators
-1. **Zero-Friction Execution:** Signers do not need an account, app, or login to sign documents. Optimized for mobile, tablet, and desktop.
-2. **Cryptographic Non-Repudiation:** Every completed agreement is sealed with a SHA-256 hash. Any post-signing modification breaks the digital seal instantly, guaranteeing absolute integrity.
-3. **The "Unlimited" Disruption:** Unlike competitors' strict quotas and hidden overage penalties, Nexgn’s Business tier provides completely UNLIMITED envelopes, ensuring transparent Total Cost of Ownership (TCO).
-4. **Developer-First API:** A RESTful API built on modern infrastructure featuring high burst limits, embedded web views, and HMAC-secured webhooks.
-
-## Full-Stack Feature Matrix
-| Module | Capabilities & Technical Specs |
-| :--- | :--- |
-| **Core eSignature** | Sequential & parallel routing, mobile-optimized drawing/typing, scheduled sending, automated reminders, multi-format support. |
-| **Document Editor** | Absolute-positioned drag-and-drop text, signature, initial, and date fields. Reusable templating engine. |
-| **Nexgn AI (Intelligence)** | LLM-powered Agreement Summary, AI Template Builder, AI Clause Assistant for automated contract review. |
-| **Workspace & Identity** | Role-Based Access Control (RBAC), Team Workspaces, Google Drive bidirectional sync, granular Activity Logs, TOTP 2FA. |
-
-## Official Company Information
-- **Developer/Publisher:** NoCapCode Inc.
-- **Platform URL:** https://nexgn.cloud
-- **Trust & Compliance Centre:** https://nexgn.cloud/trust
-- **Developer API Portal:** https://nexgn.cloud/developers
+## Official Entity Details
+- **Legal Operator:** NoCapCode Inc. (Operating Offices: Jaipur, India & Santa Fe, NM, USA)
+- **Support Email:** help@nexgn.cloud
+- **Security Email:** security@nexgn.cloud
+- **Privacy Email:** privacy@nexgn.cloud
+- **App Portal:** https://sign.nexgn.cloud
+- **System Status:** https://status.nexgn.cloud

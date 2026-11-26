@@ -139,14 +139,47 @@ const getDynamicSolutionRoutes = () => {
   );
 };
 
-const COMPETITOR_SLUGS = ['docusign', 'adobe-sign', 'dropbox-sign', 'pandadoc', 'signnow'];
-const getAlternativeRoutes = () =>
-  COMPETITOR_SLUGS.map((comp) => ({
-    path: `/alternatives/${comp}`,
-    priority: '0.8',
-    changefreq: 'monthly',
+const COMPETITOR_SLUGS = [
+  'docusign',
+  'adobe-sign',
+  'dropbox-sign',
+  'pandadoc',
+  'signnow',
+  'zoho-sign',
+  'boldsign',
+  'signwell',
+  'signeasy',
+  'yousign',
+  'onespan-sign',
+  'foxit-esign',
+  'documenso',
+  'opensign',
+  'docuseal',
+  'goodsign',
+  'esignatures-io',
+  'xodo-sign',
+  'getaccept',
+  'conga-sign',
+  'ironclad',
+  'juro',
+  'nitro-sign',
+  'box-sign',
+];
+
+const getAlternativeRoutes = () => [
+  {
+    path: '/alternatives',
+    priority: '0.9',
+    changefreq: 'weekly',
     file: 'src/pages/solutions/AlternativeCompare.jsx',
-  }));
+  },
+  ...COMPETITOR_SLUGS.map((comp) => ({
+    path: `/alternatives/${comp}`,
+    priority: '0.85',
+    changefreq: 'monthly',
+    file: 'src/pages/solutions/competitorsData.js',
+  })),
+];
 
 const DEFAULT_BLOG_SLUGS = [
   'building-trust-at-scale',
@@ -207,6 +240,29 @@ const getBlogRoutes = () => {
 };
 
 /* =====================================================================
+   AUTO-GENERATE public/llms-full.txt FROM public/llms.txt + public/llms/*.md
+   ===================================================================== */
+const generateLlmsFull = () => {
+  const llmsDir = path.resolve(ROOT_DIR, 'public/llms');
+  const llmsTxtPath = path.resolve(ROOT_DIR, 'public/llms.txt');
+  const parts = [];
+
+  if (fs.existsSync(llmsTxtPath)) {
+    parts.push(fs.readFileSync(llmsTxtPath, 'utf-8').trim());
+  }
+  if (fs.existsSync(llmsDir)) {
+    const files = fs.readdirSync(llmsDir).filter((f) => f.endsWith('.md')).sort();
+    for (const f of files) {
+      parts.push(`\n\n---\n<!-- Source: /llms/${f} -->\n\n` + fs.readFileSync(path.join(llmsDir, f), 'utf-8').trim());
+    }
+  }
+  if (parts.length) {
+    fs.writeFileSync(path.resolve(ROOT_DIR, 'public/llms-full.txt'), parts.join('\n'), 'utf-8');
+    console.log('✅ Consolidated public/llms-full.txt generated.');
+  }
+};
+
+/* =====================================================================
    3. AEO / GEO STATIC KNOWLEDGE BASE FILES (Non-localized root assets)
    ===================================================================== */
 const getGeoKnowledgeRoutes = () => {
@@ -216,6 +272,16 @@ const getGeoKnowledgeRoutes = () => {
     geoRoutes.push({
       loc: `${BASE_URL}/llms.txt`,
       lastmod: getLastMod('public/llms.txt'),
+      changefreq: 'monthly',
+      priority: '0.8',
+    });
+  }
+
+  const llmsFullTxt = path.resolve(ROOT_DIR, 'public/llms-full.txt');
+  if (fs.existsSync(llmsFullTxt)) {
+    geoRoutes.push({
+      loc: `${BASE_URL}/llms-full.txt`,
+      lastmod: getLastMod('public/llms-full.txt'),
       changefreq: 'monthly',
       priority: '0.8',
     });

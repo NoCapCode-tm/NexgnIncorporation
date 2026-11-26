@@ -2,8 +2,8 @@ name: Deploy Nexgn to GitHub Pages
 
 on:
   push:
-    branches: [main] # Triggers on push to main branch
-  workflow_dispatch: # Allows manual deployment from the Actions tab
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,8 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository (Full Git History for Accurate Sitemap lastmod)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -27,48 +29,65 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Cache Rsbuild to speed up future CI/CD pipelines
       - name: Cache Rsbuild
         uses: actions/cache@v4
         with:
           path: node_modules/.cache
-          # FIX: was github.sha — always a cache miss on every commit.
-          # Now uses a hash of package-lock.json so the cache is only invalidated
-          # when dependencies actually change. Much higher cache hit rate.
           key: ${{ runner.os }}-rsbuild-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-rsbuild-
+
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
       - name: Install Dependencies
         run: npm ci
 
-      # Headless Chromium for scripts/prerender-shells.mjs (snapshots each page so crawlers see its <h1>/title)
-      - name: Install Chromium for prerender
+      - name: Install Chromium for Prerender
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
 
-      # `npm run build` runs, in order:
-      #   prebuild  -> scripts/generate-sitemap.mjs   (writes sitemap.xml)
-      #   build     -> rsbuild build                  (outputs dist/)
-      #   postbuild -> scripts/prerender-shells.mjs   (one real, rendered .html file per sitemap URL + 404.html)
-      - name: Build Application
+      - name: Install Playwright System Deps on Cache Hit
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Build & Prerender Static SEO Shells
+        env:
+          CI: 'true'
         run: npm run build
 
-      # Fail the deploy if the page shells are missing, so a broken build can never ship 404s again
-      - name: Verify page shells
+      - name: Verify SEO Shells, Zero-Noindex Leak & GEO Files
         run: |
-          test -f dist/index.html
-          test -f dist/404.html
-          test -f dist/en/pricing.html
-          test -f dist/en/legal/terms.html
-          test -f dist/en/sustainability.html
-          # every page must carry its own <h1> in the raw HTML (what Ahrefs / non-JS crawlers see)
-          grep -q "<h1" dist/en/pricing.html
-          grep -q "<h1" dist/es/legal/terms.html
-          # product pages should carry Product JSON-LD in raw HTML (warning only: a crashed page keeps its plain shell, see the prerender log)
-          grep -q '"@type":"Product"' dist/en/products/ai-summary.html || echo "::warning::dist/en/products/ai-summary.html has no Product JSON-LD"
-          grep -q '"@type":"Product"' dist/hi/products/workflows.html || echo "::warning::dist/hi/products/workflows.html has no Product JSON-LD"
-          echo "Page shells OK: $(find dist -name '*.html' | wc -l) HTML files"
+          set -e
+          # 1. Critical root & GEO/GitHub Pages files must exist
+          for f in dist/index.html dist/404.html dist/CNAME dist/.nojekyll dist/robots.txt dist/sitemap.xml dist/llms.txt dist/llms-full.txt dist/.well-known/security.txt; do
+            test -f "$f" || { echo "MISSING REQUIRED FILE: $f"; exit 1; }
+          done
 
-      # Custom domain (nexgn.cloud) comes from public/CNAME, which Rsbuild copies into dist/
+          # 2. Key localized shells must exist with real <h1> and NEVER have noindex
+          for page in dist/index.html dist/en.html dist/en/pricing.html dist/en/alternatives.html dist/en/alternatives/docusign.html dist/en/alternatives/signnow.html dist/en/legal/terms.html dist/en/sustainability.html dist/es/legal/terms.html; do
+            test -f "$page" || { echo "MISSING PAGE SHELL: $page"; exit 1; }
+            grep -q "<h1" "$page" || { echo "NO <h1 FOUND IN: $page"; exit 1; }
+            if grep -qi 'content="noindex' "$page"; then
+              echo "FATAL SEO ERROR: noindex found on indexable page $page"
+              exit 1
+            fi
+          done
+
+          # 3. 404.html MUST be noindex
+          grep -qi 'content="noindex' dist/404.html || { echo "404.html missing noindex"; exit 1; }
+
+          # 4. Product & Comparison structured data checks
+          grep -q '"@type":"Product"' dist/en/products/ai-summary.html
+          grep -q '"@type":"FAQPage"' dist/en/alternatives/docusign.html
+          grep -q '"@type":"FAQPage"' dist/en/pricing.html
+
+          echo "VERIFIED: $(find dist -name '*.html' | wc -l) HTML pages built cleanly."
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -88,13 +107,17 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Tell IndexNow engines (Bing, Yandex, ...) about the fresh pages. Never blocks a deploy.
-      - name: Checkout (for scripts)
+      - name: Checkout (for IndexNow script)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Submit URLs to IndexNow
+      - name: Verify Live Endpoints & Submit IndexNow
         continue-on-error: true
         run: |
           sleep 45
-          node scripts/generate-sitemap.mjs   # local fallback copy of the sitemap
+          curl -sSfI https://nexgn.cloud/en/alternatives | head -n 5
+          curl -sSfI https://nexgn.cloud/llms.txt | head -n 5
+          curl -sSfI https://nexgn.cloud/sitemap.xml | head -n 5
+          node scripts/generate-sitemap.mjs
           node scripts/indexnow.mjs

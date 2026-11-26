@@ -37,6 +37,7 @@ const COLUMNS = [
       { key: 'sales', label: 'Sales', to: '/solutions/sales' },
       { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
       { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
+      { key: 'alternatives', label: 'Compare 24 Alternatives', to: '/alternatives' },
     ],
   },
   {

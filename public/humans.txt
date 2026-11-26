@@ -1,0 +1,11 @@
+/* TEAM */
+Platform: Nexgn Agreement Platform
+Company: NoCapCode Inc.
+Locations: Jaipur, Rajasthan, India & Santa Fe, NM, USA
+Contact: help@nexgn.cloud
+Security: security@nexgn.cloud
+
+/* ARCHITECTURE */
+Frontend: React 19, Rsbuild, CSS Modules, GSAP
+Security: AES-256-GCM, TLS 1.3, SHA-256 Sealing, TOTP 2FA
+Storage: Bring Your Own Storage (Google Drive BYOS)
