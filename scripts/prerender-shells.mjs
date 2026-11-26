@@ -435,7 +435,7 @@ const main = async () => {
     } catch {
       continue;
     }
-    if (!pathname) continue; // "/" is dist/index.html already
+    if (!pathname || /\.(txt|md|xml)$/i.test(pathname)) continue; // "/" is dist/index.html; skip non-HTML GEO docs (/llms*.txt, /llms/*.md)
 
     const lng = pathname.split('/')[1];
     const canonical = `${SITE}${pathname}`;
@@ -452,9 +452,12 @@ const main = async () => {
     pathnames.push(pathname);
   }
 
-  // Unknown URLs still need the app shell (the router shows the NotFound page). This replaces the old
-  // `cp dist/index.html dist/404.html`, which also fails on Windows.
-  await fs.writeFile(path.join(DIST, '404.html'), shell);
+  // Unknown URLs still need the app shell (the router shows the NotFound page), and GitHub Pages
+  // 404 responses must carry noindex so crawlers never index missing URLs.
+  const shell404 = /content=["']noindex/i.test(shell)
+    ? shell
+    : shell.replace('</head>', '  <meta name="robots" content="noindex, nofollow" />\n</head>');
+  await fs.writeFile(path.join(DIST, '404.html'), shell404);
 
   const snap = await snapshotPages(pathnames, shell);
 

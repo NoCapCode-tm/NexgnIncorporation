@@ -27,7 +27,7 @@ const COLUMNS = [
       { key: 'ai', label: 'AI Assistant', to: '/products/ai-builder' },
     ],
   },
-  {
+    {
     key: 'solutions',
     title: 'Solutions',
     links: [
@@ -37,7 +37,7 @@ const COLUMNS = [
       { key: 'sales', label: 'Sales', to: '/solutions/sales' },
       { key: 'realEstate', label: 'Real Estate', to: '/solutions/real-estate' },
       { key: 'agencies', label: 'Agencies', to: '/solutions/agencies' },
-      { key: 'alternatives', label: 'Compare 24 Alternatives', to: '/alternatives' },
+      { key: 'alternatives', label: 'Why Nexgn?', to: '/alternatives' },
     ],
   },
   {

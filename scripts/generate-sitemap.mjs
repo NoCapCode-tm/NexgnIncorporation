@@ -382,4 +382,5 @@ const generateSitemap = () => {
   );
 };
 
+generateLlmsFull();
 generateSitemap();
