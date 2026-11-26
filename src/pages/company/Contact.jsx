@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import DottedMap from 'dotted-map';
 import { FiChevronDown, FiHelpCircle, FiLock, FiMail, FiShield } from 'react-icons/fi';
 import { SEOHead } from '../../components/seo/SEOHead';
@@ -180,6 +181,15 @@ const TOPICS = [
   { key: 'press', label: 'Press & Media' },
   { key: 'other', label: 'Other' },
 ];
+
+const resolveTopicKey = (raw) => {
+  if (!raw) return '';
+  const norm = String(raw).trim().toLowerCase();
+  const match = TOPICS.find((o) => o.key === norm || o.label.toLowerCase() === norm);
+  if (match) return match.key;
+  if (norm.includes('sales') || norm.includes('pricing') || norm.includes('custom')) return 'sales';
+  return '';
+};
 
 const OFFICES = [
   { key: 'us', name: 'Nexgn Inc.', lines: ['Santa Fe, NM 87501,', 'United States'], query: 'Santa Fe, NM 87501, United States', flag: 'us', lat: 35.687, lng: -105.938, fx: 21.5, fy: 36 },
