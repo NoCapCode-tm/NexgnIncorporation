@@ -1332,6 +1332,56 @@ div.cardMedia[data-k='storage'] {
   }
 }
 
+/* ---- Custom enterprise plan banner below pricing cards ---- */
+
+.customPlanNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em 0.75em;
+  width: fit-content;
+  max-width: 100%;
+  margin: max(2rem, 3.2vw) auto 0;
+  padding: 0.85em 1.5em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: clamp(0.875rem, 1.05vw, 1.35rem);
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+}
+
+.customPlanLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 2px;
+  transition: color 0.2s ease;
+}
+
+.customPlanArrow {
+  flex: none;
+  color: var(--red);
+  transition: transform 0.25s var(--ease-out);
+}
+
+.customPlanLink:hover {
+  color: #ff4d55;
+}
+
+.customPlanLink:hover .customPlanArrow {
+  transform: translateX(4px);
+}
+
 /* ---------- 7. Final CTA: moved to src/components/common/CtaBanner ---------- */
 
 @media (max-width: 767px) {
@@ -1347,7 +1397,8 @@ div.cardMedia[data-k='storage'] {
 .planBtn:focus-visible,
 .tab:focus-visible,
 .toggleBtn:focus-visible,
-.logoLink:focus-visible {
+.logoLink:focus-visible,
+.customPlanLink:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 3px;
 }
@@ -1417,7 +1468,9 @@ div.cardMedia[data-k='storage'] {
   .toggleBtn,
   .mediaSlide,
   .flowBody,
-  .logoLink {
+  .logoLink,
+  .customPlanLink,
+  .customPlanArrow {
     transition: none;
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiStar, FiX } from 'react-icons/fi';
+import { FiArrowRight, FiCheck, FiCheckCircle, FiCommand, FiEdit2, FiFileText, FiStar, FiX } from 'react-icons/fi';
 import { PiHandFist } from 'react-icons/pi';
 import { SEOHead } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
@@ -122,7 +122,6 @@ const LOGOS = [
   { key: 'orbit', name: 'orbit', src: null }, // Example: src/assets/logos/orbit.png
 ];
 
-
 const LAUNCHED_ON = [
   {
     key: 'launchbuff',
@@ -172,7 +171,7 @@ const LAUNCHED_ON = [
     src: 'https://apprater.net/badge.svg',
     href: 'https://apprater.net',
   },
-    {
+  {
     key: 'launchbison',
     name: 'LaunchBison',
     title: 'Featured on LaunchBison',
@@ -180,7 +179,7 @@ const LAUNCHED_ON = [
     src: 'https://launchbison.com/badge-light.svg',
     href: 'https://launchbison.com',
   },
-    {
+  {
     key: 'postmake',
     name: 'Postmake',
     title: 'Featured on Postmake',
@@ -188,7 +187,7 @@ const LAUNCHED_ON = [
     src: 'https://postmake.io/postmake_badge_light.png',
     href: 'https://postmake.io/submit',
   },
-    {
+  {
     key: 'builtbyindies',
     name: 'BuiltByIndies',
     title: 'Featured on BuiltByIndies',
@@ -196,7 +195,7 @@ const LAUNCHED_ON = [
     src: 'https://builtbyindies.com/badge/98f77109-e97d-4c77-8d3c-2d77ab96558c.svg',
     href: 'https://builtbyindies.com/products/nexgn?utm_source=badge&utm_medium=embed&utm_campaign=live',
   },
-    {
+  {
     key: 'fazier',
     name: 'Fazier',
     title: 'Featured on Fazier',
@@ -204,7 +203,7 @@ const LAUNCHED_ON = [
     src: 'https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral',
     href: 'https://fazier.com/launches/nexgn.cloud',
   },
-    {
+  {
     key: 'fazier-1',
     name: 'Fazier',
     title: 'Launched on Fazier',
@@ -212,7 +211,7 @@ const LAUNCHED_ON = [
     src: 'https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=neutral',
     href: 'https://fazier.com/launches/nexgn.cloud',
   },
-    {
+  {
     key: 'startupfa-me',
     name: 'Startup Fame',
     title: 'Featured on Startup Fame',
@@ -220,7 +219,7 @@ const LAUNCHED_ON = [
     src: 'https://startupfa.me/badges/featured-badge-small.webp',
     href: 'https://startupfa.me/s/nexgn?utm_source=nexgn.cloud',
   },
-    {
+  {
     key: 'pluggyback',
     name: 'PluggyBack',
     title: 'Featured on PluggyBack',
@@ -237,7 +236,6 @@ const LAUNCHED_TRACK = [
   ...LAUNCHED_ON,
   ...LAUNCHED_ON,
 ];
-
 
 // Hover (or tap / focus) a step on the left and the panel on the right switches to it.
 // To show a product screenshot in the white box, set `img` (imported image) on a step.
@@ -307,23 +305,8 @@ const COMPLIANCE = [
   },
 ];
 
-/* PLACEHOLDER PRICES: USD monthly prices match the design ($0 / $9 / $19).
-   INR prices are estimates. Yearly prices are derived: monthly x 12 minus YEARLY_DISCOUNT.
-   Replace with your real pricing (and keep in sync with the /pricing page). */
 const YEARLY_DISCOUNT = 0.2;
 const SAVE_LABEL = 'Save 20%';
-
-const FEATURES = [
-  'No credit card',
-  'Multi-Signer Routing',
-  'Automated Email Reminders',
-  'Reusable Contract Templates',
-  'Multi-Format Support',
-  'Tamper-Evident Delivery',
-  'Mobile-Optimized Signing',
-  'Instant Status Alerts',
-  'Global ESIGN Compliance',
-];
 
 const PLANS = [
   {
@@ -500,7 +483,6 @@ const Home = () => {
   );
 
   const schema = {
-    '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
@@ -526,8 +508,15 @@ const Home = () => {
         '@type': 'SoftwareApplication',
         name: 'Nexgn eSignature',
         applicationCategory: 'BusinessApplication',
-        operatingSystem: 'Web',
+        operatingSystem: 'Web, iOS, Android',
         description: seoDescription,
+        offers: {
+          '@type': 'AggregateOffer',
+          priceCurrency: 'USD',
+          lowPrice: '0',
+          highPrice: '19',
+          offerCount: 3,
+        },
         publisher: { '@id': 'https://nexgn.cloud/#organization' },
       },
     ],
@@ -606,7 +595,7 @@ const Home = () => {
                     aria-hidden={i >= LOGOS.length ? 'true' : undefined}
                   >
                     {logo.src ? (
-                      <img src={logo.src} alt={i < LOGOS.length ? logo.name : ''} loading="lazy" />
+                      <img src={logo.src} alt={i < LOGOS.length ? logo.name : ''} loading="lazy" decoding="async" />
                     ) : (
                       <span className={styles.logoWord}>{logo.name}</span>
                     )}
@@ -711,7 +700,7 @@ const Home = () => {
                     aria-hidden="true"
                   >
                     {/* Product screenshot slot: set `img` on the step in FLOW */}
-                    {step.img && <img src={step.img} alt="" loading="lazy" />}
+                    {step.img && <img src={step.img} alt="" loading="lazy" decoding="async" />}
                   </div>
                 ))}
               </div>
@@ -795,6 +784,7 @@ const Home = () => {
                       src={IMAGES[card.key]}
                       alt={card.alt}
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className={styles.cardMedia} data-k={card.key} role="img" aria-label={card.alt} />
@@ -950,6 +940,20 @@ const Home = () => {
               );
             })}
           </ul>
+
+          <p className={styles.customPlanNote} data-a="up">
+            <span>
+              {tr('pricing.customPrompt', 'Need enterprise volume, custom SLA, or tailored workflows?')}
+            </span>{' '}
+            <Link
+              to={`/${currentLng}/contact?subject=sales#contact-form`}
+              state={{ subject: 'sales' }}
+              className={styles.customPlanLink}
+            >
+              {tr('pricing.customCta', 'For a custom plan, click here')}
+              <FiArrowRight className={styles.customPlanArrow} aria-hidden="true" />
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -972,6 +976,7 @@ const Home = () => {
                       src={item.src}
                       alt={!isDup ? item.alt || item.name : ''}
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <span className={styles.logoWord}>{item.name}</span>

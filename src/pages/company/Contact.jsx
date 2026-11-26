@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import DottedMap from 'dotted-map';
 import { FiChevronDown, FiHelpCircle, FiLock, FiMail, FiShield } from 'react-icons/fi';
-import { SEOHead } from '../../components/seo/SEOHead';
+import { SEOHead, buildBreadcrumbs, ORGANIZATION_ID } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
 import useContactAnimations from '../../hooks/useContactAnimations';
 import styles from './Contact.module.css';
@@ -343,8 +343,43 @@ const Contact = () => {
   const rootRef = useRef(null);
   useContactAnimations(rootRef);
 
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', company: '' }); // company = honeypot
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const incomingSubject = resolveTopicKey(
+    searchParams.get('subject') || searchParams.get('topic') || location.state?.subject
+  );
+
+  const [form, setForm] = useState(() => ({
+    name: '',
+    email: '',
+    subject: incomingSubject,
+    message: '',
+    company: '',
+  })); // company = honeypot
   const [state, setState] = useState('idle'); // idle | invalid | sending | done | error
+
+  useEffect(() => {
+    if (!incomingSubject) return;
+    setForm((f) => (f.subject === incomingSubject ? f : { ...f, subject: incomingSubject }));
+    setState((prev) => (prev === 'invalid' || prev === 'error' ? 'idle' : prev));
+  }, [incomingSubject]);
+
+  useEffect(() => {
+    if (location.hash !== '#contact-form') return undefined;
+    const scrollToForm = () => {
+      const el = document.getElementById('contact-form');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        ScrollTrigger.refresh();
+      }
+    };
+    const rafId = requestAnimationFrame(scrollToForm);
+    const timerId = setTimeout(scrollToForm, 220);
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timerId);
+    };
+  }, [location.hash]);
 
   const set = (field) => (e) => {
     setForm((f) => ({ ...f, [field]: e.target.value }));
@@ -400,14 +435,22 @@ const Contact = () => {
   );
   const pageUrl = `https://nexgn.cloud/${currentLng}/contact`;
   const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    '@id': `${pageUrl}#webpage`,
-    url: pageUrl,
-    name: seoTitle,
-    description: seoDescription,
-    inLanguage: currentLng,
-    isPartOf: { '@type': 'WebSite', name: 'Nexgn', url: 'https://nexgn.cloud' },
+    '@graph': [
+      {
+        '@type': 'ContactPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: seoTitle,
+        description: seoDescription,
+        inLanguage: currentLng,
+        isPartOf: { '@id': 'https://nexgn.cloud/#website' },
+        about: { '@id': ORGANIZATION_ID },
+      },
+      buildBreadcrumbs(currentLng, [
+        { name: 'Home', url: '/' },
+        { name: 'Contact Us', url: '/contact' },
+      ]),
+    ],
   };
 
   return (
@@ -475,7 +518,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className={styles.formWrap} data-ct="card">
+          <div id="contact-form" className={styles.formWrap} data-ct="card">
             <form action={FORM_URL} method="POST" className={styles.form} onSubmit={onSubmit} noValidate data-ct="form">
               <div className={styles.field} data-ct="field">
                 <label htmlFor="ct-name" className={styles.label}>

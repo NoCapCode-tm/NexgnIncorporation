@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiCheck, FiX } from 'react-icons/fi';
+import { FiArrowRight, FiCheck, FiX } from 'react-icons/fi';
 import gsap from 'gsap';
-import { SEOHead } from '../../components/seo/SEOHead';
+import { SEOHead, buildBreadcrumbs, ORGANIZATION_ID } from '../../components/seo/SEOHead';
 import CtaBanner from '../../components/common/CtaBanner';
 import usePricingAnimations from '../../hooks/usePricingAnimations';
 import styles from './Pricing.module.css';
@@ -15,7 +15,7 @@ const LOGIN_URL = 'https://sign.nexgn.cloud/login';
 const LANGS = ['en', 'es', 'hi'];
 
 /* =====================================================================
-   IMAGES (Safely resolves assets from src/assets/home if present)
+   IMAGES (Safely resolves assets from src/assets/core if present)
    ===================================================================== */
 const homeImgContext = require.context('../../assets/core', false, /\.(png|jpe?g|webp|avif|svg)$/i);
 const findHomeImage = (name) => {
@@ -30,7 +30,7 @@ const findHomeImage = (name) => {
 const IMAGES = {
   hero: findHomeImage('pricing-hero') || findHomeImage('hero'),
   devBg: findHomeImage('workflow') || findHomeImage('storage'),
-  roi: findHomeImage('roi'), // <-- Picks up src/assets/home/roi.(png|jpg|webp|avif|svg)
+  roi: findHomeImage('roi'),
   cta: findHomeImage('cta') || ctaCommonImg,
 };
 
@@ -236,31 +236,67 @@ const Pricing = () => {
 
   const sliderPercent = (docsPerMonth / 500) * 100;
 
-  // Product Schema for Google Rich Results
+  const seoTitle = tr('seo.title', 'Pricing — Simple Flat Plans ($0, $9, $19/mo)');
+  const seoDescription = tr(
+    'seo.description',
+    'Transparent eSignature pricing starting at $0 Free (19 envelopes/mo), $9 Starter, and $19/mo Business with 15 seats & unlimited envelopes. No per-envelope taxes.'
+  );
+  const pageUrl = `https://nexgn.cloud/${currentLng}/pricing`;
+
+  // Full Structured Data Graph (WebPage + BreadcrumbList + SoftwareApplication + FAQPage)
   const pricingSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Nexgn Starter Plan',
-    applicationCategory: 'BusinessApplication',
-    offers: {
-      '@type': 'Offer',
-      price: '900.00',
-      priceCurrency: 'INR',
-    },
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: seoTitle,
+        description: seoDescription,
+        inLanguage: currentLng,
+        isPartOf: { '@id': 'https://nexgn.cloud/#website' },
+        about: { '@id': ORGANIZATION_ID },
+      },
+      buildBreadcrumbs(currentLng, [
+        { name: 'Home', url: '/' },
+        { name: 'Pricing', url: '/pricing' },
+      ]),
+      {
+        '@type': 'SoftwareApplication',
+        name: 'Nexgn eSignature Platform',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web, iOS, Android',
+        offers: PLANS.map((plan) => {
+          const { perMonth } = priceInfo(plan.price[currency], billing);
+          return {
+            '@type': 'Offer',
+            name: `Nexgn ${plan.name} Plan`,
+            description: plan.desc,
+            price: String(perMonth),
+            priceCurrency: currency,
+            availability: 'https://schema.org/OnlineOnly',
+            url: `${SIGNUP_URL}?plan=${plan.key}`,
+          };
+        }),
+        publisher: { '@id': ORGANIZATION_ID },
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: FAQS.map((item, i) => ({
+          '@type': 'Question',
+          name: tr(`faq.q${i + 1}`, item.q),
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: tr(`faq.a${i + 1}`, item.a),
+          },
+        })),
+      },
+    ],
   };
 
   return (
     <div className={styles.page} ref={rootRef}>
       <div className={styles.progress} data-p="progress" aria-hidden="true" />
-      <SEOHead
-        title={tr('seo.title', 'Pricing')}
-        description={tr(
-          'seo.description',
-          'Transparent, affordable pricing for startups and enterprise. Start sending legally binding documents for free.'
-        )}
-        url="/pricing"
-        schema={pricingSchema}
-      />
+      <SEOHead title={seoTitle} description={seoDescription} url="/pricing" schema={pricingSchema} />
 
       {/* ============ 1. TOP DARK HERO BANNER ("Pricing Details") ============ */}
       <section
@@ -426,6 +462,29 @@ const Pricing = () => {
               );
             })}
           </ul>
+
+          <p className={styles.customPlanNote} data-p="up">
+            <span>
+              {t(
+                'pricing.customPrompt',
+                t(
+                  'home.pricing.customPrompt',
+                  'Need enterprise volume, custom SLA, or tailored workflows?'
+                )
+              )}
+            </span>{' '}
+            <Link
+              to={`/${currentLng}/contact?subject=sales#contact-form`}
+              state={{ subject: 'sales' }}
+              className={styles.customPlanLink}
+            >
+              {t(
+                'pricing.customCta',
+                t('home.pricing.customCta', 'For a custom plan, click here')
+              )}
+              <FiArrowRight className={styles.customPlanArrow} aria-hidden="true" />
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -488,15 +547,12 @@ const Pricing = () => {
       </section>
 
       {/* ============ 5. ROI CALCULATOR (Wood Texture + Live Slider) ============ */}
-      {/* ============ 5. ROI CALCULATOR (Wood Texture + Live Slider) ============ */}
       <section
         className={styles.roiSection}
         style={bg(IMAGES.roi)}
         data-p="roi"
         aria-labelledby="roi-heading"
       >
-        <div className={styles.roiBg} data-p="roi-bg" aria-hidden="true" />
-        <div className={styles.roiShade} aria-hidden="true" />
         <div className={styles.roiBg} data-p="roi-bg" aria-hidden="true" />
         <div className={styles.roiShade} aria-hidden="true" />
 

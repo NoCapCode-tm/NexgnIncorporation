@@ -225,6 +225,7 @@
   padding: clamp(1.5rem, 3vw, 6rem);
   background: #fff;
   border: 1px solid var(--line);
+  scroll-margin-top: calc(var(--nav-h) + 2rem);
 }
 
 .form {
