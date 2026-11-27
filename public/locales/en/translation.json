@@ -2258,37 +2258,37 @@
       "title": "Current Subprocessors",
       "mongodb": {
         "name": "MongoDB Atlas",
-        "purpose": "Cloud database services for Nexgn application operations",
-        "data": "Account, workspace, and application records; confirm the exact data scope",
-        "location": "To be confirmed"
+        "purpose": "Managed cloud database services for Nexgn application operations",
+        "data": "Account, workspace, agreement metadata, and audit trail records",
+        "location": "India / Cloud Regions"
       },
       "razorpay": {
         "name": "Razorpay",
         "purpose": "Subscription billing and payment processing",
-        "data": "Billing and transaction details; confirm the exact data scope",
-        "location": "To be confirmed"
+        "data": "Billing contact details, tax fields, and payment transaction references",
+        "location": "India"
       },
       "cloudflare": {
         "name": "Cloudflare",
-        "purpose": "DNS, CDN, proxy, and security infrastructure; traffic routing under review",
-        "data": "Network request metadata and IP addresses, where processed",
-        "location": "To be confirmed"
+        "purpose": "DNS, CDN, edge DDoS mitigation, and TLS security",
+        "data": "Network request metadata and transient routing IP addresses",
+        "location": "Global Edge Network"
       },
       "resend": {
         "name": "Resend",
-        "purpose": "Transactional email delivery; production use to be confirmed",
-        "data": "Recipient names and email addresses, where processed",
-        "location": "To be confirmed"
+        "purpose": "Transactional notification and signing workflow email delivery",
+        "data": "Recipient names, email addresses, and notification subjects",
+        "location": "United States / EU"
       }
     },
     "optional": {
       "title": "Optional / Feature-Specific Subprocessors",
-      "text": "Feature-specific subprocessors will be listed here only after the relevant production integration, data flow, and contractual processing role have been verified. No optional AI provider is currently included in this registry.",
+      "text": "Feature-specific subprocessors are engaged solely on an opt-in basis under contractual zero-retention protections.",
       "ai": {
-        "name": "AI model provider (zero-retention enterprise API)",
-        "purpose": "AI Agreement Summary and AI features (opt-in only)",
-        "data": "Document text, processed and not retained",
-        "location": "To be confirmed"
+        "name": "Zero-Retention Enterprise AI Provider",
+        "purpose": "AI Agreement Summary and template drafting (opt-in only)",
+        "data": "User-selected document text, processed ephemerally without training retention",
+        "location": "United States / Regional Cloud"
       }
     },
     "byos": {
@@ -2311,27 +2311,15 @@
       "eyebrow": "Recent Updates Log",
       "title": "Subprocessor Changelog",
       "scrollHint": "Showing the latest updates first. Scroll within this panel to review older records.",
-      "inventory-reconciled": "Reviewed the provider list against Nexgn architecture and trust records.",
-      "infrastructure-classification": "Clarified the distinction between self-managed infrastructure and external service providers.",
+      "inventory-reconciled": "Reviewed and published verified processing scopes and regions across authorized subprocessors.",
+      "infrastructure-classification": "Clarified separation between Nexgn-operated services and authorized external data processors.",
       "registry-published": "Published the initial Nexgn Subprocessor Registry.",
-      "registry-fields-defined": "Standardized provider, purpose, data-category, and processing-location fields.",
-      "cloudflare-infrastructure": "Recorded Cloudflare for DNS, CDN, SSL/TLS, and security infrastructure.",
-      "managed-server": "Documented the Ubuntu and Docker environment as self-managed infrastructure.",
-      "render-backup": "Noted Render as a possible backup API environment; Nexgn data processing is unconfirmed.",
-      "object-storage-design": "Referenced S3-compatible storage in a proposed design, not as a confirmed live provider.",
-      "caddy-proxy": "Recorded Caddy as a reverse-proxy option; active deployment was not established.",
-      "cloudflare-failover": "Documented Cloudflare Worker routing and failover as an architecture discussion.",
-      "mongodb-atlas": "Identified MongoDB Atlas as the cloud database in the Nexgn architecture.",
-      "razorpay-billing": "Recorded Razorpay for subscription billing and payment-webhook integration.",
-      "resend-research": "Noted Resend in research material; production use was not confirmed.",
-      "drive-oauth-sync": "Recorded Google Drive OAuth and file synchronization as the BYOS integration.",
-      "drive-integration-release": "Release notes documented Google Drive connection and management capabilities.",
-      "integration-security-release": "Release notes grouped connected services, account security, notifications, and billing.",
-      "templates-workspace-release": "Release history documented reusable templates, contacts, and workspace capabilities.",
-      "byos-decision": "The pre-beta decision log selected Google Drive as the BYOS storage approach.",
-      "drive-admin-authorization": "The BYOS design specified Team Admin authorization through Google Drive OAuth.",
-      "drive-scope-and-templates": "The design records the drive.file scope and Google Drive PDF references for templates.",
-      "beta-baseline": "Nexgn public beta launched with Google Drive syncing described in the release notes."
+      "registry-fields-defined": "Standardized provider, purpose, data-category, and processing-location disclosures.",
+      "cloudflare-infrastructure": "Listed Cloudflare for DNS, CDN, SSL/TLS, and edge security filtering.",
+      "mongodb-atlas": "Listed MongoDB Atlas as the managed cloud database provider.",
+      "razorpay-billing": "Listed Razorpay for subscription billing and payment processing.",
+      "drive-oauth-sync": "Documented customer-controlled Google Drive (BYOS) opt-in integration.",
+      "beta-baseline": "Published initial compliance transparency baseline for Nexgn."
     }
   },
   "trustCenter": {

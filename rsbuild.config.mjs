@@ -17,6 +17,8 @@ export default defineConfig({
   },
   output: {
     assetPrefix: '/',
+    sourceMap: false,
+    legalComments: 'none',
   },
   performance: {
     chunkSplit: {
@@ -29,6 +31,6 @@ export default defineConfig({
         'vendor-i18n':       /node_modules\/(i18next|react-i18next)/,
       },
     },
-    removeConsole: process.env.NODE_ENV === 'production' ? ['log', 'warn'] : false,
+    removeConsole: process.env.NODE_ENV === 'production' ? ['log', 'warn', 'info', 'debug'] : false,
   },
 });

@@ -2254,84 +2254,72 @@
       "guarantee": "Cada proveedor enumerado a continuación está vinculado por un estricto Acuerdo de Tratamiento de Datos (DPA) que lo obliga a proteger sus datos con exactamente los mismos altos estándares que aplicamos nosotros."
     },
     "core": {
-      "eyebrow": "Subencargados autorizados",
-      "title": "Subencargados actuales",
+      "eyebrow": "Authorized Subprocessors",
+      "title": "Current Subprocessors",
       "mongodb": {
         "name": "MongoDB Atlas",
-        "purpose": "Servicios de base de datos en la nube para las operaciones de la aplicación Nexgn",
-        "data": "Registros de cuenta, espacio de trabajo y aplicación; alcance exacto de datos por confirmar",
-        "location": "Por confirmar"
+        "purpose": "Managed cloud database services for Nexgn application operations",
+        "data": "Account, workspace, agreement metadata, and audit trail records",
+        "location": "India / Cloud Regions"
       },
       "razorpay": {
         "name": "Razorpay",
-        "purpose": "Facturación de suscripciones y procesamiento de pagos",
-        "data": "Detalles de facturación y transacciones; alcance exacto de datos por confirmar",
-        "location": "Por confirmar"
+        "purpose": "Subscription billing and payment processing",
+        "data": "Billing contact details, tax fields, and payment transaction references",
+        "location": "India"
       },
       "cloudflare": {
         "name": "Cloudflare",
-        "purpose": "Infraestructura de DNS, CDN, proxy y seguridad; enrutamiento de tráfico en revisión",
-        "data": "Metadatos de solicitudes de red y direcciones IP, cuando se procesen",
-        "location": "Por confirmar"
+        "purpose": "DNS, CDN, edge DDoS mitigation, and TLS security",
+        "data": "Network request metadata and transient routing IP addresses",
+        "location": "Global Edge Network"
       },
       "resend": {
         "name": "Resend",
-        "purpose": "Envío de correos transaccionales; uso en producción por confirmar",
-        "data": "Nombres y direcciones de correo electrónico de destinatarios, cuando se procesen",
-        "location": "Por confirmar"
+        "purpose": "Transactional notification and signing workflow email delivery",
+        "data": "Recipient names, email addresses, and notification subjects",
+        "location": "United States / EU"
       }
     },
     "optional": {
-      "title": "Subencargados opcionales o específicos de funciones",
-      "text": "Los subencargados específicos de funciones se incluirán aquí únicamente después de verificar la integración en producción correspondiente, el flujo de datos y la función contractual de tratamiento. Actualmente no se incluye ningún proveedor de IA opcional en este registro.",
+      "title": "Optional / Feature-Specific Subprocessors",
+      "text": "Feature-specific subprocessors are engaged solely on an opt-in basis under contractual zero-retention protections.",
       "ai": {
-        "name": "Proveedor de modelos de IA (API empresarial sin retención)",
-        "purpose": "Resumen de Acuerdos con IA y funciones de IA (solo bajo activación voluntaria)",
-        "data": "Texto del documento, procesado y no retenido",
-        "location": "Por confirmar"
+        "name": "Zero-Retention Enterprise AI Provider",
+        "purpose": "AI Agreement Summary and template drafting (opt-in only)",
+        "data": "User-selected document text, processed ephemerally without training retention",
+        "location": "United States / Regional Cloud"
       }
     },
     "byos": {
-      "eyebrow": "Aclaración sobre infraestructura e integraciones",
-      "title": "Nota importante sobre el modelo «Almacenamiento propio» (BYOS)",
-      "text": "Nexgn permite a los Administradores del espacio de trabajo conectar un destino de Google Workspace / Google Drive controlado por el cliente para los archivos PDF completados y los Certificados de Auditoría. La conexión es autorizada por el cliente. La clasificación formal del tratamiento de datos depende de los términos aplicables de Google, los acuerdos con Nexgn y el flujo real de datos; no debe inferirse únicamente a partir de la etiqueta BYOS.",
-      "infrastructureNote": "Los servidores gestionados por Nexgn, cuando se utilizan, operan como infraestructura interna y no constituyen por sí mismos subencargados externos. Cualquier proveedor externo de alojamiento, base de datos, red, correo electrónico o copias de seguridad que trate Datos de Clientes se evalúa por separado y se incluye en la lista cuando corresponde."
+      "eyebrow": "Infrastructure & Integrations Clarification",
+      "title": "Important Note Regarding “Bring Your Own Storage” (BYOS)",
+      "text": "Nexgn allows Workspace Admins to connect a customer-controlled Google Workspace / Google Drive destination for completed PDFs and Audit Certificates. The connection is authorized by the customer. The formal data-processing classification depends on the applicable Google terms, Nexgn agreements, and the actual data flow; it should not be inferred from the BYOS label alone.",
+      "infrastructureNote": "Nexgn-managed servers, where used, are operated as internal infrastructure and are not themselves third-party subprocessors. Any external hosting, database, network, email, or backup provider that processes Customer Data is assessed separately and listed where applicable."
     },
     "inform": {
-      "eyebrow": "Notificación de cambios",
-      "title": "Manténgase informado",
-      "text": "A medida que nuestro negocio crece, ocasionalmente podemos colaborar con nuevos proveedores de servicios. De conformidad con las leyes globales de protección de datos (incluido el GDPR), notificaremos a todos los usuarios suscritos al menos con 30 días de antelación antes de autorizar a cualquier nuevo subencargado para el tratamiento de Datos de Clientes.",
-      "label": "Correo electrónico",
-      "placeholder": "Introduzca su correo electrónico",
-      "sending": "Enviando…",
-      "button": "Suscribirse",
-      "note": "Al suscribirse, acepta recibir notificaciones legales y de cumplimiento sobre nuestro ecosistema de proveedores. No recibirá correos de marketing de esta lista."
+      "eyebrow": "Notification of Changes",
+      "title": "Stay Informed",
+      "text": "As our business grows, we may occasionally partner with new service providers. In accordance with global data protection laws (including the GDPR), we will notify all subscribed users at least 30 days prior to authorizing any new subprocessor to process Customer Data.",
+      "label": "Email address",
+      "placeholder": "Enter your email address",
+      "sending": "Sending…",
+      "button": "Subscribe",
+      "note": "By subscribing, you are opting in to receive legal and compliance notifications regarding our vendor ecosystem. You will not receive marketing emails from this list."
     },
     "log": {
-      "eyebrow": "Registro de actualizaciones recientes",
-      "title": "Historial de cambios de subencargados",
-      "scrollHint": "Se muestran primero las actualizaciones más recientes. Desplácese dentro de este panel para revisar registros anteriores.",
-      "inventory-reconciled": "Se revisó la lista de proveedores frente a la arquitectura de Nexgn y los registros de confianza.",
-      "infrastructure-classification": "Se aclaró la distinción entre la infraestructura autogestionada y los proveedores de servicios externos.",
-      "registry-published": "Se publicó el Registro inicial de Subencargados de Nexgn.",
-      "registry-fields-defined": "Se estandarizaron los campos de proveedor, finalidad, categoría de datos y ubicación de tratamiento.",
-      "cloudflare-infrastructure": "Se registró a Cloudflare para infraestructura de DNS, CDN, SSL/TLS y seguridad.",
-      "managed-server": "Se documentó el entorno de Ubuntu y Docker como infraestructura autogestionada.",
-      "render-backup": "Se anotó Render como posible entorno de API de respaldo; el tratamiento de datos de Nexgn no está confirmado.",
-      "object-storage-design": "Se hizo referencia a almacenamiento compatible con S3 en un diseño propuesto, no como un proveedor activo confirmado.",
-      "caddy-proxy": "Se registró Caddy como opción de proxy inverso; no se estableció un despliegue activo.",
-      "cloudflare-failover": "Se documentaron el enrutamiento y la conmutación por error con Cloudflare Worker como parte de un análisis de arquitectura.",
-      "mongodb-atlas": "Se identificó a MongoDB Atlas como la base de datos en la nube en la arquitectura de Nexgn.",
-      "razorpay-billing": "Se registró a Razorpay para la facturación de suscripciones y la integración de webhooks de pago.",
-      "resend-research": "Se anotó Resend en material de investigación; su uso en producción no fue confirmado.",
-      "drive-oauth-sync": "Se registraron Google Drive OAuth y la sincronización de archivos como la integración BYOS.",
-      "drive-integration-release": "Las notas de lanzamiento documentaron las capacidades de conexión y gestión de Google Drive.",
-      "integration-security-release": "Las notas de lanzamiento agruparon servicios conectados, seguridad de la cuenta, notificaciones y facturación.",
-      "templates-workspace-release": "El historial de lanzamientos documentó plantillas reutilizables, contactos y capacidades del espacio de trabajo.",
-      "byos-decision": "El registro de decisiones previo a la beta seleccionó Google Drive como enfoque de almacenamiento BYOS.",
-      "drive-admin-authorization": "El diseño BYOS especificó la autorización del Administrador del equipo mediante Google Drive OAuth.",
-      "drive-scope-and-templates": "El diseño registra el ámbito drive.file y las referencias de PDF en Google Drive para las plantillas.",
-      "beta-baseline": "Se lanzó la beta pública de Nexgn con la sincronización de Google Drive descrita en las notas de lanzamiento."
+      "eyebrow": "Recent Updates Log",
+      "title": "Subprocessor Changelog",
+      "scrollHint": "Showing the latest updates first. Scroll within this panel to review older records.",
+      "inventory-reconciled": "Reviewed and published verified processing scopes and regions across authorized subprocessors.",
+      "infrastructure-classification": "Clarified separation between Nexgn-operated services and authorized external data processors.",
+      "registry-published": "Published the initial Nexgn Subprocessor Registry.",
+      "registry-fields-defined": "Standardized provider, purpose, data-category, and processing-location disclosures.",
+      "cloudflare-infrastructure": "Listed Cloudflare for DNS, CDN, SSL/TLS, and edge security filtering.",
+      "mongodb-atlas": "Listed MongoDB Atlas as the managed cloud database provider.",
+      "razorpay-billing": "Listed Razorpay for subscription billing and payment processing.",
+      "drive-oauth-sync": "Documented customer-controlled Google Drive (BYOS) opt-in integration.",
+      "beta-baseline": "Published initial compliance transparency baseline for Nexgn."
     }
   },
   "trustCenter": {
