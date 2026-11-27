@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
 const BASE_URL = 'https://nexgn.cloud';
-const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
+const DEFAULT_IMAGE = `${BASE_URL}/brand/og-image.png`;
 const SUPPORTED_LANGS = ['en', 'es', 'hi'];
 
 export const ORGANIZATION_ID = `${BASE_URL}/#organization`;
