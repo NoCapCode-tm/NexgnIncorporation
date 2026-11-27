@@ -15,6 +15,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import { generateOgImagesBatch, getOgImageUrl } from './generate-og-images.mjs';
 
 const DIST = path.resolve('dist');
 const SITE = 'https://nexgn.cloud';
@@ -156,13 +157,26 @@ const normalizeHead = (html, pathname) => {
     links += `  <link rel="alternate" hreflang="x-default" href="${alt('en')}" />\n`;
   }
 
-  // --- Open Graph / X: fill what the page didn't set, force og:url to the page's own URL
+  // --- Open Graph / X: fill what the page didn't set, force og:url & dynamic og:image to the page's own URL
   const description = meta.description || '';
+  const ogImage = getOgImageUrl(pathname);
+  const forceKeys = new Set([
+    'og:url',
+    'og:image',
+    'og:image:width',
+    'og:image:height',
+    'og:image:type',
+    'og:image:alt',
+    'twitter:image',
+    'twitter:image:alt',
+  ]);
   const setMeta = (kind, key, value) => {
     if (!value) return '';
     const present = key in meta;
-    if (present && key !== 'og:url') return '';
-    if (present) head = head.replace(new RegExp(`<meta\\b[^>]*property=["']${key}["'][^>]*>\\s*`, 'gi'), '');
+    if (present && !forceKeys.has(key)) return '';
+    if (present) {
+      head = head.replace(new RegExp(`<meta\\b[^>]*(?:property|name)=["']${key}["'][^>]*>\\s*`, 'gi'), '');
+    }
     return `  <meta ${kind}="${key}" content="${esc(value)}" />\n`;
   };
   let social = '';
@@ -171,9 +185,16 @@ const normalizeHead = (html, pathname) => {
   social += setMeta('property', 'og:url', canonical);
   social += setMeta('property', 'og:type', 'website');
   social += setMeta('property', 'og:site_name', 'Nexgn');
+  social += setMeta('property', 'og:image', ogImage);
+  social += setMeta('property', 'og:image:width', '1200');
+  social += setMeta('property', 'og:image:height', '630');
+  social += setMeta('property', 'og:image:type', 'image/png');
+  social += setMeta('property', 'og:image:alt', title);
   social += setMeta('name', 'twitter:card', 'summary_large_image');
   social += setMeta('name', 'twitter:title', title);
   social += setMeta('name', 'twitter:description', description);
+  social += setMeta('name', 'twitter:image', ogImage);
+  social += setMeta('name', 'twitter:image:alt', title);
 
   head = head.replace(/\n{3,}/g, '\n\n').replace(/\s+$/, '\n');
   return { html: head + links + social + rest, title, description };
@@ -300,15 +321,43 @@ const renderOnce = async (page, origin, pathname, getErrs, resetErrs) => {
   if (!/<!doctype/i.test(html)) html = `<!DOCTYPE html>\n${html}`;
   const slug = (pathname.match(/\/(?:products|solutions)\/([^/]+)$/) || [])[1] || '';
   const info = await page.evaluate((sl) => {
-    const txt = (el) => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
+    const txt = (el) => {
+      if (!el) return '';
+      const out = [];
+      const walk = (n) => {
+        if (n.nodeType === 3) {
+          out.push(n.nodeValue);
+          return;
+        }
+        if (n.nodeType !== 1) return;
+        if (n.getAttribute('aria-hidden') === 'true') return;
+        if (n.tagName === 'BR') {
+          out.push(' ');
+          return;
+        }
+        const disp = getComputedStyle(n).display;
+        const isBlock = disp !== 'inline' && disp !== 'inline-block' && disp !== 'inline-flex';
+        if (isBlock && out.length) out.push(' ');
+        for (const ch of n.childNodes) walk(ch);
+        if (isBlock && out.length) out.push(' ');
+      };
+      walk(el);
+      return out.join('').replace(/\s+/g, ' ').trim();
+    };
     // ProductLayout marks the section the URL points at (alias-aware) with data-target
     const art = document.querySelector('article[data-target="true"]') || (sl && document.getElementById(sl)) || null;
-    const lead =
+    const heroLead =
       txt(document.querySelector('[data-pl="hero-lead"]')) ||
-      Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 60) ||
+      txt(document.querySelector('[class*="heroLead"], [class*="heroText"]')) ||
+      '';
+    const lead =
+      heroLead ||
+      txt(document.querySelector('h1 ~ p, main p')) ||
+      Array.from(document.querySelectorAll('main p, h1 ~ p')).map(txt).find((x) => x.length > 40) ||
       '';
     return {
       h1: txt(document.querySelector('h1')),
+      heroLead,
       lead,
       liveTitle: document.title || '',
       secTitle: sl ? txt(art?.querySelector('h2')) : '',
@@ -364,6 +413,7 @@ const snapshotPages = async (pathnames, shell) => {
   const fallbackUsed = [];
   const errorPages = [];
   const seo = [];
+  const ogItems = [];
   let rootHtml = null;
   const queue = [...pathnames];
 
@@ -404,6 +454,11 @@ const snapshotPages = async (pathnames, shell) => {
         if (fb.used.length) fallbackUsed.push(`${pathname} [${fb.used.join(', ')}]`);
         const n = normalizeHead(fb.html, pathname);
         seo.push({ pathname, title: n.title, description: n.description });
+        ogItems.push({
+          pathname,
+          title: info.secTitle || info.h1 || n.title,
+          desc: info.secSub || info.heroLead || n.description || info.lead,
+        });
         if (pathname === ROOT_SOURCE) rootHtml = n.html;
         await fs.writeFile(path.join(DIST, `${pathname}.html`), n.html);
         ok.push(pathname);
@@ -417,7 +472,7 @@ const snapshotPages = async (pathnames, shell) => {
   await Promise.all(Array.from({ length: 4 }, worker));
   await browser.close();
   server.close();
-  return { ok: ok.length, failed, noH1, noSchema, fallbackUsed, errorPages, seo, rootHtml };
+  return { ok: ok.length, failed, noH1, noSchema, fallbackUsed, errorPages, seo, ogItems, rootHtml };
 };
 
 const main = async () => {
@@ -460,6 +515,8 @@ const main = async () => {
   await fs.writeFile(path.join(DIST, '404.html'), shell404);
 
   const snap = await snapshotPages(pathnames, shell);
+
+  if (snap.ogItems?.length) await generateOgImagesBatch(snap.ogItems, DIST);
 
   // "/" is a duplicate of /en: ship the rendered /en content (so it has an <h1>, text and links) with the
   // canonical pointing at /en. Written last, because the snapshot server serves dist/index.html.

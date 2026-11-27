@@ -6,6 +6,12 @@ const BASE_URL = 'https://nexgn.cloud';
 const DEFAULT_IMAGE = `${BASE_URL}/brand/og-image.png`;
 const SUPPORTED_LANGS = ['en', 'es', 'hi'];
 
+const getDynamicOgImageUrl = (pathname = '/') => {
+  const clean = String(pathname || '/').replace(/\/+$/, '') || '/';
+  if (clean === '/' || clean === '/en') return DEFAULT_IMAGE;
+  return `${BASE_URL}/og${clean}.png`;
+};
+
 export const ORGANIZATION_ID = `${BASE_URL}/#organization`;
 export const WEBSITE_ID = `${BASE_URL}/#website`;
 
@@ -125,7 +131,7 @@ export const SEOHead = ({
   title,
   description = '',
   url = '/',
-  image = DEFAULT_IMAGE,
+  image = null,
   type = 'website',
   noindex = false,
   articleMeta = null,
@@ -136,7 +142,9 @@ export const SEOHead = ({
   const currentLang = SUPPORTED_LANGS.includes(rawLang) ? rawLang : 'en';
 
   const cleanUrl = !url || url === '/' ? '' : url.startsWith('/') ? url : `/${url}`;
-  const canonicalUrl = `${BASE_URL}/${currentLang}${cleanUrl}`;
+  const routePath = `/${currentLang}${cleanUrl}`;
+  const canonicalUrl = `${BASE_URL}${routePath}`;
+  const resolvedImage = image || getDynamicOgImageUrl(routePath);
 
   const SITE_NAME = 'Nexgn';
   const fullTitle = !title
@@ -205,7 +213,8 @@ export const SEOHead = ({
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={resolvedImage} />
+      <meta property="og:image:alt" content={fullTitle} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
 
@@ -224,7 +233,8 @@ export const SEOHead = ({
       <meta name="twitter:url" content={canonicalUrl} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={resolvedImage} />
+      <meta name="twitter:image:alt" content={fullTitle} />
 
       <script type="application/ld+json">{JSON.stringify(generateFinalSchema())}</script>
     </Helmet>

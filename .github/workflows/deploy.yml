@@ -55,6 +55,11 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
+      - name: Install System Fonts for Multilingual Dynamic OG Cards (EN / ES / HI)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core fonts-liberation
+
       - name: Build & Prerender Static SEO Shells
         env:
           CI: 'true'
@@ -86,7 +91,15 @@ jobs:
           grep -q '"@type":"FAQPage"' dist/en/alternatives/docusign.html
           grep -q '"@type":"FAQPage"' dist/en/pricing.html
 
-          echo "VERIFIED: $(find dist -name '*.html' | wc -l) HTML pages built cleanly."
+          # 5. Dynamic OG Images & Meta Tag verification
+          for og in dist/og/en/blog.png dist/og/es/blog.png dist/og/hi/blog.png dist/og/en/pricing.png dist/og/en/alternatives/docusign.png; do
+            test -f "$og" || { echo "MISSING DYNAMIC OG IMAGE: $og"; exit 1; }
+          done
+          grep -q 'https://nexgn.cloud/brand/og-image.png' dist/index.html
+          grep -q 'https://nexgn.cloud/og/en/blog.png' dist/en/blog.html
+          grep -q 'https://nexgn.cloud/og/es/blog.png' dist/es/blog.html
+
+          echo "VERIFIED: $(find dist -name '*.html' | wc -l) HTML pages + $(find dist/og -name '*.png' | wc -l) dynamic OG images built cleanly."
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
